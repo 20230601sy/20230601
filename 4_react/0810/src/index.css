@@ -1,0 +1,11 @@
+/* font-family: 'Noto Sans KR', sans-serif; */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+
+
+html, body {
+  margin: 0;
+}
+
+html, body, input, button, select{
+  font-family: 'Noto Sans KR', sans-serif;
+}
