@@ -1,0 +1,105 @@
+.container {
+  width: 100%;
+  height: 400px;
+  border: 1px solid olivedrab;
+  position: relative;
+}
+.position-test{
+  /* position: relative; */
+  /* 기본값은 static, 해당 요소마다 원래 들어가는 위치
+    relative는 static 기준으로 원하는 위치에 넣음
+    relative만 하면 안되고 방향, 거리 써줘야 하는데
+    위로 100px이면 bottom : 100px 요런식임. 방향이 반대라 주의 필요
+    차라리 테두리 위치를 기준으로 안쪽으로 간다고 생각하면 맞는 듯
+   */
+   /* left: 100px; */
+   /* top: 100px; */
+
+   position: absolute;
+   /* absolute는 부모태그 기준 절대 위치,
+    부모태그 지금은 container 기준인데,
+    부모태그가 static이면 안됨, relative하고 안 건드리면 static이나 마찬가지...
+    부모 요소가 존재하지 않으면 body를 기준으로 맞춰짐
+    top 버튼이나 따라다니는 side 메뉴 같은 거 만들 수 있다심
+    */
+    /* bottom: 5%; */
+    /* 이미지를 정중앙으로 하고 싶을 때, top, left 50%로는 시작지점이 50%이기 때문에 정중앙이 안됨 */
+    /* top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); */
+    /* 그럴 때 transform 사용, translate는 평행이동, 이미지 크기에 맞추나봄ㅎ, 축은 좌상 원점 기준, x축 오른쪽방향, y축 아래방향 */
+    bottom: 50%;
+    right: 50%;
+    transform: translate(50%, 50%);
+}
+
+*{
+  box-sizing: border-box;
+}
+
+.wrapper{
+  margin: 20%;
+  width: 60%;
+  height: 300px;
+  border: 1px solid rgb(100, 200, 255);
+  position: relative;
+}
+
+.wrapper div {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  width: 75px;
+  height: 75px;
+  background: rgba(100, 200, 255, 0.3);
+  position: absolute;
+  text-align: center;
+}
+
+.left{
+  right: 100%;
+}
+.right{
+  left: 100%;
+}
+.top{
+  bottom: 100%;
+}
+.bottom{
+  top: 100%;
+}
+
+.tr-left{
+  transform: translate(-100%, 0%);
+}
+.tr-top{
+  transform: translate(0%, -100%);
+}
+.tr-topleft{
+  transform: translate(-100%, -100%);
+}
+
+.middle{
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ex1{
+  top:0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.ex2{
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+.ex3{
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+.ex4{
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+}

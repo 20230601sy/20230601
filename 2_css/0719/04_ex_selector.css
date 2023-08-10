@@ -1,0 +1,16 @@
+input:nth-child(1):focus{
+  background: lightgrey;
+}
+
+input:nth-of-type(2):focus{
+  background: lightgrey;
+}
+
+a{
+  text-decoration: none;
+  color: blue;
+}
+a:hover, a:focus{
+  background: orange;
+  color: white;
+}

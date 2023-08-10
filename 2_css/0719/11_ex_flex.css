@@ -1,0 +1,21 @@
+*{
+  margin: 0;
+}
+body{
+  background: burlywood;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container, .item{
+  width: 70%;
+  height: 80%;
+  background: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.item{
+  background: wheat;
+}

@@ -1,0 +1,28 @@
+.header {
+  height: 30px;
+  padding: 20px 0;
+}
+
+div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty {
+  flex: 1;
+}
+/* 이걸로 간단히 쫑 치시넹ㅎㅎ */
+/* .header > div:nth-child(1) {
+  margin-right: auto;
+} */
+.logo, .menu {
+  width: 150px;
+}
+.logo {
+  background: pink;
+}
+.menu {
+  background: skyblue;
+  margin-left: 10px;
+}

@@ -1,0 +1,37 @@
+/* 동위선택자, 형제선택자
+  동일한 애들이 뭐냐?
+  동일한 부모태그 안에 있는 거
+  같은 선상에 있는 거!
+  h5 ~ p {}
+  h5 같은 선상에 있는 p 태그 지만... 
+  h5(자기를 기준으로 뒤에 있는 것만 잡아줌)
+  요게 일반 동위선택자 라고 한다심
+  h5 + p {}
+  h5와 가장 가까운 형제 요소를 찾는다심
+  마찬가지로 뒤에 있는거
+  중간에 다른 태그가 있으면 사라짐!
+
+  이런 걸 가상클래스에 활용할 수 있다심
+  input 라디오 같은 거에서 체크가 됐을 때
+  보통은 라벨을 붙여서 쓸 거니까... ???
+  eg. input[type="radio"]:checked + label {}
+
+  결합선택자
+  .wrapper p {} 자손선택자, wrapper 하위 모든 p 태그 적용
+  .wrapper > p {} 자식선택자, wrapper 직계 자식 p 태그에만 적용
+ */
+h5 ~ p {
+  color: burlywood;
+}
+
+h5 + p {
+  background: pink;
+}
+
+input[type="radio"]:checked + label{
+  color: red;
+}
+
+.wrapper > p {
+  background: burlywood;
+}

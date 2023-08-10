@@ -1,0 +1,32 @@
+/* 04_ex_modal.css */
+
+.black-bg {
+  background: rgba(0,0,0,0.5);
+  padding: 30px;
+  /* 겹치게 보이게 하려면 position 써야 함 */
+  position: fixed;
+  /* display : none; */
+
+  /* fadeIn, Out 직접 css에서 구현 */
+  /* 애니메이션은 display 설정이 있으면 안됨... */
+  visibility: hidden;
+  opacity: 0;
+  transition: all 1s;
+  height: 0;
+  overflow: hidden;
+}
+
+.white-bg {
+  background: white;
+  padding: 30px;
+}
+
+.show {
+  /* display: block; */
+
+  /* fadeIn, Out 직접 css에서 구현 */
+  visibility: visible;
+  opacity: 1;
+  height: 100%;
+  overflow: hidden;
+}

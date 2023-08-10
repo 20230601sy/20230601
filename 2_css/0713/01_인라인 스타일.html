@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- 내부 스타일은 head 태그 안쪽에 작성! -->
+  <style>
+    p {
+      color: burlywood;
+      font-size: 20px;
+      text-align: center;
+    }
+    /* style 안쪽 주석은 따지고 보면 css 영역이라 모양이 다르다심 ㄷㄷ */
+  </style>
+  <!-- 외부 스타일 시트 명시도 head 태그 안쪽에 작성! -->
+  <link rel="stylesheet" href="02_외부스타일시트.css" type="text/css">
+  <link rel="stylesheet" href="03_test.css" type="text/css"> 
+  <!--
+    css 파일 여러 개를 link해도 되는데, 중복되는 선택자가 있으면 가장 아래쪽에 있는 게 적용됨
+    그리고 css 파일은 폴더를 따로 만들어서 하는 경우도 많다심
+   -->
+</head>
+<body>
+  <p style="color: green; font-size: 50px;">인라인 스타일</p>
+  <!--
+    인라인 스타일이 가장 최우선적으로 적용됨
+    그다음 내부스타일 시트
+    그다음 외부스타일 시트
+    중복된 항목들만 우선순위를 따지는 것이고
+    내부스타일 시트나 외부스타일 시트에서 겹치지 않는 항목은 적용됨
+  -->
+  <!--  -->
+  <p>내부 스타일 시트</p>
+  <h1>외부 스타일 시트</h1>
+</body>
+</html>

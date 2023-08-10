@@ -1,0 +1,39 @@
+div {
+  width: 100px;
+  height: 100px;
+  /* position: relative; */
+  animation: ani 4s ease infinite alternate;
+}
+
+@keyframes ani{
+  0%{
+    background: red;
+    /* left: 0; */
+    /* top: 0;  */
+    /* 이거 생략 하면 뚝뚝 끊기는 건 position relative 특성이라심 ㅡㅡ */
+    /* 사실 위치 이동은 position보다 transform translate이 조금 더 선호하는 편인가봄 */
+  }
+  25%{
+    /* left: 200px;
+    top: 0; */
+    transform: translateX(200px);
+    background: blue;
+  }
+  50%{
+    /* left: 200px;
+    top: 200px; */
+    transform: translate(200px, 200px);
+    background: yellow;
+  }
+  75%{
+    /* top: 200px;
+    left: 0; */
+    transform: translateY(200px);
+    background: skyblue;
+  }
+  100%{
+    /* left: 0;
+    top: 0; */
+    background: olivedrab;
+  }
+}

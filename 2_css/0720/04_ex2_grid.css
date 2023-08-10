@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 10px;
+}
+
+.card {
+  border: 1px solid lightgrey;
+  box-shadow: 3px 3px 5px grey;
+  padding: 20px 25px;
+}
+
+.card h2{
+  text-align: center;
+}
+
+.card img {
+  width: 250px;
+  height: 166px;
+  margin: 10px 0;
+}
+
+.card p {
+  font-size: 12px;
+}

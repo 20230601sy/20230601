@@ -1,0 +1,102 @@
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'NanumSquare';
+}
+/* 버튼색 : #03c75a */
+
+.container{
+  width: 80%;
+  margin: auto;
+}
+
+.logo{
+  padding: 10%;
+  text-align: center;
+}
+.logo img{
+  width: 100%;
+}
+
+.main, .loginBlock, .simpleLogin, .submenu, footer{
+  width: 90%;
+  margin: auto;
+  text-align: center;
+}
+
+input{
+  width: 100%;
+  height: 40px;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid lightgrey;
+}
+
+.loginbtn input{
+  color: white;
+  background: #03c75a;
+  border: none;
+}
+.wrapper div input{
+  width: 15px;
+  height: 15px;
+}
+
+.wrapper-stayLogin {
+  float: left;
+}
+.wrapper-IPsafe {
+  float: right;
+}
+
+label{
+  font-size: 15px;
+  color: lightgrey;
+}
+
+.simpleLogin{
+  clear: both;
+  padding-top: 40px;
+  text-align: center;
+}
+
+.btns input{
+  width: 47%;
+  margin-top: 20px;
+  background: none;
+  border: 1px solid #03c75a;
+}
+
+ul li, ul a li {
+  list-style: none;
+  float: left;
+  margin-top: 30px;
+  padding: 10px;
+  color: lightgrey;
+  font-size: 15px;
+}
+
+ul{
+  padding-left: 10%;
+}
+ul a li{
+  width: 25%;
+}
+footer{
+  clear: both;
+  padding-top: 30px;
+
+}
+
+.copyImg{
+  height: 50px;
+  float: left;
+}
+
+span{
+  line-height: 10px;
+}

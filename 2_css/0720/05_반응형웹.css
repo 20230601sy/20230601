@@ -1,0 +1,60 @@
+/* 반응형웹
+특정 사이즈 되는 순간 네비바라든지... 처리를 해주는 거
+airbnb가 좀 잘 만들어진 걸로 알려져 있다심
+개발자도구 디바이스 선택하면 모바일형태로 볼 수 있음
+화면 크기에 따라서 보여지는 내용이 달라지는... 
+미디어 쿼리??? 를 쓴다심 */
+
+body {
+  background: skyblue;
+}
+
+@media screen and (max-width: 800px) {
+/* 최대 화면 크기 0부터 800px까지 적용할 css 작성공간 */
+/* min-width는 800부터임 */
+/* 뷰포트 규격을 일반적으로 모바일 0~767px breakpoint */
+/* tablet 768~1023px */
+/* PC : 1024~1439px */
+/* Large Pc : 1440px~ 뭐 이런 것도 있다심 */
+/* 당근마켓도 개발자도구 해더보면 비슷한 코드 있음... */
+/* 너무 세세하겐 안 하고. 할수록 고통이 증가된다심ㅋㅋㅋㅋㅋ */
+  body {
+    background: pink;
+  }
+}
+
+
+.container {
+  height: 80vh;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+}
+
+.container > div {
+  background: skyblue;
+  height: 200px;
+  width: 15%;
+  border: 1px solid blue;
+  margin: 5px;
+}
+
+@media screen and (min-width: 600px) and (max-width: 900px) {
+  .container{
+    flex-wrap: wrap;
+  }
+
+  .container > div {
+    width: 45%;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .container{
+    flex-direction: column;
+  }
+
+  .container > div {
+    width: 100%;
+  }
+}

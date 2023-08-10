@@ -1,0 +1,82 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container{
+  width: 700px;
+  height: 100%;
+  background: lightgrey;
+  padding: 50px;
+}
+
+.logo{
+  text-align: center;
+}
+
+.top-inputs input{
+  width: 100%;
+  height: 35px;
+  margin-bottom: 5px;
+  padding: 0 10px 0;
+}
+
+.submit {
+  background: #03c75a;
+  border: 0px;
+  color: white;
+  /* 마우스오버한다음 커서 손가락 모양으로 바뀌는 거... 나중에 할 거라심*/
+}
+
+.chk-left {
+  float: left;
+}
+.chk-right {
+  float: right;
+}
+.chk-wrapper{
+  height: 40px;
+  border-bottom: 1px solid black;
+}
+
+.wrapper, .search {
+  margin-top: 60px;
+  text-align: center;
+}
+
+a{
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+}
+.wrapper a {
+  border: 1px solid #03c75a;
+  width: 48%;
+  height: 60px;
+  background: white;
+  line-height: 60px;
+  margin-top: 15px;
+  border-radius: 5px;
+}
+
+.btn-login a:hover{
+  /* 마우스 올리면 css 적용될 내용!
+    가상 선택자 설명할 때 다시 할 거라심!!!
+    * : 앞뒤로 띄어쓰기 넣으면 안 된다심!!!
+   */
+  background: #03c75a;
+  color: white;
+}
+
+.search a{
+  padding: 0 30px;
+}
+
+.footer{
+  margin-top: 50px;
+  text-align: center;
+}
+.footer img{
+  width: 100px;
+}

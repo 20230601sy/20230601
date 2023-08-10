@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  overflow: hidden;
+}
+.carousel {
+  width: 300vw;
+  transition: all 1s;
+}
+
+.box {
+  width: 100vw;
+  float: left;
+}
+
+.box img {
+  width: 100%;
+}
+
+button {
+  border: none;
+  background: none;
+  font-size: 20px;
+  width: 15px;
+}

@@ -1,0 +1,20 @@
+.container {
+  height: 100px;
+}
+
+div{
+  display:flex;
+  flex: 1;
+}
+
+.item {
+  border: 1px solid red;
+}
+
+.yellow {
+  background: pink;
+}
+
+.green{
+  background: skyblue;
+}

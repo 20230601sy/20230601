@@ -1,0 +1,29 @@
+/* .container {
+  text-align: center;
+} */
+
+.box {
+  border: 1px solid;
+  width: 300px;
+  height: 300px;
+  overflow: scroll;
+}
+/* 가상선택자중에 disabled도 있어서,,, 체크 안되어 있을 때 선택 */
+/* label tag는 input의 형제 tag */
+#chk:disabled + label { 
+  color: lightgray;
+}
+
+body {
+  height: 3000px;
+}
+
+.bar{
+  border: 1px solid; 
+  /* border는 확인용 원래 디자인상은 없어야 한다심 */
+  width: 0;
+  height: 5px;
+  background: black;
+  position: fixed;
+  top: 0;
+}

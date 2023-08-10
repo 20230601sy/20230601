@@ -1,0 +1,27 @@
+<!-- 03_ex_alert.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="03_ex_alert.css">
+</head>
+<body>
+  <div id="msg" class="alert">
+    알림창
+    <!-- <button onclick="hide()">x</button> -->
+    <button onclick="showHide('none')">x</button>
+  </div>
+  <!-- 클릭했다든지 더블클릭했다든지 등등을 이벤트라고 함 -->
+  <!-- button onclick 속성에 button을 클릭했을 때 실행할 코드를 넣는데 길어지니까 js에 함수를 넣어줌 -->
+  <!-- <button onclick="test()">알림창 열기</button>  -->
+  <!-- <button onclick="show()">알림창 열기</button>  -->
+  <!-- <button onclick="showHide('block')">알림창 열기</button>  -->
+  <button onclick="showHide2('알림창1')">알림창 열기1</button> 
+  <button onclick="showHide2('알림창2')">알림창 열기2</button> 
+  <button onclick="showHide2('알림창3')">알림창 열기3</button> 
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="03_ex_alert.js"></script>
+</body>
+</html>

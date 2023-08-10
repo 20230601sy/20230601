@@ -1,0 +1,26 @@
+a, b, div {
+  border: 1px solid red;
+  padding: 10px;
+  margin-top: 20px; /* div는 적용되지만 a, b는 적용되지 않음! */
+  margin-left: 10px;
+}
+
+div {
+  padding: 3px;
+  width: 300px;
+  height: 500px;
+  text-align: center; 
+  /* inline 요소는 부모 태그에 정렬 적용시킴 */
+}
+button {
+  margin-top: 20px;
+  height: 50px;
+}
+
+.inner {
+  border: 1px solid blue;
+  width: 100px;
+  height: 50px;
+  margin: auto;
+  /* block 요소는 해당 태그에 margin auto 적용해서 가운데 정렬 시킴 */
+}

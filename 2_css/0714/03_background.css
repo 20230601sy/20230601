@@ -1,0 +1,59 @@
+body {
+  background-color: antiquewhite;
+  background-image: url(../../img/kakaofriends.gif);
+  background-repeat: no-repeat;
+  /* 기본은 x,y 모두 반복
+    repeat-x
+    repeat-y
+    no-repeat 반복 없음
+   */
+   background-size: 100px;
+   /* 
+    px, % 설정 다 됨
+    cover 브라우저 창크기에 맞춰서 이미지 크기 조절
+    contain 해당하는 요소에 맞춰서 이미지 크기 조절
+    body는 높이가 내용이 들어간 만큼만 적용이 되다보니...그거에 맞춰서 조절...
+    블럭 요소들은 내용이 안 들어가면 높이가 0 너비는 100%
+    */
+    background-position: right 10px bottom 10px;
+    /* left right center top bottom
+      기준으로 몇 px 떨어뜨리고 싶으면 그 기준 뒤에 값 넣으면 됨
+     */
+    background-attachment: fixed;
+    /* fixed로 하면 화면 크기나 스크롤을 이동했을 때 계속 보이게 할 수 있음 */
+    border: 1px solid;
+
+    /* background: url(../../img/kakaofriends.gif) left 10px top 10px no-repeat fixed;
+    font처럼 한방에 넣어 줄 수 있음 그런데 background에 size는 안 들어가짐 따로 지정해야 함 */
+}
+
+h1 {
+  background-color: #ffe4c4;
+}
+
+p {
+  background-color: rgb(200, 120, 0);
+}
+
+.bg-test {
+  background-color: rgba(200, 120, 0, 0.5);
+}
+
+/* .img-test {
+  background-image: url(../../img/apeach.jpeg);
+  background-repeat: no-repeat;
+  width: 200px;
+  height: 300px;
+} */
+
+.bg-gradation-test {
+  background: linear-gradient(to right bottom, yellow, green);
+}
+
+.radial-gradient-test {
+  background: radial-gradient(green, yellow);
+  /* radial-gradient(circle at 100%, #333, #333 50%, #eee 75%, #333 75%); */
+}
+/* https://webgradients.com/ copy css */
+/* background-image: linear-gradient(to top, #fad0c4 0%, #ffd1ff 100%); */
+/* 나중에는 아예 디자인적 요소는 클래스만 지정후 갖다쓰는 것도 할 거라심 ㄷㄷ */

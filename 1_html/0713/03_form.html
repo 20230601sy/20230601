@@ -1,0 +1,147 @@
+<!--
+  form태그 - (입력 양식들)
+  파일을 보낼 때던가 입력을 해서 서버로 보낼 때라던가..
+  지금은 서버가 구현이 안 되어 있으니 확인은 못하겠지만...jsp할 때부터 할거라심
+  검색초록창 같은 거...
+  <form action="서버측 주소" method="POST">
+    <input type="text">
+  </form>
+  기본적으로 속성이 최소 2개 들어감
+  1. action="서버측 주소" 서버측 url이 들어간다고 보면 됨
+  2. method="get" or "post" 요청 방식이 get 방식, post 방식 (dialog는 무시하고라고 하심)
+     두개 방식이 다른데 
+     일단 get 같은 경우는 
+     보낼 수 있는 크기, 용량이 한정이 되어 있음. 게시판 같은 건 불가능, 
+     그리고 보안이 없음, 그대로 url에 표시가 됨. id/pw 이런 거 get 하면 안 되겠지...
+     대표적인 get 방식은 검색창, youtube. 검색 결과보면 url에 result?search_query=aaaa 같은 게 뜸
+     method가 생략되어 있으면 get 요청 한거임.
+     post는 반대로, 용량이 한정되어 있지 않고, 보안이 유지됨. 그래서 네이버 로그인창 같은 거에서 사용됨
+
+  form태그 넣는다고 아무 것도 화면에 보이는 것은 없음
+  입력할 창이나 버튼은 form태그 안에 input 태그 넣어줘야 함!
+  이메일에는 @ 가 기입되지 않으면 보낼 때
+  jsp로 정규표현식 조건을 걸어버리는 형태로 처리한다고 하심
+  라디오는 여러 개 중에 1개만 선택 가능
+  체크박스는 다중 선택 가능
+  서치는 텍스트옆에 아이콘이 추가로 생김
+  히든은 화면에 노출은 안됨. 이런 거 왜 쓰나 싶지만 자주 쓴다심
+  유저한테 표시해줄 필요는 없는 데이터를 서버에 보내야 할 때 작성이 되어야 하기 때문에 종종 사용한다심
+  value라는 속성을 사용하면 값을 사용할 수 있도록 한다심
+  네이버 로그인 창에도 hidden 있음 ㄷㄷ
+
+  버튼은 크게 3가지
+  그냥 버튼은 기능이 없음 자바스크립트에서 넣어줘야 사용 가능
+  기능이 있는 버튼 2가지, 리셋이랑 전송 버튼!
+
+  속성을 각각으로 좀 봐야 할 것들은 있다심
+  주로 쓸 거는 text긴 하지만...이라심 헤헷
+-->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <form action="서버측 주소" method="post">
+    text : <input type="text"><br>
+    password : <input type="password"><br>
+    email : <input type="email"><br>
+    radio : <input type="radio"><br>
+    checkbox : <input type="checkbox"><br>
+    search : <input type="search" value="검색할 내용을 입력하세요"><br>
+    hidden : <input type="hidden"><br>
+    button : <input type="button" value="button"><br>
+    reset : <input type="reset" value="reset"><br>
+    submit : <input type="submit" value="submit"><br>
+    file : <input type="file"><br>
+    date : <input type="date"><br>
+    color : <input type="color"><br>
+  </form>
+
+  <br>
+    <form action="" method="get">
+    <input type="text"><br><br>
+    <input type="text" size="40" autofocus minlength="3" maxlength="7" placeholder="아이디" value="2023">
+    <input type="text" value="readonly" readonly>
+    <input type="text" value="disabled" disabled>
+    <input type="text" value="required" required>
+    <input type="text" name="id">
+    <input type="submit">
+    <!-- ="id"
+      input type="text" 속성
+      autofocus는 페이지 새로고침 시 제일 먼저 커서가 가는 곳, 이런 것들은 다 사용자 편의성을 위한 것 
+      maxlength는 최대 입력할 수 있는 길이, 더 입력하려고 해도 입력이 안되는 거 바로 확인됨
+      minlength는 최소 입력할 수 있는 길이, 이 상태에서는 확인 안 되고 submit 버튼 같은 거 만들어야 확인 가능
+      placeholder 보조텍스트, 실텍스트를 입력하면 내용이 사라짐
+      value는 칸 안에 실제 값이 들어가있는 거임 placeholder와 다름
+      readonly 넣어주면 읽기 전용이라 선택은 가능해도 내용 수정이 안됨
+      disabled 회원정보수정할 때 id는 못 바꾸니까 그런 거 보여주기만 하는 식으로 할 때 씀
+      required 필수 입력 submit으로 확인가능
+      
+      name 속성 서버로 전송할 때 인풋에 저장된 값을 담는 저장 공간이라고 생각하면 됨 name의 변수명
+      input태그의 값을 서버에서 제대로 빼려면 name이라는 속성 지정이 필수! 가장 많이 쓰고...꼭 넣어주어야 할 것 중 하나...
+      submit 하면 get방식에서는 url에 표시됨
+
+    -->
+  </form>
+  <br>
+  <form action="" method="get">
+    <label for="male">남자</label>
+    <input id="male" type="radio" name="gender" value="남자">
+    <!-- <label for="female">여자</label> -->
+    여자 <input id="female" type="radio" name="gender" value="여자" checked>
+    <input type="submit">
+    <!-- 
+      라디오 버튼을 묶는 것은 name을 동일한 이름으로 지정하면 됨
+      value를 지정해야 서버에 값이 전송이 됨, 지정하지 않으면 어떤 걸로 선택해도 gender=on(체크했심)만 보내짐
+      사용자 편의성을 위해서 id 지정하고 label 태그 사용
+      어떤 사용자 편의성이냐면 남자라는 글씨를 클릭해도 라디오버튼이 선택됨
+      label 태그 안 쓴 상태의 여자는 클릭해도 라디오버튼이 선택되지 않음
+      checked 초기에 선택되어 있는 거, 새로고침 해서 확인해보면 됨
+
+    -->
+  </form>
+
+  <br>
+  <form action="">
+    <fieldset> <!-- 보이는 모양새를 세트,,, 그룹화시켜줌 기능이 특별하게 있는 건 아니고 테두리 정도... 더 보여줌ㅎ -->
+      <legend>기본정보</legend> <!-- 테두리 제목 -->
+      <label for="userId">아이디 : </label> <!-- 라벨 지정은 아무 input태그나 다 됨 -->
+      <input id="userId" type="text"><br>
+      <label for="password">비밀번호 : </label>
+      <input id="password" type="password"><br>
+
+      <label for="text">남길 말 : </label>
+      <textarea name="text" id="text" cols="30" rows="5"></textarea> <br> 
+
+      <label for="city">지역</label>
+      <select name="city" id="city" size="8" multiple> <!--size는 세로 크기 지정, 기본은 다중 선택이 안되지만 multiple을 넣으면 다중 선택 가능, 그치만 다중선택되게 할 거면 콤보상자보다 체크박스 쓰는 게 낫다심-->
+        <optgroup label="서울시"> <!--콤보상자 내부도 그룹화 가능함-->
+          <option value="강남">강남구</option> <!-- 보통 value는 영어로 보낸다심... ㅠㅠ -->
+          <option value="강동">강동구</option>
+          <option value="강북">강북구</option>
+          <option value="강서" selected>강서구</option> <!--selected는 라디오박스에서 checked 같이 기본 선택값을 지정해줄 수 있음, 지정 안 하면 디폴트는 제일 위에 있는 값-->
+        </optgroup>
+        <optgroup label="대전시">
+          <option value="대덕">대덕구</option>
+          <option value="유성">유성구</option>
+        </optgroup>
+      </select>
+      <input type="submit">
+    </fieldset>
+  </form>
+  <br>
+  <form action="">
+    탑      <input name="chk" value="top" type="checkbox">
+    미드    <input name="chk" value="mid" type="checkbox" checked>
+    정글    <input name="chk" value="jungle" type="checkbox">
+    AD      <input name="chk" value="AD" type="checkbox">
+    서포트  <input name="chk" value="support" type="checkbox">
+    <!-- http://127.0.0.1:5500/0713/03_form.html?chk=mid&chk=AD -->
+    <input type="submit">
+  </form>
+</body>
+</html>

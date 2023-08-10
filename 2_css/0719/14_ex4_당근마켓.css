@@ -1,0 +1,110 @@
+/* 
+  전체너비 1200px
+  높이 685px
+  첫번째 이미지 800x685
+  두번째 이미지 530x685
+  당근색 : #ff8a3d
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.flex{
+  display: flex;
+}
+
+.flex-center{
+  justify-content: center;
+}
+
+.col-center{
+  align-items: center;
+}
+
+.flex-column{
+  flex-direction: column; 
+}
+
+.container {
+  width: 1200px;
+}
+header{
+  height: 90px;
+  position: fixed;
+}
+
+.logo a{
+  background: url("../../img/당근이미지/logo.png") no-repeat center center;
+  background-size: contain;
+  height: 30%;
+  width: 120px;
+}
+
+nav {
+  width: 600px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+header a {
+  font-size: 20px;
+  font-weight: bolder;
+  text-decoration: none;
+  color: black;
+}
+nav a:nth-of-type(1){
+  color: #ff8a3d;
+}
+
+header input {
+  height: 40px;
+  font-size: 15px;
+  padding: 5px;
+  background: lightgrey;
+  border: none;
+  border-radius: 7px;
+}
+
+/* 테두리 안 없어짐! */
+/* header input:focus {
+  border: 0px;
+} */
+
+header > a {
+  align-self: center;  
+  padding: 7px 12px;
+  border: 1px solid lightgrey;
+  border-radius: 7px;
+}
+
+header a:hover {
+  opacity: 0.6;
+}
+
+header a:first-child:hover{
+  opacity: 1;
+}
+
+*::selection {
+  background: none;
+}
+h1::selection, h5::selection, p::selection {
+  background: #ff8a3d;
+}
+
+.container1 {
+  width: 100vw;
+  height: 685px;
+  background: rgba(255, 178, 61, 0.3);
+}
+
+.left-container {
+  width: 500px;
+  margin-left: auto;
+}
+
+.right-container img{
+  width: 800px;
+}

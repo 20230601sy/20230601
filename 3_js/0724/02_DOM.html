@@ -1,0 +1,79 @@
+<!-- 02_DOM.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- <script>
+    console.log(document.body); //null
+  </script> -->
+</head>
+<body>
+  <div>div태그-시작</div>
+  <ul>
+    <li>li태그</li>
+  </ul>
+  <div>div태그-끝</div>
+
+  <table id="table">
+    <tr>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+    </tr>
+  </table>
+
+  <div id="ele">
+    <div id="ele-content">div태그</div>
+  </div>
+
+  <ul class = "test">
+    <li>1-1</li>
+    <li>1-2</li>
+  </ul>
+  <ul class = "test">
+    <li>2-1</li>
+    <li>2-2</li>
+  </ul>
+ 
+  <a href="asdsad.zip"></a>
+  <a href="asdsad.com"></a>
+
+  <div class="content">
+    <ul class="book">
+      <li class="chapter">1</li>
+      <li class="chapter">2</li>
+    </ul>
+  </div>
+
+  <script>
+    // console.log(document.body);
+    for(let i=0; i<document.body.childNodes.length; i++)
+      console.log(document.body.childNodes[i]); // 배열 같아보이지만... 정확하게는 배열 같이 쓸 수 있는 iterator 객체라심
+    // div태그-시작 같은 내용도 하나의 뭉치로 봄 #text로 나옴
+    console.log(document.body.firstChild);
+    console.log(document.body.lastChild); // script 코드 밑에 있는 것은 인식을 못함, 현재 작업중인 여기 script 태그가 lastChild임
+
+    for(let node of document.body.childNodes)
+      console.log(node);
+
+    // for(let node in document.body.childNodes) // in 을 쓰면 요소들을 읽어주는,,, 속성들 같은 게 나오기 때문에 of를 써야 함.
+    //   console.log(node);
+
+    console.log(document.head.parentNode); // html
+    console.log(document.head.parentNode === document); // false
+    console.log(document.head.parentNode === document.documentElement); // true!
+    console.log(document.head.nextSibling); // body ?? #text ... 로 나옴 ㄷㄷ
+    console.log(document.body.previousSibling); // 이렇게 접근해서 쓰는 경우는 많이 없을 거라심...
+
+    console.log(table); // id를 보고 찾아감
+    console.log(table.rows[0]); // table 요소도 접근 가능함.
+    console.log(table.rows[0].cells[1]); // <td>2</td>
+  </script>
+  <script src="02_DOM.js"></script>
+</body>
+</html>

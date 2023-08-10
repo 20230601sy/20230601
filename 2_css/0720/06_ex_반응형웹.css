@@ -1,0 +1,49 @@
+.container{
+  width: 95vw;
+  height: 500px;
+  margin: auto;
+}
+
+.wrapper{
+  display: flex;
+  height: 400px;
+}
+
+header{
+  background: rgb(255, 200, 220);
+  height: 50px;
+}
+
+aside{
+  flex: 1;
+}
+
+.aside1{
+  background: rgb(255, 255, 170);
+}
+
+.aside2{
+  background: rgb(20, 170, 20);
+}
+
+main{
+  background: rgb(160, 80, 240);
+  flex: 3;
+}
+
+footer{
+  background: rgb(150, 220, 255);
+  height: 50px;
+}
+
+@media screen and (max-width:768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+  .aside1 {
+    order: 1;
+  }
+  .aside2 {
+    order: 2;
+  }
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <audio src="img/프리스타일-Y.mp3" autoplay controls loop muted></audio>
+
+  <audio autoplay controls loop muted> <!-- 보통 audio tag에서는 속성만 지정 -->
+    <source src="img/프리스타일-Y.mp3" type="audio/mp3"> <!-- mp3는 다 지원해줌 -->
+    <source src="img/프리스타일-Y.wav" type="audio/wav">
+    <source src="img/프리스타일-Y.wma" type="audio/wma">
+    <source src="img/프리스타일-Y.flac" type="audio/flac">
+  </audio>
+
+  <video src="img/nike.mp4" width="500px" autoplay controls loop muted></video>
+
+  <video width="500px" autoplay controls loop muted>
+    <source src="img/nike.mp4" type="video/mp4">
+    <source src="img/nike.avi" type="video/avi">
+    <source src="img/nike.ogg" type="video/ogg">
+  </video>
+
+  <iframe src="index1_ex.html" width="100%"></iframe>
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/exQQfuhnRxA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</body>
+</html>

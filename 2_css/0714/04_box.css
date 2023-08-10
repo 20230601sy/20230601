@@ -1,0 +1,75 @@
+.box {
+  border: solid 1px red;
+  margin: 5px;
+  padding: 10px;
+}
+
+.box-div {
+  width: 200px;
+  border: solid 5px blue;
+  margin: 20px;
+  padding: 10px;
+  /* 박스 전체 너비는 270px */
+  /* 이런 거 다 계산하기 귀찮아서 하는 거
+    box-sizing: border-box;로 설정하면 테두리까지가 width로 되어
+    박스 전체 너비는 양쪽 마진만 width에 더해서 240px로 됨
+    그래서 아까도 언급됐지만 초기 설정을... 종종 */
+   /* * {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+   } */
+  box-sizing: border-box;
+}
+
+.wrapper{
+  border: 1px solid;
+  width: 500px;
+  height: 500px;
+}
+
+.first {
+  border: 5px solid red;
+  padding: 10px;
+  height: 220px;
+  margin: 10px;
+}
+
+.second {
+  margin:20px;
+  border: 3px solid blue;
+  padding: 20px;
+  background: gainsboro;
+  height: 250px;
+  box-sizing: border-box;
+  /* 전체를 box-sizing 하면은 wrapper 내부 바뀌는 거 감안 해서 249px로 해야 함 */
+}
+
+.border-test {
+  height: 100px;
+  border: 5px solid red; 
+  border-style: solid dotted dashed double;
+  /* 위쪽부터 시계방향 순서로 4개 입력 가능, 1개만 쓰면 전체
+    매개변수가 4개에서 모자라면 같은 방향의 것이 뒤에 생략됐다고 여김
+    3개일 경우 왼쪽은 오른쪽과 동일하게 표시됨
+    위 / 왼쪽,오른쪽 / 아래
+    2개이면 위, 아래 / 왼쪽, 오른쪽
+    solid, dotted, dashed, double, ridge, groove, inset, outset, 
+   */
+  border-radius: 10px;
+  /* 퍼센트나 px 50%~100%는 타원으로 됨 근데 꼭지점별로 지정해줄 때 50~100도 차이가 나게 됨 */
+  border-top-right-radius: 60%;
+  border-top-width: 20px;
+  border-bottom: brown 1px solid;
+
+  margin-top: 50px;
+  margin: 30px 10px 0 0;
+  /* 블럭 요소를 가진 아이들은 margin을 auto로 주면 자동 가운데 정렬됨 복잡하게 계산할 필요 없음 */
+  /* padding도 margin과 동일하게 사용! */
+
+  box-shadow: 5px 10px 3px maroon;
+  /* 기본 그림자는 바깥쪽 안쪽 그림자 넣고 싶으면 inset 
+    box-shadow: inset 5px 10px 3px gray;
+    x, y, 퍼짐 정도, 색상
+   */
+}

@@ -1,0 +1,59 @@
+<!-- 
+  - 폼 요소를 삽입할 때 <label> 태그 사용
+  - '이름'필드는 텍스트 필드로 삽입하고, '공백없이 입력하세요'라는 힌트 표시
+  - '연락처'필드는 전화번호에 맞는 필드로 삽입
+  - '지원 동기'는 텍스트를 여러 줄 입력할 수 있는 텍스트 영역 필드로 삽입
+  - 텍스트 영역의 글자 수는 70자, 화면에 표시할 줄 개수는 5개로 지정 (cols="70" 얘기였음ㅋㅋㅋ)
+-->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>프론트앤드 개발자 지원서</h1>
+  <p>HTML, CSS, Javascript에 대한 기술적 이해와 경험이 있는 분을 찾습니다.</p>
+  <hr>
+  <form action="">
+    <h4>개인정보</h4>
+      <div>
+        <div>
+          <label for="name">&nbsp;&nbsp;&nbsp;&nbsp;이름</label>
+          <input type="text" id="name" name="name" placeholder="공백없이 입력하세요">
+        </div>
+        <div>
+          <label for="tel">&nbsp;&nbsp;&nbsp;&nbsp;연락처</label>
+          <input type="tel" name="tel" id="tel">
+        </div>
+      </div>
+      <h4>지원 분야</h4>
+      <div>
+        <div>
+          &nbsp;&nbsp;&nbsp;
+          <input type="radio" name="field" value="webpub" id="webpub">
+          <label for="webpub">웹퍼블리싱</label> <!-- 라벨 태그가 뒤에 있으면 라벨이 뒤에 붙어짐 유레카! -->
+        </div>
+        <div>
+          &nbsp;&nbsp;&nbsp;
+          <input type="radio" name="field" value="webfront" id="webfront">
+          <label for="webfront">웹 프론트앤드</label>
+        </div>
+        <div>
+          &nbsp;&nbsp;&nbsp;
+          <input type="radio" name="field" value="mobileApp" id="mobileApp">
+          <label for="mobileApp">모바일 앱</label>
+        </div>
+      </div>
+
+      <h4>지원동기</h4>
+      <div>
+        <textarea name="purpose" id="purpose" cols="70" rows="5" maxlength="70"></textarea>
+      </div>
+      <input type="submit" value="접수하기">
+      <input type="reset" value="다시쓰기">
+  </form>
+</body>
+</html>

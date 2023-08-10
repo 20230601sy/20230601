@@ -1,0 +1,21 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li{
+  display:inline-block;
+  list-style: none; /* ul의 li에 bullet 없애게 */
+  width: 19%;
+  text-align: center;
+  border-right: 2px solid black;
+}
+
+.javascript{
+  border-right: none;
+}
+
+a{
+  text-decoration: none;
+}

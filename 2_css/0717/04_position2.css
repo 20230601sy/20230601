@@ -1,0 +1,58 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 5000px;
+  /* 스크롤을 보고 싶어서 높이 크게 지정함 */
+}
+
+img {
+  position: fixed;
+  /* 브라우저 스크롤을 내려도 위치 고정됨
+    리모컨이나 top 버튼 만들 때 사용할 수 있음!
+   */
+  width: 20%;
+  bottom: 1%;
+  right: 1%;
+}
+
+h1 {
+  background: rgb(100, 200, 255);
+  position: sticky;
+  /* sticky로 설정했으면 위치 지정 해야 함
+    네비바같은 건 위치가 고정되니까 이런 거 사용하면 됨
+   */
+  top: 0;
+  z-index: 10;
+}
+
+/* 겹쳤을 때 어떤 것을 앞에 오게 할 것인지 설정하는 거! */
+div{
+  width: 200px;
+  height: 200px;
+  position: absolute;
+}
+.first{
+  background: olivedrab;
+  top: 20px;
+  left: 20px;
+  z-index: 9;
+  /* 숫자가 낮을수록 뒤로 감, 0이 맨뒤 */
+  /* 튀어나온 거 순서를 바꾸려면 html 태그 위치를 바꿔도 되지만 그러기 힘들다는 거
+    보통은 팝업창 뜨는 거 할 때 z-index 조절해서 만듦
+   */
+}
+
+.second{
+  background: olive;
+  top: 40px;
+  left: 40px;
+  z-index: 7;
+}
+
+.third{
+  background: yellowgreen;
+}

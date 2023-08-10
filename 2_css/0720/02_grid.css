@@ -1,0 +1,47 @@
+.container {
+  display: grid;
+  /* grid-template-columns: 1fr 1fr 100px; */
+  /* grid-template-columns: repeat(auto-fill, 200px); */
+  /* grid-template-columns: repeat(auto-fill, minmax(100px, 200px)); */
+  /* 넓어졌을 때 auto-fill은 안 넓어짐 그럴 때 auto-fit, minmax px, px로 지정하면 의미는 없음 */
+  /* grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); */
+  /* grid-template-columns: repeat(3, minmax(100px, 1fr)); */
+  grid-template-columns: repeat(3, minmax(100px, 200px));
+  /* grid-template-rows: 1fr 1fr 1fr; */
+  /* repeat 메서드는 반복할 횟수, 동일한 크기 */
+  /* grid-template-rows: repeat(3, 1fr); */
+  /* gap: 10px; */
+  /* row-gap: 5px;
+  column-gap: 10px; */
+  gap: 5px 10px;
+  height: 30vh;
+
+  /* grid-auto-rows: 100px; */
+  /* grid-auto-columns: minmax(100px, 200px); */
+  /* item이 더 많게 추가되었을 때 기본값을 지정해줌 */
+  /* auto-column은 딱히 쓸일이 없을거라심 ok?  column 추가해주려면 애초에 grid-template-columns에 설정했어야 함...*/
+
+  justify-content: center;
+}
+
+.container > div {
+  background: skyblue;
+  border: 1px solid blue;
+}
+
+.container > div:first-child {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.container > div:nth-child(4) {
+  /* 셀병합 */
+  grid-column-start: 2;
+  grid-column-end: 4;
+  grid-row-start: 2;
+  grid-row-end: 4;
+}
+
+.container > div:nth-child(1) {
+  order: 7;
+}

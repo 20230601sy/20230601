@@ -1,0 +1,91 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  width: 500px;
+  margin: 20px auto;
+}
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 300px;
+  height: 50px;
+  border-radius: 10px;
+  padding-left: 20px;
+}
+
+.input_confirm_btn {
+  width: 100px;
+  height: 50px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  background-color: royalblue;
+  color: white;
+  border: none;
+  border: 1px solid blue;
+}
+.input_confirm_btn:active {
+  position: relative;
+  left: 2px;
+  top: 2px;
+}
+
+.id_input_box {
+  position: relative;
+}
+
+.id_input_check {
+  position: absolute;
+  top : 52px;
+  right: 200px;
+}
+.pw_input_box {
+  position: relative;
+}
+.pw_input_check {
+  position: absolute;
+  top: 52px;
+  right: 200px;
+}
+.email_input_box {
+  position: relative;
+}
+.email_input_check {
+  position: absolute;
+  top: 52px;
+  right: 200px;
+}
+.phone_input_box {
+  position: relative;
+}
+.phone_input_check {
+  position: absolute;
+  top: 52px;
+  right: 200px;
+}
+
+.reg_req_btn {
+  margin-top: 30px;
+  font-size: 1.2em;
+  width: 404px;
+  height: 50px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  background-color: darkgray;
+  color: white;
+  border: none;
+  border: 1px solid darkgray;
+}
+
+.reg_req_btn:active {
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+
+p {
+  margin: 0;
+}

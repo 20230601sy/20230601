@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="02_ex_naver.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="../../img/naverlogo.png" alt="">
+      </div>
+    </header>
+    <main>
+      <div class="loginBlock">
+        <form action="" >
+          <div class="userId">
+            <input type="text" name="userId" placeholder="아이디">
+          </div>
+          <div class="password">
+            <input type="password" name="password" placeholder="비밀번호">
+          </div>
+          <div class="loginbtn">
+            <input type="submit" value="로그인" name="loginbtn">
+          </div>
+          <div class="wrapper">
+            <div class="wrapper-stayLogin">
+              <input type="checkbox" value="" name="stayLogin" id="stayLogin">
+              <label for="stayLogin">로그인 상태 유지</label>
+            </div>
+            <div class="wrapper-IPsafe">
+              <label for="IPsafe">IP 보안</label>
+              <input type="checkbox" value="" name="IPsafe" id="IPsafe">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="simpleLogin">
+        <h2>더욱 간편한 로그인</h2>
+        <div class="btns">
+          <input type="button" value="QR 코드 로그인" name="qr">
+          <input type="button" value="일회용 번호 로그인" name="onetime">
+          <!-- 버튼 처럼 보이는 것 대부분은 a 태그로 되어 있을 거라심 ㄷㄷ -->
+        </div>
+      </div>
+      <div class="submenu">
+        <ul>
+          <a href=""><li>아이디 찾기</li></a>
+          <li>|</li>
+          <a href=""><li>비밀번호 찾기</li></a>
+          <li>|</li>
+          <a href=""><li>회원가입</li></a>
+        </ul>
+      </div>
+    </main>
+    <footer>
+      <div class="copyrigth">
+        <img src="../../img/naverlogo.png" alt="" class="copyImg">
+        <span><br>Copyright ⓒ NAVER Corp. All Rights Reserved.</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

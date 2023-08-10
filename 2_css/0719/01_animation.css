@@ -1,0 +1,60 @@
+div{
+  width: 100px;
+  height: 100px;
+  background: burlywood;
+}
+
+.ani1{
+  /* 애니메이션 영역을 좀더 세분화해서 적용가능하다심 */
+  /* 애니메이션 용도를 ... 뭐 적으려고 했더라 ?? ㄷㄷ */
+  /* 키프레임 적용할 곳에 넣기 */
+  animation-name: ani;
+  /* 애니메이션도 트렌지션이랑 거의 비슷함, 하기 추가 설정 필요... */
+  position: relative;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 1s;
+  /* 애니메이션 반복 횟수, 숫자 걍 쓰면 됨, 3 쓰면 3번 반복, 계속 반복은 infinite */
+  animation-iteration-count: infinite;
+  /* 방향 설정, normal은 딱 구간만 반복, alternate는 왕복으로 왔다갔, reverse는 normal의 역방향 */
+  /* 재생횟수가 1번이면 확인 어려우니 몇 회 이상되게 한 다음 방향 확인해야 결과 확인 가능 */
+  animation-direction: alternate;
+  /* animation도 animation 속성 안에 한번에 다 써도 된다심 */
+  /* animation: ani 3s(duration) 1s(delay) linear infinite alternate */
+}
+
+.ani1:hover {
+  /* 애니메이션 일시 정지도 가능! */
+  animation-play-state: paused;
+
+}
+@keyframes ani{
+  from{
+    /* 애니메이션 시작 */
+    left: 0;
+  }
+  to{
+    /* 애니메이션 끝 */
+    left: 100px;
+  }
+}
+
+.ani2{
+  animation-name: ani2;
+  position: relative;
+  animation: ani 3s 1s linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes ani2{
+  /* 백분율로 쪼갤 수 있음 0%가 시작 100%,
+    구간은 나누면 보통 5나 10단위로 쪼갠다심 */
+  0%{
+    left: 0;
+    background: olive;
+  }
+  to{
+    /* 변동사항은 시작 위치나 상태를 기준으로 바뀜! 중간 지점은 기준이 되지 않음 */
+    left: 100px;
+  }
+}

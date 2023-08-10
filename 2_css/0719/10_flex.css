@@ -1,0 +1,140 @@
+/* 요즘 어지간한 페이지들은 다 flex로 레이아웃 잡는다심
+  그 이후에 나온 grid는 취향차이라심
+
+  flex는 한방향, 가로면 가로, 세로면 세로
+  grid는 양방향, 행렬
+  flex는 전체를 감싸는 부모 컨테이너가 필요한데 그걸 플렉스 컨테이너라고 하고
+  그 안에 있는 각각의 요소를 플렉스 아이템이라고 한다심
+  각 속성이 어디에 위치해야 하는지 유의해야 한다심
+  플렉스 컨테이너 - 플렉스 아이템
+
+  컨테이너
+  display: flex;
+  flex는 가로배치로 기본 설정됨 // 정확히는 flex-direction 기본값이 row이기 때문
+  justify-content: center; 가로 정렬
+                   flex-start는 앞쪽(맨 왼쪽), flex-end는 뒤쪽(맨 오른쪽)
+                   space-around 시작과 끝에도 여백이...
+                   space-between 시작과 끝이 딱 붙어 있음
+  flex로 설정된 아이템은 높이를 설정하지 않으면 컨테이너에 맞추서 높이가 자동 설정된다심...
+
+  align-items: center; 세로정렬, 세로 중앙정렬하는 순간 높이 지정 안된 태그는 사라짐 주의
+               flex-start, flex-end 동일하게 있다심
+               strecth; 높이값이 없는 태그를 100%로 해서 center로 지정됐을 때처럼 사라지게 하는 걸 방지
+  아이템이 하나만 있을 때 중앙에 위치하려면 간단하게 
+  justify-content: center; 
+  align-items: center;
+  하면 됨! // 여러 개 아이템이면 안 되겠고만...
+
+  display: flex;
+  flex-direction: row; 가로배치 기본값
+                  row-reverse 가로 역순
+                  column 세로배치, column-reverse 세로 역순 배치
+  가로배치에서 내용이 넘치면 너비를 설정했더라도 크기가 줄어듦
+  넘쳤을 때 밑으로 내리고 싶으면
+  flex-wrap: nowrap; 기본값으로 알아서 우겨넣는 건데,
+             wrap; 으로 설정하면 밑으로 내려감
+ */
+
+.container {
+  height: 300px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.item {
+  width: 100px; 
+  background: pink;
+  margin: 5px;
+}
+
+.container div:first-child {
+  height: 100px;
+}
+
+.container2{
+  height: 300px;
+  border: 1px solid black;
+  display: flex;
+  /* flex-direction: row;
+  flex-wrap: wrap; */
+  /* flex-flow는 direction과 wrap을 한 번에 설정해주는 요소 */
+  flex-flow: column wrap;
+  /* align-content는 wrap 간 정렬, 간격 조정해주는 요소 */
+  /* flex-start, flex-end, center, space-between 등등 있음 */
+  /* align-content는 wrap으로 설정하지 않으면 하나 마나한 요소 */
+  align-content: flex-start;
+}
+
+.container2 > div {
+  width: 100px;
+  height: 100px; 
+  margin: 5px;
+}
+
+.item1 {
+  background: pink;
+}
+
+.item2 {
+  background: skyblue;
+}
+
+.item3 {
+  background: burlywood;
+}
+
+.container3{
+  height: 300px;
+  border: 1px solid black;
+  display: flex;
+  /* flex-flow: column wrap; */
+  align-content: space-between;
+}
+
+.container3 > div {
+  width: 100px;
+  height: 100px; 
+  /* margin: 5px; */
+}
+
+.item4 {
+  background: pink;
+  /* flex-grow: 1; */
+  /* flex-grow는 증가치가 적용됨 최소치가 존재함 */
+  /* flex-shrink: 3; */
+  /* flex-shrink는 감소비율이 설정됨 */
+  /* flex-basis: 100px; */
+  /* flex-basis는 기본 너비 */
+  /* 상기 3가지를 한번에 설정하는 게 flex: grow shrink basis 순 */
+  /* 보통은 grow만 쓰나봄 flex : 1 */
+  /* itme중에서 flex 설정이 안 된 item이 있으면 그 공간 빼고 남은 공간에서 분배, 조율한다심 */
+  /* flex: 1 1 100px; */
+  /* 순서 설정은 order, 뒤로 빼는 건 가능한데, 설정이 안되어 있는 것부터 0으로 자동설정되기 때문에 내가 원하는대로 배치가 안될 수 있으니 유의하라심 */
+  /* 결국 조절을 하게 되면 전체 설정해주는 게 나을 거라심 */
+  /* order: 2; */
+  /* 아이템 하나만 정렬해주고 싶을 때 align-self 이건 가로배치에서 세로 정렬해주넹... */
+  /* align-self: center; */
+}
+
+.item5 {
+  background: skyblue;
+  /* flex-grow: 2; */
+  /* flex-shrink: 2; */
+  /* flex-basis: 200px; */
+  /* flex: 1 1 100px; */
+  margin-left: auto;
+  /* .container3 > div { margin : 5px } 주석처리해야 함*/
+}
+
+.item6 {
+  background: burlywood;
+  /* flex-grow: 1; */
+  /* flex-shrink: 1; */
+  /* flex-basis: 300px; */
+  /* flex: 1 1 100px; */
+  margin: auto;
+}
+

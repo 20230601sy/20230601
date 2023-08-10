@@ -1,0 +1,12 @@
+.App .black-nav {
+  display: flex;
+  background: black;
+  color: white;
+  padding-left: 20px;
+}
+
+.App .list {
+  padding-left: 20px;
+  text-align: left;
+  border-bottom: 1px solid grey;
+}

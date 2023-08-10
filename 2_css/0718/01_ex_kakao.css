@@ -1,0 +1,91 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* 위에는 css 모든 초기화는 아니라고 언급하시면서 css reset cdn 얘기해주심
+    <link href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css" rel="stylesheet">
+    이거를 html head 태그 안에 넣기
+  */
+}
+
+.container{
+  width: 450px;
+  height: 700px;
+  background: rgba(255, 255, 0, 0.3);
+  margin: 20px auto;
+}
+
+.empty{
+  height: 350px;
+  /* position은 sticky나 fixed 같은 거나 위치가 너무 넣기 어려울 때 쓰고 아니면 거의... */
+}
+
+.p-img{
+  background: url(../../img/bambi.jpg) center center no-repeat;
+  /* 내가 설정할 때 잘 안 보이면 개발자도구 요소 확인!
+    원인 파악 및 간단간단 수정으로 확인 가능, 체크박스
+    코드에 영향을 주지 않으므로 코드는 수정해야 하고,
+    새로 고침 하면 원복됨
+   */
+   background-size: cover;
+   width: 150px;
+   height: 150px;
+   border-radius: 50%;
+   margin: auto;
+}
+
+.name{
+  font-size: 20px;
+  font-weight: bold;
+}
+.profile p{
+  text-align: center;
+  padding: 2px;
+}
+
+.profile{
+  margin-bottom: 10px;
+}
+
+/* 가로배치의 두 가지 방법은 1. 디스플레이 인라인블록 혹은 2. float
+  인라인 블록으로 하면 알 수 없는 여백이 생김
+  어쩔 수 없는 거라심
+  왜 그러냐면 정확하게는 부모태그의 글자 크기 때문이라심
+  글자와 글자 사이 간격
+  font-size: 0으로 하거나 margin을 강제로 음수로 줘서 땡기는
+  부모 폰트 크기 조절했으면 자식 폰트 크기도 변경되기 때문에 재설정해야 함 주의!
+ */
+
+.btn{
+  float: left;
+  width: 25%;
+  text-align: center;
+  /* font-size: 13px; */
+}
+
+.btn-img {
+  height: 60px;
+  width: 60px;
+  margin: auto;
+}
+
+.chat-icon{
+  background: url(../../img/message.png) center center no-repeat;
+  background-size: 45px;
+}
+
+.phone-icon{
+  background: url(../../img/call.png) center center no-repeat;
+  background-size: 45px;
+}
+
+.video-icon{
+  background: url(../../img/callvideo.png) center center no-repeat;
+  background-size: 45px;
+
+}
+
+.quote-icon{
+  background: url(../../img/comma.png) center center no-repeat;
+  background-size: 45px;
+}

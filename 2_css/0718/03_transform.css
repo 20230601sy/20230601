@@ -1,0 +1,112 @@
+/* transform 예제
+ */
+ .transform-test {
+  width: 100px;
+  height: 100px;
+  background: rgba(100, 200, 255, 0.3);
+  position: absolute;
+  left: 100px;
+  top: 100px;
+
+  /* transform: scale(2, 3); */
+  /* 크기 변경
+    가로 세로 크기 배율 조절
+    % 안됨, 그냥 숫자로 배율 2 쓰면 2배
+   */
+
+  /* 각도 변경 */
+  /* transform: rotate(30deg);
+  transform-origin: left bottom; */
+
+  /* 비틀기 */
+  /* transform: skew(15deg, 30deg); */
+  /* skewX, skewY도 있음
+   */
+
+  /* 이런 것들은 애니메이션 효과 같은 거... 쓸 때 쓴다심 */
+  /* hover는 너무 순식간에 변동되니까 그걸 지연시키는 속성을 적용시킬 수 있음
+    property는 대상이 되는 것을 지정해줘야 함 (eg. background-color)
+    모든 효과를 다 주려면 all
+    시간 설정을 따로따로 설정 가능함, 쉼표로 구분됨
+    property랑 duration은 세트라고 생각해야 함!
+    지연은 delay로 줄 수 있음ㅎ
+   */
+  transition-property: background-color, height;
+  /* transition-duration: 2s, 1s; */
+  /* transition-delay: 1s; */
+  transition-timing-function: ease-in;
+  /* timing function은 cubic-bezier 같은 걸로 직접 조절할 수도 있음...
+    동영상 편집 같은 거 하면 비슷한 거 있다고 하심
+    css 어지간한 속성에서 적용 가능, 안 되는 것도 있긴 하다심
+   */
+}
+
+.transform-test:hover{
+  background: orange;
+  height: 200px;
+}
+
+.container{
+  border: 1px solid black;
+}
+
+.container div{
+  background: rgba(100, 200, 255, 0.3);
+  width: 100px;
+  margin: 5px;
+  transition-duration: 3s;
+}
+
+.container:hover div{
+  width: 400px;
+}
+
+.bar1{
+  transition-timing-function: linear;
+  /* 일정하게. 기본값 */
+}
+
+.bar2{
+  transition-timing-function: ease;
+}
+
+.bar3{
+  transition-timing-function: ease-in;
+}
+
+.bar4{
+  transition-timing-function: ease-out;
+}
+.bar5{
+  transition-timing-function: ease-in-out;
+}
+
+.test{
+  background: orange;
+  width: 100px;
+  /* transition: width 1s easy-in-out 1s; */
+  /* 한방에 쓸 수 있음, property, duration, timing-function, delay! 지정할 필요가 없는 항목은 생략 가능! */
+  transition: 1s ease-in-out;
+  opacity: 0;
+  /* 처음에 안 보였다가 */
+}
+
+.test:hover{
+  width: 300px;
+  opacity: 1;
+  /* 나중에 나타날 수도 있음 */
+}
+
+.box{
+  width: 100px;
+  height: 100px;
+  background: rgba(100, 200, 255, 0.3);
+  margin: 100px;
+  transition: 1s ease-in-out;
+}
+
+.box:hover{
+  width: 200px;
+  height: 200px;
+  transform: rotate(270deg);
+}

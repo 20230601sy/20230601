@@ -1,0 +1,44 @@
+ul.list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+ul.list::after {
+  /* list 이후 float 해제와 줄바꿈처리 */
+  content: '';
+  display: block;
+  clear: both;
+}
+.tab-button {
+  display: block;
+  padding: 20px;
+  float: left;
+  color: grey;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.container {
+  border: 1px solid;
+}
+
+ul {
+  border-bottom: 1px solid;
+}
+
+.tab-content {
+  display: none;
+  padding: 10px;
+}
+
+.show {
+  display: block;
+}
+
+.select {
+  /* color: black;
+  border: 1px solid grey; */
+  font-weight: bold;
+  color: white;
+  background: black;
+}

@@ -1,0 +1,7 @@
+/* Body.css, css는 원래 소문자로 시작하지만 컴포넌트 맞춰서 쓰는 거는 파일명 동일하게 앞글자 대문자로 한다심 */
+/* 쌩 css라서 문법은 기존 css 방식 동일하다심 */
+
+.body {
+  background: pink;
+  color: red;
+}

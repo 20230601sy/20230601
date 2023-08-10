@@ -1,0 +1,91 @@
+p {
+  font-size: 16px;
+  /* 폰트 크기
+    기본 크기, 16px, 12pt, 100%, 1em
+    일반적으로는 px 단위를 쓴다심, 
+    나중에 반응형웹하면 폰트 크기 고정 방식은 좀 바뀔 거라심.... 
+   */
+  font-weight: 600;
+  /* 폰트 굵기
+    기본 굵기 400, normal
+    lighter 100 일겁니다?ㅎ
+    normal 400
+    bold 700
+    bolder 900
+   */
+  line-height: 20px;
+  /* 줄간격
+    %로도 지정가능, 50%나 0.5나...
+    줄끼리 겹치는 공간이 아니고 안겹치는 폰트 공간
+    마진이랑 패딩 공부하고 더 얘기해줄 거라심
+   */
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  /* 글꼴
+    하나만 넣어도 안 되는 건 아니지만
+    폰트가 설치되어 있지 않으면 깨져서 보일 위험이 있으므로 그럴 때 video 처럼 지정해줌
+    뒤쪽 폰트들은 거의 있을 법한 폰트들임
+    이런 폰트들을 보통 웹 안전 글꼴이라고 한다심
+    글꼴 종류는 크게 두 가지 serif(안 일정하거, 돌출부 있는 거, 바탕체, 궁서체, 인쇄물 가독성은 세리프) vs sans-serif(글꼴 두께가 일정한 거, 굴림, 화면상 가독성은 산세리프라심)
+    글꼴은 적절하게 사용하는 게 좋음!
+    기본적으로 글꼴은 여러 사이트에서 갖다가 쓴다심
+    눈누폰트 같은 거도 있고
+   */
+
+  /* 큰따옴표, 작은따옴표 구분 안한다심, 어떤 거 쓰는지는 취향차이라심ㅋㅋㅋ */
+  font-style: oblique;
+  /* normal, italic, oblique
+    italic은 정확히는 이탤릭체이고, 기울임은 oblique라심
+   */
+  
+  font-variant: small-caps;
+
+  /* 그냥 font는 한방에 쭉 나열해서 써줄 수 있는데
+    이건 쓰는 순서가 중요함
+    font: [font-wight font-style font-variant] [font-size/line-height] [font-family];
+    font-size랑 font-family는 필수 기입, 나머지는 생략 가능
+   */
+}
+
+h1 {
+  font: bold italic small-caps 20px/50% '굴림' '돋움';
+  color: red;
+  color: #ff0000;
+  color: rgb(255,0,0);
+  color: rgba(255,0,0, 0.4);
+  /* 글꼴색
+    색깔을 지정하는 방법은 3가지
+    원래는 색깔 이름 잘 안 쓴다심
+    16진수나 rgb로 표기한다심
+    rgba alpha는 투명도 값이 작을수록 옅어짐
+   */
+
+  text-decoration: underline overline line-through;
+  /* u 태그 같은 거 안 쓴다고! 
+    none li tag들 효과 없애고 싶을 때 쓴다심
+   */
+}
+
+h2 {
+  text-transform: lowercase capitalize;
+  /* 대소문자 변경해주는 거
+    lowercase, uppercase, capitalize
+   */
+  
+  text-shadow: 2px 2px 1px green, 10px 10px 3px blue;
+  /* 값은 x 이동값, y 이동값, 퍼짐 정도, color (color는 앞에 써도 가능, 퍼짐 정도 생략 가능)
+    퍼짐 정도가 작으면 선명해지고, 크면 뿌옇게 됨
+    x, y 값은 음수이면 반대로 이동함
+    , 쉼표 사용하면 그림자 효과 중복 적용 가능함!
+   */
+  
+  letter-spacing: 2px; /* 자간 */
+  word-spacing: 5px; /* 단어와 단어 사이 간격 */
+  text-align: center; /* 정렬, justfy? 균등분할? 이거는 따른 거 하면서 나중에 볼거라심 */
+}
+
+h3 {
+  direction: ltr; /* 작성 방향 왼쪽에서 오른쪽으로 작성됨, 반대로 rtl은 오른쪽에서 왼쪽으로 */
+  text-indent: 20px; /* 첫줄 들여쓰기 */
+}
+
+/* 웹폰트는 내일 할 거라심 */
