@@ -9,7 +9,7 @@ const EventCarousel = () => {
   };
 
   return (
-    <div>EventCarousel
+    <div className='event-carousel'>
       <Carousel onSelect={handleSelect}>
         {
           [1, 2, 3].map((num)=>

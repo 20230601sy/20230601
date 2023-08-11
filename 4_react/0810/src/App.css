@@ -18,6 +18,12 @@
   display: flex;
   justify-content: center;
 }
+
+.align-items-center {
+  display: flex;
+  align-items: center;
+}
+
 /* .main-footer-mobile */
 .display-on-mobile {
   display: none;

@@ -8,11 +8,12 @@ import '../styles/Header.css'
 
 const Header = () => {
   return (
-    <div className='Header'>
+    <div className='Header fixed-top'>
       <Container>
         <Row className='column-direction-on-mobile'>
           <Col className="col-align" xs="auto">
-            <img src="https://via.placeholder.com/200x50?text=logo"/>
+            <img src={process.env.PUBLIC_URL + '/logo.png'} alt='logo'/>
+            {/* <img src="https://via.placeholder.com/200x50?text=logo"/> */}
           </Col>
           <Col>
             <Search />

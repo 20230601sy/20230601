@@ -25174,6 +25174,7 @@ github 가입 https://github.com/
 원격 저장소 주소 https://github.com/20230601sy/test.git
 git push -u https://github.com/20230601sy/test.git main
 git push -u https://github.com/20230601sy/0810.git main
+git push -u https://github.com/20230601sy/20230601.git main
 -u 옵션이 뒤에 주소 저장좀 해주세요하는 거임..
 뒤에 main은 branch명
 하면 로그인하라고 창이 뜸 Sign in browser 파란색 선택 후 Authorize git-ecosystem 초록색 선택
@@ -25272,3 +25273,5 @@ index.css 파일 수정, font 추가
 
 3. 기능을 담은 css는 App.css에 넣기, 기능을 의미하는 className 지정
 특정컴포넌트 위치
+
+https://아이디.github.io/프로젝트(저장소)이름/폴더이름/파일명

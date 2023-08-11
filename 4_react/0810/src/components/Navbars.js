@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 const Navbars = () => {
   return (
-    <div>Navbars
+    <div>
       <Navbar bg="dark" data-bs-theme="dark">
         <Container>
           <Nav className="me-auto">

@@ -3,7 +3,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 
 const Search = () => {
   return (
-    <div>Search
+    <div>
       <InputGroup className="mb-3">
         <InputGroup.Text id="inputGroup-sizing-default">
           <i class="fa-solid fa-magnifying-glass"></i>
