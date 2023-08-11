@@ -10,15 +10,17 @@ const Header = () => {
   return (
     <div className='Header'>
       <Container>
-        <Row className='header-container-row'>
+        <Row className='column-direction-on-mobile'>
           <Col className="col-align" xs="auto">
             <img src="https://via.placeholder.com/200x50?text=logo"/>
           </Col>
           <Col>
             <Search />
           </Col>
-          <Col className="col-align header-login" xs="auto">
-            <Login />
+          <Col className="col-align" xs="auto">
+            <div className="none-display-on-mobile">
+              <Login />
+            </div>
           </Col>
         </Row>
       </Container>

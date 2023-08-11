@@ -14,7 +14,7 @@ const EventCarousel = () => {
         {
           [1, 2, 3].map((num)=>
             <Carousel.Item key={num}>
-              <img src={`https://via.placeholder.com/875x250?text=Event Image ${num}`} alt="" />
+              <img src={`https://via.placeholder.com/800x200?text=Event Image ${num}`} alt="" className='full-width-on-mobile'/>
               {/* <ExampleCarouselImage text="First slide" /> */}
               {/* <Carousel.Caption> */}
                 {/* <h3>First slide label</h3> */}

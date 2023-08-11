@@ -25269,3 +25269,5 @@ index.css 파일 수정, font 추가
 
 2. pages, components 파일 기본 .js 생성 + export
 
+3. 기능을 담은 css는 App.css에 넣기, 기능을 의미하는 className 지정
+특정컴포넌트 위치

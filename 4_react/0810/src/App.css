@@ -2,16 +2,40 @@
   text-align: center;
 }
 
-*{
+/* *{
   border: 1px solid;
+} */
+
+.none-padding {
+  padding: 0;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.justify-content-center {
+  display: flex;
+  justify-content: center;
+}
+/* .main-footer-mobile */
+.display-on-mobile {
+  display: none;
 }
 
 @media screen and (max-width: 575px) {
-  .header-container-row {
+  /* .header-login, .main-footer */
+  .none-display-on-mobile {
+    display: none;
+  }
+  .display-on-mobile {
+    display: block;
+  }
+  .column-direction-on-mobile {
     display : flex;
     flex-direction: column;
   }
-  .header-login {
-    display: none;
+  .full-width-on-mobile {
+    width: 100%;
   }
 }
