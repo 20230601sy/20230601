@@ -25173,6 +25173,7 @@ add하면 reset 약간 되돌릴 수 있음
 github 가입 https://github.com/
 원격 저장소 주소 https://github.com/20230601sy/test.git
 git push -u https://github.com/20230601sy/test.git main
+git push -u https://github.com/20230601sy/0810.git main
 -u 옵션이 뒤에 주소 저장좀 해주세요하는 거임..
 뒤에 main은 branch명
 하면 로그인하라고 창이 뜸 Sign in browser 파란색 선택 후 Authorize git-ecosystem 초록색 선택

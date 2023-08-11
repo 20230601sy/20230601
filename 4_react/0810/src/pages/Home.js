@@ -4,8 +4,7 @@ import MainFooter from '../components/MainFooter';
 
 const Home = () => {
   return (
-    <div>Home
-      {/* <EventCarousel /> */}
+    <div>
       <EventCarousel />
       <ItemList />
       <MainFooter />
