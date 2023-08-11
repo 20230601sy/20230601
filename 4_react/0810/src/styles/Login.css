@@ -1,0 +1,8 @@
+.login {
+  display: flex;
+  justify-content: center;
+}
+.login i {
+  font-size: 50px;
+  margin: 10px;
+}
