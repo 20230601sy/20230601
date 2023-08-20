@@ -1,30 +1,33 @@
-import { useState } from 'react';
-import Carousel from 'react-bootstrap/Carousel';
+import { Container, Carousel } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { IMG_PATH } from '../constants/path';
+import { EVENT_LISTS } from '../constants/eventList';
+import { setShowItems } from '../redux/store';
 
 const EventCarousel = () => {
-  const [index, setIndex] = useState(0);
-
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   return (
-    <div className='event-carousel'>
-      <Carousel onSelect={handleSelect}>
+    <Container className='my-2'>
+      <Carousel>
         {
-          [1, 2, 3].map((num)=>
-            <Carousel.Item key={num}>
-              <img src={`https://via.placeholder.com/800x200?text=Event Image ${num}`} alt="" className='full-width-on-mobile'/>
-              {/* <ExampleCarouselImage text="First slide" /> */}
-              {/* <Carousel.Caption> */}
-                {/* <h3>First slide label</h3> */}
-                {/* <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> */}
-              {/* </Carousel.Caption> */}
+          EVENT_LISTS.map(event => 
+            <Carousel.Item key={event.id}>
+              <img src={`${IMG_PATH}${event.img}`} alt=""
+                    style={{width: '800px', aspectRatio:'8/3'}}
+                    className='img-fluid'
+                    onClick={() => {
+                      dispatch(setShowItems(event.eventItems));
+                      navigate('/items');
+                    }}
+              />
             </Carousel.Item>
           )
         }
       </Carousel>
-    </div>
+    </Container>
   );
 }
 

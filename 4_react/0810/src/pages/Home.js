@@ -1,13 +1,17 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { setShowItems } from '../redux/store';
 import EventCarousel from '../components/EventCarousel';
-import ItemList from '../components/ItemList';
-import MainFooter from '../components/MainFooter';
+import Items from './Items';
 
 const Home = () => {
+  const {totalItems} = useSelector(state=>state);
+  const dispatch = useDispatch();
+  dispatch(setShowItems(totalItems));
+
   return (
-    <div>
+    <div className='Home'>
       <EventCarousel />
-      <ItemList />
-      <MainFooter />
+      <Items />
     </div>
   );
 }

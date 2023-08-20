@@ -1,16 +1,19 @@
-import Card from 'react-bootstrap/Card';
+import { Card, Badge } from 'react-bootstrap';
+import { IMG_PATH } from '../constants/path';
+import { useNavigate } from 'react-router-dom';
 
-const ItemCard = () => {
+const ItemCard = ({item}) => {
+  const navigate = useNavigate();
   return (
-    <div className='justify-content-center m-2'>ItemCard
-      <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src="https://via.placeholder.com/300x300?text=Item Image" />
-        <Card.Body>
-          <Card.Title>Card Title</Card.Title>
-          <Card.Text>Some quick example text</Card.Text>
-        </Card.Body>
-      </Card>      
-    </div>
+    <Card style={{ width: '18rem' }} onClick={()=>navigate(`/detail/${item.id}`)} className="position-relative">
+      <Card.Img variant="top" src={`${IMG_PATH}${item.img}`} style={{ width: '16rem', aspectRatio: '1', margin: '1rem'}} />
+      <h5><Badge pill className="position-absolute" style={{top:'2.5%', left:'4%'}}>{item.new}</Badge></h5>
+      <h5><Badge pill className="position-absolute" bg='info' style={{top:'2.5%', right:'4%'}}>{item.event}</Badge></h5>
+      <Card.Body>
+        <Card.Title>{item.title}</Card.Title>
+        <Card.Text>{Number(item.price).toLocaleString()}원</Card.Text>
+      </Card.Body>
+    </Card>
   );
 }
 

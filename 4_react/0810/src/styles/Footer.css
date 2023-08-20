@@ -1,0 +1,13 @@
+.mobile-footer i {
+  font-size: 30px;
+}
+
+.mobile-footer .me-auto div:last-child {
+  font-size: 0.5rem;
+  white-space: nowrap;
+}
+.mobile-footer * {
+  /* padding: 2px 0; */
+  flex : 1;
+  background: lightgrey;
+}
