@@ -1,0 +1,94 @@
+package N04_복습;
+
+import java.util.Scanner;
+
+public class Test01 {
+
+	public static void main(String[] args) {
+		
+		System.out.println("문제 1");
+		// 1 + (1+2) + (1+2+3) + (1+ ... +10)의 결과를 계산하시오
+		int sum=0;
+		for(int i=1; i<=10; i++)
+			for(int j=1; j<=i; j++)
+				sum += j;
+		System.out.println("이중for문 결과 : " + sum);
+		
+		sum = 0;
+		int n = 10;
+		for (int i = 1; i <= 10; i++)
+			sum += i*(n+1-i);
+		System.out.println("이중for문 안 하고 결과 : " + sum);
+		
+		// 1 + (1+2) + (1+2+3) + (1+ ... +10)의 결과를 계산하시오
+		sum = 0;
+		int temp = 0;
+		for (int i = 1; i <= 10; i++) {
+			temp += i;
+			sum += temp;
+		}
+		System.out.println("이중for문 안 하고 결과2 : " + sum);
+		
+		// (sig n + sig n^2) / 2 니까... (n(n+1)/2 + n(n+1)(2n+1)/6)/2 이었던가..ㅋㅋ
+		System.out.println("반복문 안 하고 결과 : " + (n*(n+1)/2 + n*(n+1)*(2*n+1)/6)/2);
+		
+		System.out.println("문제 2");
+		// 1+(-2)+3+(-4)+...몇까지 더해야 총합이 100이상이 되는지 구하시오.
+		int sum2 = 0;
+		int k = 1;
+		int num = 0;
+		while(sum2<100) {
+			sum2 += k*(++num);
+			k = -k;
+		}
+		System.out.println(num + "까지 더하면 " + sum2); // 사실 이거 그냥 2n-1...
+
+		System.out.println("문제 3");
+		// 두 개의 주사위를 던졌을 때 눈의 합이 6이 되는 모든 경우의 수를 출력하는 프로그램을 작성하시오
+		for(int i=1; i<=6; i++) {
+			for(int j=1; j<=6; j++) {
+				if(i+j==6)
+					System.out.println("주사위 눈이 (" + i + ", " + j + ") 경우일 때 눈의 합이 6이 됩니다.");
+			}
+		}
+		
+		System.out.println("문제 4");
+		/*
+		 * int 타입의 변수 num이 있을 때
+		 * 각자리의 합을 더한 결과를 출력하는 코드를 완성하라
+		 * 만일 변수 num의 값이 12345라면 1+2+3+4+5의 결과인 15를 출력하라.
+		 * 주의 문자열로 변환하지 말고 숫자로만 처리해야 한다.
+		 */
+		int num4 = 12345;
+		int sum4 = 0;
+		
+		while(num4>0) {
+			sum4 += num4%10;
+			num4 /= 10;
+		}
+		System.out.println("각자리 수의 합 : " + sum4);
+		
+		System.out.println("문제 5");
+		/*
+		 * 다음은 숫자 맞추기 게임을 작성한 것이다
+		 * 1과 100사이의 값을 반복적으로 입력해서 컴퓨터가 생각한 값을 맞추면 게임이 끝난다.
+		 * 사용자가 값을 입력하면 컴퓨터는 자신이 생각한 값과 비교해서 결과를 알려준다.
+		 * 사용자가 컴퓨터가 생각한 숫자를 맞추면 게임이 끝나고 몇 번만에 숫자를 맞췄는지 알려준다.
+		 */
+		int numRandom = (int)(Math.random()*100)+1;
+		Scanner sc = new Scanner(System.in);
+		int cnt = 0;
+		int num5;
+		do {
+			System.out.println("값을 맞춰보세요 : ");
+			num5 = sc.nextInt();
+			cnt++;
+			if(num5==numRandom)
+				System.out.println("축하합니다. " + cnt + "트만에 값을 맞췄습니다.");
+			else if(num5>numRandom)
+				System.out.println("더 작은 값으로 시도해보세요.");
+			else
+				System.out.println("더 큰 값으로 시도해보세요.");
+		} while(num5!=numRandom);
+	}
+}

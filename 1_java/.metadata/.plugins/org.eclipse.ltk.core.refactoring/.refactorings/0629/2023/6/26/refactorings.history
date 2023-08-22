@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 2 elements to &apos;0630/src/N01_HW&apos;&#x0D;&#x0A;- Original project: &apos;0629&apos;&#x0D;&#x0A;- Destination element: &apos;0630/src/N01_HW&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     N01_컬렉션.S05_Sample05.java&#x0D;&#x0A;     N01_컬렉션.S04_Sample04.java" description="Copy compilation units" destination="=0630/src&lt;N01_HW" element1="/src&lt;N01_컬렉션{S05_Sample05.java" element2="/src&lt;N01_컬렉션{S04_Sample04.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1688087065761" units="2" version="1.0"/>
+</session>

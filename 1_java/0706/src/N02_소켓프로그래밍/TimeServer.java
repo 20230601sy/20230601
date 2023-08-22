@@ -1,0 +1,40 @@
+package N02_소켓프로그래밍;
+
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.xml.crypto.Data;
+
+public class TimeServer {
+
+	public static void main(String[] args) {
+		try {
+			ServerSocket serverSocket = new ServerSocket(9000); // 포트번호 대충 3000~9000까지 임의 사용
+			System.out.println("서버 시작");
+			
+			while(true) {
+				Socket clientSocket = serverSocket.accept(); // 연결 대기
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				String now = sdf.format(new Date());
+				System.out.println(now + " : 클라이언트 연결 성공");
+				
+				System.out.println("                    : 요청을 처리 중입니다.");
+				Thread.sleep(1000);
+				
+				now = sdf.format(new Date());
+				PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
+				pw.println(now);
+				
+				clientSocket.close();
+				now = sdf.format(new Date());
+				System.out.println(now + " : 클라이언트 연결 종료");
+			}
+		} catch(Exception e) {
+			
+		}
+	}
+}

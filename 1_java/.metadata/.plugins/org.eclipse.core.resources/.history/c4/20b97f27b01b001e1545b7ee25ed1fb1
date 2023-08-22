@@ -1,0 +1,18 @@
+package N01_입출력스트림;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+public class S07_Sample07 {
+
+	public static void main(String[] args) throws Exception{
+		FileReader fr = new FileReader("src/N01_입출력스트림/S07_Sample07");
+		BufferedReader br = new BufferedReader(fr);
+		String line = "";
+		int numLine=0;
+		while((line = br.readLine())!=null) {
+			System.out.println(++numLine + " : " + line);
+		}
+	}
+
+}

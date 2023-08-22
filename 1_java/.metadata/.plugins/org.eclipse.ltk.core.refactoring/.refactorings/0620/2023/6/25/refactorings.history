@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;게임_2조&apos; to &apos;게임&apos;&#x0D;&#x0A;- Original project: &apos;0620&apos;&#x0D;&#x0A;- Original element: &apos;0620/src/게임_2조&apos;&#x0D;&#x0A;- Renamed element: &apos;0620/src/게임&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;게임_2조&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;게임_2조" name="게임" qualified="false" references="true" stamp="1687308789548" textual="false" version="1.0"/>
+</session>

@@ -1,0 +1,36 @@
+package N03_채팅서버;
+
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ChatServer {
+
+	public static void main(String[] args) {
+		try {
+			ServerSocket serverSocket = new ServerSocket(8888); // 포트번호 대충 3000~9000까지 임의 사용
+			System.out.println("서버 시작");
+			while(true) {
+				Socket clientSocket = serverSocket.accept(); // 연결 대기
+				System.out.println(clientSocket.getInetAddress() + " 클라이언트 연결 성공");
+				
+				ReceiveThread rt = new ReceiveThread(clientSocket);
+				SendThread st = new SendThread(clientSocket);
+				
+				rt.start();
+				st.start();
+				
+//				Date date = new Date();
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//				String now= sdf.format(date);
+//				
+//				PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
+//				pw.println(now);
+//				clientSocket.close();
+//				System.out.println("클라이언트 연결 종료");
+			}
+		} catch(Exception e) {
+			
+		}
+	}
+
+}

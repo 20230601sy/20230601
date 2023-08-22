@@ -25275,3 +25275,444 @@ index.css 파일 수정, font 추가
 특정컴포넌트 위치
 
 https://아이디.github.io/프로젝트(저장소)이름/폴더이름/파일명
+
+rechart
+https://recharts.org/en-US/api/BarChart
+https://velog.io/@eunjin/React-Recharts-%EC%B0%A8%ED%8A%B8-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%82%AC%EC%9A%A9%EB%B2%95
+
+/* Bootstrap 공부 */
+/* Bootstrap 스크롤스파이 */
+/* itemList, 회원가입, 로그인 */
+/* 게시판, 그래프 그리기 */
+/* bootstrap 테마 색상 바꾸기 SaSS */
+/* 반응형 레이아웃 */
+/* Kakao Navi Map OpenAPI */
+/* 검색 자동완성 */
+/* 리액트스럽다...??? 는 것... */
+
+/* 이미지 경로 */
+/* https://bokjiho.medium.com/react-%EB%A6%AC%EC%95%A1%ED%8A%B8%EC%97%90%EC%84%9C-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EA%B2%BD%EB%A1%9C-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-public-src-%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC-%EC%B0%A8%EC%9D%B4-fddb4f455c2a */
+
+/* VS code 기본 터미널 git bash로 변경하기 */
+/* setting default 검색 기본 터미널 bash로 변경 */
+/* https://amaranth1ne.tistory.com/50 */
+
+카톡 OG image 안 보임 관련
+https://velog.io/@euji42/solvedmeta-%ED%83%9C%EA%B7%B8-ogimage-%EC%9D%B4%EB%AF%B8%EC%A7%80%EA%B0%80-%EC%95%88%EB%9C%A8%EB%8A%94-%EC%9D%B4%EC%9C%A0 캐시 초기화 후 해결됨
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/page.html">
+<meta property="og:title" content="Content Title">
+<meta property="og:image" content="https://example.com/image.jpg">
+<meta property="og:description" content="Description Here">
+<meta property="og:site_name" content="Site Name">
+<meta property="og:locale" content="en_US">
+<!-- 다음의 태그는 필수는 아니지만, 포함하는 것을 추천함 -->
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+// ====================================================================================================
+Day0821 미니플젝 발표
+// ====================================================================================================
+로그인창 요즘 트랜드 모달창으로 구성-
+경로 정리할 때 props도 같이 정리하면 나중에 보기 편해짐
+중첩 if 가독성이 떨어짐, 단편단편으로 나눠서 return 시킬 
+나중에 쿠키 다루는 것도 할 거라심 ...
+보안에 민감하지 않는 것은 로컬/세션/쿠키에 담아서...
+
+본인이 프로젝트에 설치한 library는 package.json 파일에서 볼 수 있음
+carousel 가져다 쓸 거면 이미지에 따른 버튼 색깔이나 위치 수정
+
+Footer 영역에는 회사 정보 같은 거 보통 넣음....법으로 정해진 건 아니지만 대부분 그러하니까 대세를 따르자...
+단위 rem, em 고려
+애니메이션 효과 코드가 많이 추가되지 않지만 있어보임
+
+슬라이스 나누기...권장
+ScrollToTop https://github.com/JSSSH/Academyproject/blob/main/src/components/ScrollToTop.js
+공유하기 API https://github.com/swchoi00/miniproject/blob/main/src/components/Share.js
+지역 언어는 서버쪽에서... 나중에 시간되면 한다심...
+window scroll https://divlook.tistory.com/9
+이모티콘 win + . 활용 👍👌🤔
+
+github 잔디밭 1일1commit + 이력서 (github 이력서 + pdf)
+https://github.com/codingmonster-tv/Awesome_Resume_Portfolio
+https://github.com/JSpiner/RESUME
+// ====================================================================================================
+데이터베이스 - 오라클 (교재)
+servlet + jsp (교재), jsp는 프론트 쪽...
+spring (기념품 교재?ㅋㅋㅋㅋㅋ)
+spring boot
+// ====================================================================================================
+apach tomcat 9 프로그램 삭제
+oracle 11g프로그램 삭제
+c/oraclexe 폴더 삭제
+사용자-oracle 폴더 삭제
+// ====================================================================================================
+Day0822
+// ====================================================================================================
+const convertPrice = (price) => {
+	return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");
+}
+가격 , 표시
+
+오라클 버전 11g EX 구버전
+https://www.oracle.com/database/technologies/xe-prior-release-downloads.html
+로그인 reponist@gmail.com Aa0a!
+설치는 편하게 하는 거 다운받아서 할 건데... 산업기사 자격증할 때는 cmd 작업
+sql developer jdk 검색 후 JDK 11버전에 맞춰서 다운 https://www.oracle.com/database/sqldeveloper/technologies/download/
+
+오라클로 배우는 데이터베이스 입문 교재 15p
+DBMS DB Management System 오라클도 그 중 하나
+중복된 데이터는 100% 제거는 힘들고 최대한 제거하는 형태로 관리한다심
+
+21p
+계층형 데이터 모델 옛날거
+네트워크형 데이터 모델
+객체 지향형 데이터 모델
+앞에 3가지는 모두 잘 안 씀
+
+관계형 데이터 모델 중요한 거 우리가 사용할 거 오라클도 그중 하나
+이 외에도 종류가 많은데 그래프형, 아예 관계가 없는 거 noSQL 등... 요즘 트랜드...
+
+데이터베이스에서 말하는 데이터 중복의 의미
+회계부서가 서울에서 강원도로 이전했다면...그것도 다 수정해야 함...
+관계형 데이터를 원자화... 데이터를 최소화해서 쪼갬
+사원표와 부서 표를 나누고 그 표끼리 연관시켜주는 부서코드를 만들어서 연결... 이게 관계형
+나중에 정규화 작업을 하면서 볼거라심
+정규화는 제1,제2,제3,제4,제5,제6 많다심...
+생성된 표 entity
+열 attribute
+부서코드 relationship 키 설명하면서 이따가 알려준다심
+
+SQL DB를 다루는 언어!
+종류... DQL, DML, DDL
+
+표 하나를 테이블
+테이블이 여러개 모은 게 DB
+행 row 일반적으로는 record라고 말하고 튜플이라고 하기도 함
+열 column, attribute 속성, field 필드라고 한다심
+키는 특별한 의미를 지님
+키 종류 많음 기본키와 외래키를 주로 본다심 그외는 후보키, 복합키 등이 있음
+기본키가 가장 중요함 유일/중복/Null값을 가질 수 없음 "레코드를 식별하는 유일한 필드"
+eg 사원번호는 기본키가 될 수 있는 후보, 이런 애들 후보키나 외래키가 될 수 있고, 기본키를 DB가 알아서 지정해주는 게 아님 우리가 지정한 순간 중복 입력안되고 필수 입력해야 하는 제약이 걸리는 거라심
+사용자번호등 특수한 데이터 기본키는 내부 관리 목적이지 사용자에게 보여주는 정보는 아님...
+보조키=대체키 후보키
+후보키는 기본키가 될 수 있는 모든 키
+
+외래키 table에서 다른 table의 기본키를 사용하는 거를 외래키(=외부키, foreign key) 부서코드는 부서 테이블에서는 기본키인데, 사원표에서는 외래키
+
+39p 자료형
+VARCHAR2, CHAR, NVARCHAR...
+주로 쓸 거는 VARCHAR2, NUMBER, DATE
+// ====================================================================================================
+DB 설치~
+OracleXE112_Win64 설치 진행 압축해제 후 DISK1 setup.exe 실행 비밀번호 1234로 함 SYS, SYSTEM 계정 비번이라심 앞으로 비밀번호 누를 일 있으면 1234라고 하면 된다심
+sqldeveloper-23.1.0.097.1607-x64.zip은 압축풀면 끝인데,,,다른 사람이 지울까봐 C드라이브에 옮겨서 압축 풀기 sqldeveloper 폴더 생김 sqldeveloper.exe-보내기-바탕화면에 바로가기 만들기 생성
+
+연습용 계정 생성, oracle에서 제공해줌 (56p)
+cmd > sqlplus system/1234 ( ← 계정명/비밀번호 ) 난 걍 vscode terminal에서 cd /c 한다음 진행함
+SQL > 로 바뀜
+
+SCOTT 계정 생성 에러 떠서... developer 열기 처음에 창뜨면 아니오 선택
++ 클릭 Name local-system 사용자 이름 system, 1234 비밀번호 저장, 테스트 클릭 후 아래 상태:성공 확인, 저장, 접속
+
+alter user hr account unlock identified by 1234; 입력 후 ctrl+Enter(이게 실행) 입력하면
+User HR이(가) 변경되었습니다. 라고 스크립트 출력됨
+
+계정생성해서 아까랑 마찬가지로 + 버튼 누르고 Name local-hr, hr/1234/비밀번호 저장/테스트/저장/접속
+기본제공되는 테이블들이 조금 보임
+
+local-system에서 다시...
+create user scott identified by tiger; (ctrl+enter)
+권한 설정은 ... 필요하면 나중에 얘기해준다심...
+grant connect, resource to scott; (ctrl+enter)
+grant create view to scott; (ctrl+enter)
+
+계정생성했으니 또 + 버튼 local-scott, scott/tiger 테스트/저장/접속 
+근딩 테이블이 없엉 
+다시 local-system 가서
+@C:\oraclexe\app\oracle\product\11.2.0\server\RDBMS\ADMIN\scott.sql (ctrl+enter)
+(https://jmseo.tistory.com/64 참고, vscode에서도 해보니 scott 계정으로 전환됨 확인)
++ 버튼 옆에 새로고침 한다음 테이블 확인됨
+
+혹시모르니 commit (F11) 해달라심
+그리고 이제부터는 scott 계정 쓸 거라서 system 계정 끄라심, 저장 안 해도 된다심(저장하면 sql문 저장되는 거인가봄)
+
+도구-환경설정-코드편집기-글꼴 최대가 24...
+desc emp; (ctrl+enter) (sql문 마지막은 항상 ;로 끝남)
+
+73p 연습용 제공 table 설명
+
+SQL> alter user scott identified by tiger;
+cmd> sqlplus scott/tiger 이제 됨
+// ====================================================================================================
+table 조회
+select, projection, join
+SQL : 검색문( Select )
+select 필드명 from 테이블명
+select ename from emp;
+select * from emp;
+select * from dept; 
+select empno, ename, job, sal from emp; (, 로 구분)
+SELECT empno, ename, job, sal FROM emp; (sql은 대소문자 구문을 안하는데 일반적인 경우 대문자...)
+
+ctrl+space 자동 완성된다심... 이건 developer 얘기...
+// ====================================================================================================
+desc emp;
+--SQL : 검색문( Select )
+--select 필드명 from 테이블명
+select ename from emp;
+select * from emp;
+select * from dept; 
+select empno, ename, job, sal from emp;
+--(, 로 구분)
+SELECT empno, ename, job, sal FROM emp;
+--sql은 대소문자 구문을 안하는데 일반적인 경우 명령어 대문자 작성... 그러나 귀찮으니 소문자ㅎㅎ
+SELECT DISTINCT deptno from emp;
+--emp 테이블에서 직책과 부서번호를 조회
+desc emp;
+SELECT job, deptno FROM emp;
+SELECT DISTINCT job, deptno FROM emp;
+--이름, 급여와 추가수당을 더한 값 조회
+select ename, sal, comm, sal+comm from emp;
+--별칭 지정 4가지 방법
+select ename 이름, sal "급여", comm as 추가수당, sal+comm as "총 금액" from emp;
+--""를 붙이는 거는 특별한 거 아니면 잘 안 쓴다심, sql 예약어 같은 거 쓸 때는 따옴표 써야 함... 
+--왜냐하면 java에서 변수에 넣을 때 따옴표 쓰면 넣을 수 없기 때문에...
+--String sql = "select ename 이름, sal "급여", comm as 추가수당, sal+comm as "총 금액" from emp;" 이런 게...
+--as는 명시해주는 게 좋다심
+--신입이 db를 건드릴 일은 없다심ㅎㅎㅎ 팀장급이 만들어놓고 java 서버에서 명령어 쓰는 정도....
+
+--정렬
+--select from order by 필드명 정렬 옵션(asc - 오름차순, 생략가능, desc - 내림차순);
+select * from emp;
+select * from emp order by sal asc;
+select ename 이름, sal "급여", comm as 추가수당, sal+comm as "총 금액" from emp order by sal desc;
+select ename 이름, sal "급여", comm as 추가수당, sal+comm as "총 금액" from emp order by sal;
+--생략가능이라는 얘기는 안 쓰면 걍 오름차순이라는 얘기
+--정렬 기준이 1개일 필요는 없지... 여러개 구분은 ,로 가능
+select * from emp order by job, sal desc;
+
+--emp 테이블에서 deptno기준으로 내림차순정렬, hiredate 기준으로 오름차순 정렬한 데이터 중 empno, ename, deptno, hiredate 출력
+select empno, ename, deptno, hiredate 
+    from emp 
+    order by deptno desc, hiredate;
+--나중에 속도 같은 거 보면서 할 거라심 그때보면 정렬 남발하지 않도록...
+
+--92p 예제2, 3
+SELECT DISTINCT job from emp;
+select empno as employee_no, ename as employee_name, mgr as manager, sal as salary, comm as commossion, deptno as department_no from emp order by deptno desc, ename;
+
+--select xxx from xxx where xxxx order by xxx
+--where 뒤에는 조건식을 쓰면 됨 여기서 등호는 1개만 쓰면 됨!
+select * from emp where deptno=30;
+select * from emp where sal>=1500 order by sal;
+select * from emp where sal*12>=40000;
+select * from emp where deptno=10 or deptno=30;
+--조건식 연산은 and, or 로 쓰면 됨!
+select * from emp where job='SALESMAN' and sal>=1500;
+--문자열은 '문자열'로 ''사용해야 함. 입력된 값은 대문자 구분을 하나보넹ㄷㄷ
+--deptno가 20, 30인 레코드 중 empno, ename, sal만 출력, 단, sal을 기준으로 내림차순 정렬
+select empno, ename, sal from emp where deptno=20 or deptno=30 order by sal desc;
+select * from emp where hiredate > '81/06/09';
+
+--문자열 비교 연산
+SELECT * FROM emp WHERE ename >= 'F';
+
+--같지 않다의 3가지 방법
+SELECT * FROM emp WHERE deptno!=10;
+SELECT * FROM emp WHERE deptno^=10;
+SELECT * FROM emp WHERE deptno<>10;
+
+SELECT * FROM emp WHERE NOT deptno=10;
+
+--IN 연산자는 or와 비슷한 개념
+SELECT * FROM emp WHERE deptno IN (20, 30);
+SELECT * FROM emp WHERE deptno=20 or deptno=30;
+
+--NOT IN은 IN의 반대
+SELECT * FROM emp WHERE deptno NOT IN (20, 30);
+
+--BETWEEN A(최소값) AND B(최대값)
+SELECT * FROM EMP WHERE SAL>=1000 AND SAL<=2000;
+SELECT * FROM EMP WHERE SAL BETWEEN 1000 AND 2000;
+
+SELECT * FROM EMP WHERE ENAME BETWEEN 'A' AND 'F';
+--LIKE 시작하는, 끝나는, 포함하는 등 조건을 걸 수 있음, 만능문자와 같이 사용해야 함
+--만능문자(와일드카드)
+--% : 글자수 제한없이 모든 문자
+--_ : 하나당 한 글자의 모든 문자
+
+SELECT * FROM EMP WHERE ENAME LIKE 'A%'; --A로 시작하는
+SELECT * FROM EMP WHERE ENAME LIKE '%N'; --N으로 끝나는 
+SELECT * FROM EMP WHERE ENAME LIKE '%A%'; --A를 포함하는
+SELECT * FROM EMP WHERE ENAME LIKE '_A%'; --두번째 글자가 A인
+
+SELECT * FROM EMP WHERE ENAME NOT LIKE '_A%';
+
+--만능문자가 데이터에 포함되어 있는데 그것을 조회하고 싶을 경우
+--연습용으로 developer에서 데이터 추가시킨 후 커밋, 원래는 sql 문으로 넣는다심
+--INSERT INTO "SCOTT"."EMP" (EMPNO, ENAME) VALUES ('8111', 'Z_%S');
+SELECT * FROM EMP WHERE ENAME LIKE '%\%%' ESCAPE '\'; --이스케이프문자는 꼭 \일 필요는 없지만 다른 언어에서도 많이 쓰니까...
+--그리고 추가한 DATA 삭제 후 커밋함
+
+SELECT * FROM EMP WHERE COMM IS NULL;
+SELECT * FROM EMP WHERE COMM IS NOT NULL;
+
+--집합연산자 UNION 이건 잘 안 쓴다심
+SELECT * FROM emp WHERE deptno=10
+    UNION
+SELECT * FROM emp WHERE deptno=20;
+--이럴 거면 그냥 OR 쓰는 게 낫지 않음 ㅋㅋ 라고 하심
+
+SELECT * FROM emp WHERE deptno=10
+    UNION
+SELECT * FROM emp WHERE deptno=10;
+--기본적으로 중복된 건 제거해서 출력해줌
+
+SELECT * FROM emp WHERE deptno=10
+    UNION ALL
+SELECT * FROM emp WHERE deptno=10;
+--기본적으로 중복된 건 제거해주는데 ALL 붙이면 제거 안 함
+
+SELECT * FROM emp
+    MINUS
+SELECT * FROM emp WHERE deptno=10;
+--차집합
+
+SELECT * FROM emp
+    INTERSECT
+SELECT * FROM emp WHERE deptno=10;
+--교집합
+
+SELECT ENAME || '-' || JOB FROM EMP; --CONCAT해주고 싶을 때 || 사용!
+SELECT SAL || '원' AS 급여 FROM EMP;
+
+--125p 교재 예제 1
+SELECT * FROM EMP WHERE ENAME LIKE '%S';
+--125p 교재 예제 2
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP WHERE DEPTNO=30 AND JOB='SALESMAN';
+--125p 교재 예제 3
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP WHERE DEPTNO IN (20, 30) AND SAL>2000;
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP WHERE DEPTNO =20 AND SAL>2000
+    UNION
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP WHERE DEPTNO =30 AND SAL>2000;
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP WHERE DEPTNO IN (20, 30)
+    INTERSECT
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP WHERE SAL>2000;
+--125p 교재 예제 4
+SELECT * FROM EMP WHERE SAL NOT BETWEEN 2000 AND 3000;
+SELECT * FROM EMP WHERE NOT (SAL>=2000 AND SAL<=3000);
+--125p 교재 예제 5
+SELECT ENAME, EMPNO, SAL, DEPTNO FROM EMP WHERE ENAME LIKE '%E%' AND DEPTNO=30 AND SAL NOT BETWEEN 1000 AND 2000;
+--125p 교재 예제 6
+SELECT * FROM EMP WHERE COMM IS NULL AND MGR IS NOT NULL AND JOB IN ('MANAGER', 'CLERK') AND ENAME NOT LIKE '_L%';
+
+--129p 단일행 함수 vs 다중행 함수(다중행에서 단일한 결과가 나오는 거)
+--단일행 함수 먼저한다고 되어 있는데, 많이 써서도 그렇지만, 다중행함수는 그룹에 관한 설정들을 해야 해서 일 거라심...
+--130p 문자함수
+SELECT ENAME, UPPER(ENAME), LOWER(ENAME), INITCAP(ENAME) FROM EMP;
+--INITCAP은 첫글자만 대문자로 변경해주는 함수
+
+SELECT ENAME, LENGTH(ENAME) FROM EMP;
+SELECT * FROM EMP WHERE LENGTH(ENAME)=5;
+SELECT EMPNO FROM EMP WHERE LENGTH(ENAME)=5; --SELECT에 ENAME이 없어도 상관 없음
+
+SELECT LENGTH('한글'), LENGTHB('한글') FROM DUAL;
+--DUAL TABLE은 임시테이블... 단순 계산하고 싶은데, 참조할 테이블이 없다면...
+--참고로 ORACLE 같은 경우 한글 3BYTE로 인식한다심??!!
+
+SELECT JOB, SUBSTR(JOB, 1, 2), SUBSTR(JOB, 3, 2), SUBSTR(JOB, 5) FROM EMP;
+SELECT JOB, SUBSTR(JOB, 1, 2), SUBSTR(JOB, 3, 2), SUBSTR(JOB, 6) FROM EMP; --없으면 (null) 나오넹ㅎㅎ
+--여긴 1부터 시작하넹...
+SELECT JOB, SUBSTR(JOB, -3, 2), SUBSTR(JOB, -3) FROM EMP;
+--음수는 끝에서부터 세는 것, 이건 편하당, 파이썬도 요랫던 듯
+
+SELECT INSTR('HELLO, ORACLE', 'L') AS INSTR_1,
+            INSTR('HELLO, ORACLE', 'L', 5) AS INSTR_2,
+            INSTR('HELLO, ORACLE', 'L', 2, 2) AS INSTR_3
+    FROM DUAL;
+--세번째 인수는 시작위치, 네번째 인수는 'L'의 번째 수, 뒤에 2개 인수는 입력 선택, not 필수 입력
+--local-hr 계정에서 연습... 이런 것도 할 수 있다 뭐 이런...
+--SELECT JOB_ID, SUBSTR(JOB_ID, 1, INSTR(JOB_ID, '_')-1) AS RESULT FROM JOB_HISTORY;
+
+SELECT '010-1234-5678' AS PHONE,
+            REPLACE('010-1234-5678', '-', ' ') AS BLANK,
+            REPLACE('010-1234-5678', '-') AS REMOVE
+    FROM DUAL;
+
+SELECT LPAD('AA', 5, '*'), RPAD('RR', 9, 'TA'), LPAD('AA', 10), RPAD('RR', 10) FROM DUAL;
+--반복문자열 길이가 꼭 1일 필요는 없지만 TOTAL 길이에 의해 중간에 잘라짐
+
+SELECT CONCAT(ENAME, JOB) FROM EMP;
+--CONCAT은 인수가 최대 2개라 || 쓰라심
+
+SELECT '[' || TRIM ('     _ ORACLE _       ') || ']' FROM DUAL;
+SELECT '[' || LTRIM ('     _ ORACLE _       ') || ']' FROM DUAL;
+SELECT '[' || RTRIM ('     _ ORACLE _       ') || ']' FROM DUAL;
+SELECT LTRIM(' <_ORACLE_>', ' _<') FROM DUAL; --삭제할 문자집합 문자열은 LTRIM과 RTRIM에서만 되넹
+
+--숫자함수
+--반올림
+SELECT 1234.5678, ROUND(1234.5678), --소수 첫째자리에서 반올림
+            ROUND(1234.5678, 0), --소수 첫째자리에서 반올림
+            ROUND(1234.5678, 1), --소수 둘째자리에서 반올림
+            ROUND(1234.5678, 2), --소수 셋째자리에서 반올림
+            ROUND(1234.5678, -1), --일의 자리에서 반올림
+            ROUND(1234.5678, -2) --십의 자리에서 반올림
+    FROM DUAL;
+--반올림 ROUND, 버림 TRUNC
+
+--가까운 정수 출력
+--지정된 숫자보다 큰 정수중 가장 작은 정수 CEIL / 작은 정수증 가장 큰정수 FLOOR
+SELECT CEIL(3.14), FLOOR(3.14) FROM DUAL; --4, 3
+
+SELECT MOD(5, 2) FROM DUAL; --%연산 안됨, 나머지 알려주는 MOD함수 사용 필요함!
+
+SELECT SYSDATE FROM DUAL;--현재날짜 알려줌
+SELECT SYSDATE+1 FROM DUAL; --다음날
+SELECT SYSDATE-1 FROM DUAL; --전날
+SELECT ADD_MONTHS(SYSDATE, 3), SYSDATE, ADD_MONTHS(SYSDATE, -3) FROM DUAL;--개월수 연산
+
+SELECT HIREDATE, MONTHS_BETWEEN(SYSDATE, HIREDATE) FROM EMP;
+--일수까지 고려해서 소수로 나옴...TRUNC 쓰면 버림
+--양수로 나오게 하려면 최근께 앞에 있어야함
+SELECT HIREDATE, TRUNC(MONTHS_BETWEEN(SYSDATE, HIREDATE)/12) FROM EMP;
+
+--돌아오는 요일
+SELECT NEXT_DAY(SYSDATE, '월요일') FROM DUAL; --23/08/28
+SELECT LAST_DAY(SYSDATE) FROM DUAL; --23/08/31
+
+--테이블에서 숫자는 오른쪽 정렬 문자는 왼쪽 정렬, 열에서 보면 자료형 볼 수 있음
+--날짜 데이터형 TO_CHAR, TO_NUMBER, TO_DATE
+--p162 천단위 구분 기호 등...이런 건 서버에서 처리하지 DB에서 하진 않는다심
+--TO_CHAR(SAL, '$999,999'), TO_CHAR(SAL, 'L999,999'), TO_CHAR(SAL, '009,999.00')
+
+--NULL 처리 함수 NVL(대상, NULL이 아니면 변경할 값), NVL2(대상, NULL이 아닐 때 값, NULL일 때 값)
+SELECT SAL, COMM, SAL+NVL(COMM, 0) FROM EMP;
+SELECT COMM, NVL2(COMM, '추가수당 있음', '추가수당 없음') FROM EMP;
+SELECT NULLIF(10, 10), NULLIF('A', 'B') FROM DUAL; --NULLIF는 두 값이 같으면 NULL, 같지 않으면 첫번째 값 리턴시킴
+
+--DECODE 함수 약간 switch와 비슷함
+SELECT JOB, SAL, DECODE(JOB, 'MANAGER', SAL*1.1,
+                                    'SALESMAN', SAL*1.05,
+                                    'ANALYST', SAL,
+                                    SAL*0.5) AS DECODE
+    FROM EMP;
+--CASE도 비슷 함수형이 아니니까...CASE 대상 { WHEN 값 THEN 작업 } 반복 END 형태임
+SELECT JOB, SAL, CASE JOB
+                            WHEN 'MANAGER' THEN SAL*1.1
+                            WHEN 'SALESMAN' THEN SAL*1.05
+                            WHEN 'ANALYST' THEN SAL
+                            ELSE SAL*0.5
+                        END AS CASE
+    FROM EMP;
+--CASE는 DECODE에 비해 조건식을 다양하게 쓸 수 있음 대상이 필수가 아니어서...
+SELECT JOB, SAL, COMM, CASE 
+                            WHEN JOB='MANAGER' THEN SAL*1.1
+                            WHEN COMM IS NOT NULL THEN SAL*1.05
+                            WHEN SAL BETWEEN 1000 AND 2000 THEN SAL*2
+                            ELSE SAL*0.5
+                        END AS CASE2
+    FROM EMP
+    WHERE SAL>=2000
+ORDER BY JOB;

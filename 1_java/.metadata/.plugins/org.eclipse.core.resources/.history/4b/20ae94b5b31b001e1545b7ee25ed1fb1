@@ -1,0 +1,20 @@
+package N01_입출력스트림;
+
+import java.io.File;
+
+public class S09_Sample09 {
+
+	public static void main(String[] args) throws Exception {
+		File f = new File("src/N01_입출력스트림/S09_Sample09.java");
+		String fileName = f.getName();
+		int pos = fileName.lastIndexOf(".");
+		System.out.println(fileName);					// 파일명 : S09_Sample09.java
+		System.out.println(fileName.substring(0, pos)); // 확장자 제거 : S09_Sample09
+		System.out.println(fileName.substring(pos+1));  // 확장자 : java
+		System.out.println(f.getPath());				// 상대경로 : src\N01_입출력스트림\S09_Sample09.java
+		System.out.println(f.getAbsolutePath());		// 절대경로 : D:\Y\java\0706\src\N01_입출력스트림\S09_Sample09.java
+		System.out.println(f.getCanonicalPath()); 		// 정규경로 : D:\Y\java\0706\src\N01_입출력스트림\S09_Sample09.java
+		System.out.println(f.getParent()); 
+	}
+
+}

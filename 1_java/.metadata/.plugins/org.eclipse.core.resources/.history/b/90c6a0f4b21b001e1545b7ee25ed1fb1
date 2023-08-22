@@ -1,0 +1,15 @@
+package N01_입출력스트림;
+
+import java.io.File;
+
+public class S09_Sample09 {
+
+	public static void main(String[] args) {
+		File f = new File("src/N01_입출력스트림/S09_Sample09.java");
+		String fileName = f.getName();
+		int pos = fileName.lastIndexOf(".");
+		System.out.println(fileName);
+		System.out.println(fileName.substring(0, pos));
+	}
+
+}

@@ -1,0 +1,20 @@
+.login i {
+  font-size: 40px;
+  margin: 10px;
+}
+
+.login-logout {
+  color: lightgrey;
+}
+
+.login-user {
+  color: black;
+}
+
+.login-manager {
+  color: #8bc6e4;
+}
+
+.login-admin {
+  color: #2578c4;
+}

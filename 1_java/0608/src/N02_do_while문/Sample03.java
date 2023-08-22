@@ -1,0 +1,27 @@
+// 책 118p 예제, 1~100 사이 숫자 랜덤 1개 생성 후 사용자가 맞춰가는 형태
+// 술 게임 ?? 소주병 뚜겅 ㄷㄷ 모름!
+
+package N02_do_while문;
+
+import java.util.Scanner;
+
+public class Sample03 {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int input;
+		int answer = (int)(Math.random()*100) + 1;
+		
+		int cnt=0;
+		do {
+			System.out.print("1과 100 사이의 정수를 입력하세요 : ");
+			input = sc.nextInt();
+			cnt++;
+			if(input > answer)
+				System.out.println("더 작은 수로 다시 시도해보세요.");
+			else if(input < answer)
+				System.out.println("더 큰 수로 다시 시도해보세요.");
+		} while(input != answer);
+		System.out.println(cnt+"회 시도 후 정답입니다.");
+	}
+
+}

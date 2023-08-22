@@ -1,0 +1,5 @@
+package N03_채팅클라이언트;
+
+public class ReceiveThread extends Thread {
+
+}

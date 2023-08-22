@@ -1,0 +1,50 @@
+package N01_입출력스트림;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+public class S03_Sample03 {
+
+	public static void main(String[] args) throws Exception {
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		int data;
+		long start;
+		long end;
+		
+		// 보조스트림 사용 안함
+		fis = new FileInputStream("src/N01_입출력스트림/sky.jpg");
+		fos = new FileOutputStream("N01_입출력스트림_S03_Sample03_Copy_sky1.jpg");
+		start = System.currentTimeMillis();
+		while((data=fis.read()) != -1) {
+			fos.write(data);
+		}
+		fos.flush();
+		end = System.currentTimeMillis();
+		fos.close();
+		fis.close();
+		System.out.println("보조스트림 안쓴 작업 소요 시간 : " + (end-start));
+		
+		// 보조스트림 사용
+		fis = new FileInputStream("src/N01_입출력스트림/sky.jpg");
+		bis = new BufferedInputStream(fis);
+		fos = new FileOutputStream("N01_입출력스트림_S03_Sample03_Copy_sky2.jpg");
+		bos = new BufferedOutputStream(fos);
+		start = System.currentTimeMillis();
+		while ((data = bis.read()) != -1) { // 보조스트림으로 작업!
+			bos.write(data);				// 보조스트림으로 작업!
+		}
+		bos.flush();						// 보조스트림으로 작업!
+		end = System.currentTimeMillis();
+		bos.close(); // close는 보조스트림부터!
+		bis.close();
+		fos.close();
+		fis.close();
+		System.out.println("보조스트림 안쓴 사용 소요 시간 : " + (end-start));
+	}
+
+}

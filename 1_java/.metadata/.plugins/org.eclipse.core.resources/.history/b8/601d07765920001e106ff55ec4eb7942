@@ -1,0 +1,14 @@
+// 스트림: 로또번호 생성(6개, 오름차순정렬해서 출력)
+package N01_복습;
+
+import java.util.Random;
+
+public class Test03 {
+
+	public static void main(String[] args) {
+		new Random().ints(1,46).distinct().limit(6).sorted().forEach(n->System.out.print(n + " "));
+		System.out.println("구분선");
+		new Random().ints(1,46).distinct().limit(6).sorted().forEach(System.out::println);
+	}
+
+}

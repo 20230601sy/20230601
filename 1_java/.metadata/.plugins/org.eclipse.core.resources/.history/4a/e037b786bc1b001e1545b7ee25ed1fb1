@@ -1,0 +1,24 @@
+/*
+ * 직렬화 662p
+ * 객체를 입출력하려면??? 객체 안에는 수많은 정보들이 더 많이 있잖여
+ * 그럴 때 직렬화와 역직렬화의 과정을 필요로 함
+ * 예를 들어
+ * class Student{
+ *   String name;
+ *   int age;
+ * }
+ * 객체는 약간 입체적이라 생각하면 된다심
+ * name이나 age를 한줄로 일자로 쫙 풀어서 내보내줘야 하니까 그런 걸 직렬화라고함
+ * 마찬가지로 어디서 예를 들어 메모장에 있는 데이터를 받아오는데, 내용이 이것저것 있는데,
+ * 객체로 변환하는 과정이 필요하잖음 그거를 역직렬화라고 함 
+ */
+package N01_입출력스트림;
+
+public class S10_Sample10 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

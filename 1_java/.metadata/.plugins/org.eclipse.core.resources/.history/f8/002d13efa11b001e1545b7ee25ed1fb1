@@ -1,0 +1,18 @@
+package N01_입출력스트림;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class S02_Sample02 {
+
+	public static void main(String[] args) throws IOException { // throws FileNotFoundException : FileInputStream에서 강요
+		FileInputStream fis = new FileInputStream("src/N01_입출력스트림/S02_Sample02.java"); // 앞글자만 따서 보통 fis, 매개변수는 파일 경로
+		
+		int data = 0;
+		while((data=fis.read()) != -1) {
+			System.out.print(data);
+		}
+	}
+
+}

@@ -1,0 +1,74 @@
+/*
+ * 입출력스트림 624p
+ * 입출력 스트림 : 가운데 통로!, 기존에 배웠던 스트림이랑은 다름
+ * 입력 : 키보드, 마우스, 파일...
+ *  ↕ 입력스트림
+ * 자바
+ *  ↕ 출력스트림
+ * 출력 : 모니터, 파일, 프로그램
+ * 
+ * 입출력을 동시에 담당하는 스트림은 없음. 입력 따로, 출력 따로
+ * 어떤 걸 기반으로 전송을 할 건지에 따라, 스트림의 종류가 다양함
+ * 입출력의 성능 향상을 거들어주는 보조스트림이라는 것도 있음
+ * 게시판 작업 같은 걸 하거나 업로드, 다운로드, 로그파일을 만들어서 내보낸다던가 할 때 종종 이용할 예정
+ * 
+ * 바이트 기반 스트림
+ * 바이트 기반은 한 바이트씩 쪼개서 전송 // cf 문자기반 스트림은 문자 한글자씩 쪼개서 전송
+ * 1,0,1,0으로 구성된 그림, 동영상, 사운드 파일들을 전송할 때 사용
+ * IO스트림은 FIFO 먼저 들어온 순으로 먼저 나옴
+ * 최상위 클래스는 InputStream, OutputStream (추상클래스)
+ * read(), write() 메서드들은 오버로딩 되어 있음
+ * 추가적으로 기억하면 좋은 거는 void close(), void flush() 메서드
+ * 모든 스트림에 다 있진 않지만(??? 아니 나중에 모든 입출력에 다 있다고 말씀하심) 대부분의 입출력 스트림에 있다심
+ * close() : 스트림 닫기
+ * flush() : 입력을 하든 출력을 하든 통로를 거쳐 전송되어, 특별하게 건들지 않으면 알아서 내보내지는데, 
+ * 			 특정 바이트까지 채워질 때까지 기다렸다가 모였을 때 전송해달라... 성능향상 목적으로 작업을 진행하는데
+ * 			 스트림에 남은 찌꺼기를 내보내는거 그냥 close를 하면 마지막 나머지는 전송되지 못한채 스트림이 닫힘
+ * 			 그럴 때 내보내기 위해서 사용하는 게 flush()
+ * 
+ * 보조스트림
+ * 보조스트림은 입출력스트림이 있어야 함. 추가적인 부품을 껴주는 거. 성능향상을 기대... 
+ * 버퍼 ㅡ_ㅡ
+ * 
+ * 문자기반 스트림
+ * 바이트기반스트림은 한글 같은 거 다 깨짐 왜냐면 한글은 2바이트이기 때문에...
+ * 그래서 문자기반스트림을 사용
+ * 문자스트림도 Reader랑 Writer 있음!
+ * 매개변수가 조금 다른 거 뿐임
+ * 
+ * 거의 사용하는게 read, write, flush, close 정도라심
+ * 630p 예제
+ * 실제로 배열 스트림은 잘 안 쓰긴 하는데, 흐름상 나온 거 같다심... ㅡㅡ
+ * 나중엔 파일로, 메모장 같은 걸로 바뀔 거라심
+ */
+package N01_입출력스트림;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+
+public class S01_Sample01 {
+
+	public static void main(String[] args) {
+		byte[] inSrc = {0,1,2,3,4,5,6,7,8,9}; // 자료형에서 보관할 수 있는 가장 짧은 정수형, 0~255 범위임!
+		byte[] outSrc = null;
+		
+		ByteArrayInputStream input = new ByteArrayInputStream(inSrc);
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+//		
+//		int data = 0; // 읽어온 데이터를 잠깐동안 저장해서 사용할 임시변수, 읽어왔을 때 read에서 -1을 내보낼 때가 있기 때문에 byte로 못함..
+//		while((data = input.read()) != -1)
+//			output.write(data);
+
+		// write가 오버로딩 되어 있어서 배열로 바로 넣을 수도 있다심
+		byte[] temp = new byte[inSrc.length]; // 파일 같은 경우는 모를 때가 많아서 넉넉하게 해놓을 수 있다심...
+		input.read(temp, 0, temp.length); // 어지간해선 걍 위에 한 것처럼 반복문처리 한다심
+		output.write(temp, 0, temp.length);
+
+//		outSrc = output.toByteArray();
+//		System.out.println(Arrays.toString(outSrc));
+		
+
+	}
+
+}

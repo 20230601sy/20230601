@@ -1,0 +1,14 @@
+package N01_입출력스트림;
+
+import java.io.FileInputStream;
+import java.io.FileReader;
+
+public class S06_Sample06 {
+
+	public static void main(String[] args) throws Exception{
+		FileInputStream fis = new FileInputStream("x.txt");
+		FileReader fr = new FileReader("x.txt");
+
+	}
+
+}

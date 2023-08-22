@@ -1,0 +1,360 @@
+/*
+ * 오늘도 Java 총정리 복습~
+ */
+package N01_복습;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Test02 {
+
+	public static void main(String[] args) {
+		System.out.println("문제 1 ========================================");
+		/*
+		 * 다음은 회문수를 구하는 프로그램이다
+		 * 회문수란 숫자를 거꾸로 읽어도 앞으로 읽는 것과 같은 수를 말한다
+		 * 예를 들면 12321 이나 13531 같은 수를 말한다. 
+		 * 숫자를 입력받아 회문수인지 아닌지 판별하는 프로그램을 완성하시오
+		 */
+		Scanner sc = new Scanner(System.in);
+		System.out.print("판별한 숫자를 입력하세요 : ");
+//		String numStr = sc.next();
+//		Boolean isRoundNum = true;
+//		int numLen = numStr.length();
+//		for(int i=0; i<numLen/2; i++) {
+//			if(numStr.charAt(i) != numStr.charAt(numLen-1-i)) {
+//				isRoundNum = false;
+//				break;
+//			}
+//		}
+//		System.out.println(numStr + "는 회전수" + (isRoundNum ? "입니다." : "가 아닙니다."));
+		
+		int num = 12321; // sc.nextInt();
+		int tmp = num;
+		int revNum = 0;
+		while(tmp>0) {
+			revNum = revNum*10 + tmp%10;
+			tmp = tmp/10;
+		}
+		System.out.println(num + "는 회전수" + (num==revNum ? "입니다." : "가 아닙니다."));
+		
+		System.out.println("문제 2 ========================================");
+		int[] answer = { 1, 4, 4, 3, 1, 4, 4, 2, 1, 3, 2};
+		int[] counter = new int[4];
+		/*
+		 * 배열에 담긴 데이터를 읽고 각 숫자의 개수를 세어서 개수만큼 *를 찍어서 그래프를 그리는 프로그램
+		 * 실행 결과
+		 * 1 : ***
+		 * 2 : **
+		 * 3 : **
+		 * 4 : ****
+		 */
+		for(int i=0; i<answer.length; i++)
+			counter[answer[i]-1]++;
+		
+		for(int i=0; i<counter.length; i++) {
+			System.out.print((i+1) + " : ");
+			for(int j=0; j<counter[i]; j++)
+				System.out.print("*");
+			System.out.println();
+		}
+		
+		System.out.println("문제 3 ========================================");
+		int[] coinUnit = { 500, 100, 50, 10 }; // 동전의 단위
+		int[] coin = { 5, 5, 5, 5 }; // 단위별 동전의 개수
+		int money;
+		/*
+		 * 거슬러줄 금액을 입력받아 계산한다
+		 * 보유한 동전의 개수로 거스름돈을 지불할 수 없으면
+		 * '거스름 돈이 부족합니다.'라고 출력하고 종료한다
+		 * 지불할 돈이 충분히 있으면 거스름돈을 지불한 만큼 가진 돈에서 빼고
+		 * 남은 동전의 개수를 화면에 출력한다.
+		 * // 출력 결과
+		 * 거스름 받을 금액을 입력하세요 : 2680
+		 * money=2680
+		 * 500원 : 5
+		 * 100원 : 1
+		 * 50원 : 1
+		 * 10원 : 3
+		 * =남은 동전의 개수=
+		 * 500 : 0
+		 * 100 : 4
+		 * 50 : 4
+		 * 10 : 2
+		 */
+		System.out.print("거스름 받을 금액을 입력하세요 : ");
+		money = 2680; // sc.nextInt();
+		System.out.println("money=" + money);
+		int[] payCoin = new int[coin.length];
+		for(int i=0; i<coin.length; i++) {
+			payCoin[i] = money/coinUnit[i];
+			if(payCoin[i] > coin[i])
+				payCoin[i] = coin[i];
+			money -= payCoin[i]*coinUnit[i];
+		}
+		if(money>0)
+			System.out.println("거스름 돈이 부족합니다.");
+		else {
+			for(int i=0; i<coin.length; i++)
+				System.out.println(coinUnit[i]+"원 : "+payCoin[i]);
+			System.out.println("=남은 동전의 개수=");
+			for(int i=0; i<coin.length; i++)
+				System.out.println(coinUnit[i]+" : "+(coin[i]-payCoin[i]));			
+		}
+		
+		System.out.println("문제 4 ========================================");
+		/* 
+		 * Student 클래스를 구현하고,
+		 * 정의한 클래스에 다음과 같이 정의된 두 개의 매서드 getTotal()과 getAverage()를 추가하시오
+		 * 1. 메서드명 : getTotal
+		 * 기능 : 국어 영어 수학의 점수를 모두 더해서 반환한다
+		 * 반환타입 : int
+		 * 매개변수 없음
+		 * 2. 메서드명 : getAverage
+		 * 기능 : 총점을 과목수로 나눈 평균을 구한다
+		 * 반환타입 : double
+		 * 매개변수 없음
+		 */
+		Student4 s = new Student4();
+        
+        s.name = "홍길동"; 
+        s.ban = 1;
+        s.no = 1;
+        s.kor = 100;
+        s.eng = 60;
+        s.math = 76;
+        
+        System.out.println("이름 : "+s.name); 
+        System.out.println("총점 : "+s.getTotal()); 
+        System.out.println("평균 : "+s.getAverage()); 
+        
+        System.out.println("문제 5 ========================================");
+        Student5 s5 = new Student5("홍길동", 1, 1, 100, 60, 76);
+        s5.info();
+		/* 
+		 * 위의 코드가 다음과 같은 실행결과를 얻도록 Student 클래스를 완성
+		 * 이름 : 홍길동
+		 * 반 : 1
+		 * 번호 : 1
+		 * 국어 : 100
+		 * 영어 : 60
+		 * 수학 : 76
+		 * 총점 : 236
+		 * 평균 : 78.7
+		 */
+        
+        System.out.println("문제 6 ========================================");
+        /*
+         * 다음 중 생성자에 대한 설명으로 옳지 않은 것을 모두 고르시오
+         * a. 모든 생성자의 이름은 클래스의 이름과 동일해야 한다
+         * b. 생성자는 객체를 생성하기 위한 것이다
+         * c. 클래스에는 생성자가 반드시 하나 이상 있어야 한다
+         * d. 생성자가 없는 클래스는 컴파일러가 기본 생성자를 추가한다
+         * e. 생성자는 오버로딩 할 수 없다
+         * 답은 b, c, e // b가 애매한데 정확하게는 틀렸다고 하심, 객체를 생성해주는 거가 new이고, 객체를 초기화하기 위한 게 생성자!
+         */
+        
+        System.out.println("문제 7 ========================================");
+        /*
+         * 다음 중 오버로딩이 성립하기 위한 조건이 아닌 것을 모두 고르시오
+         * 1. 메서드의 이름이 같아야 한다
+         * 2. 매개 변수의 개수나 타입이 달라야 한다
+         * 3. 리턴타입이 달라야 한다
+         * 4. 매개변수 이름이 달라야 한다
+         * 답은 3, 4 // 4번 얘기는 void method(int score), void method(int num) 얘기임 ㄷㄷ
+         */
+        
+        System.out.println("문제 8 ========================================");
+        int[] arr = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        System.out.println(Arrays.toString(arr));
+        
+        int[] result = shuffle8(arr);
+        System.out.println(Arrays.toString(result));
+        /*
+         * 메서드명 : shuffle
+         * 기능 : 주어진 배열에 담긴 값의 위치를 바꾸는 작업을 반복하여 뒤섞이게 한 후 처리한 배열을 반환한다.
+         * 반환타입 : int[]
+         * 매개변수 : 정수값이 담긴 배열
+         */
+        
+        System.out.println("문제 9 ========================================");
+        MyTv9 t = new MyTv9();
+        
+        t.channel = 100;
+        t.volume = 0;
+        
+        System.out.println("CH:" + t.channel + ", VOL:" + t.volume);
+        
+        t.channelDown();
+        t.volumeDown();
+        System.out.println("CH:" + t.channel + ", VOL:" + t.volume);
+        
+        t.volume = 100;
+        t.channelUp();
+        t.volumeUp();
+        System.out.println("CH:" + t.channel + ", VOL:" + t.volume);
+		/* 
+		 * 위의 코드가 다음과 같은 실행결과를 얻도록 MyTv 클래스를 완성
+		 * CH:100, VOL:0
+		 * CH:99, VOL:0
+		 * CH:100, VOL:100
+		 */
+        
+        System.out.println("문제 10 =======================================");
+        // 상속 생성자 문제
+        System.out.println("문제 11 =======================================");
+        // 상속 형변환 문제
+        A a = new A11();
+        A21 a21 = new A21();
+        A11 a11 = new A11();
+        a = (A) a11; // 가능
+        a = a11;	 // 가능
+        A11 b = (A11) a; // 가능 그외에 올라갔던 것만 내려올수 있다 등등등
+        
+        System.out.println("문제 12 =======================================");
+        
+	}
+	
+	public static int[] shuffle8(int[] arr) {
+		int[] result = new int[arr.length];
+//		boolean isHere;
+//		for(int i=0; i<result.length; i++) {
+//			do {
+//				isHere = false;
+//				result[i] = arr[(int)(Math.random()*arr.length)];
+//				for(int j=0; j<i; j++)
+//					if(result[i] == result[j])
+//						isHere = true;
+//			} while(isHere);
+//		}
+		for(int i=0; i<result.length; i++)
+			result[i] = arr[i];
+		for(int i=0; i<result.length; i++) {
+			int j = (int)(Math.random()*arr.length);
+			int tmp = result[i];
+			result[i] = result[j];
+			result[j] = tmp;
+		}
+		return result;
+	}
+}
+class A{}
+class A1 extends A{}
+class A2 extends A{}
+class A11 extends A1{}
+class A21 extends A2{}
+class Student4 {
+    String name; 
+    int ban;
+    int no;
+    int kor, eng, math;
+    public int getTotal() {
+    	return kor+eng+math;
+    }
+    public double getAverage() {
+    	return Math.round(getTotal()*10/3.0)/10.0;
+    }
+}
+
+class Student5 {
+    String name; 
+    int ban;
+    int no;
+    int kor, eng, math;
+    
+    public Student5(String name, int ban, int no, int kor, int eng, int math) {
+		this.name = name;
+		this.ban = ban;
+		this.no = no;
+		this.kor = kor;
+		this.eng = eng;
+		this.math = math;
+	}
+
+    public int getTotal() {
+    	return kor+eng+math;
+    }
+    public double getAverage() {
+    	return Math.round(getTotal()*10/3.0)/10.0;
+    }
+
+	public void info() {
+		System.out.println("이름 : " + name);
+		System.out.println("반 : " + ban);
+		System.out.println("번호 : " + no);
+		System.out.println("국어 : " + kor);
+		System.out.println("영어 : " + eng);
+		System.out.println("수학 : " + math);
+		System.out.println("총점 : " + getTotal()); 
+        System.out.println("평균 : " + getAverage()); 
+	}
+    
+}
+
+class MyTv9 {
+	   boolean isPowerOn;
+	   int channel;
+	   int volume;
+	   final int MAX_VOLUME = 100;
+	   final int MIN_VOLUME = 0;
+	   final int MAX_CHANNEL = 100;
+	   final int MIN_CHANNEL = 1;
+
+	   void turnOnOff() {
+	      // (1) isPowerOn의 값이 true면 false로 , false면 true로 바꾼다
+		   isPowerOn = !isPowerOn;
+	   }
+
+	   void volumeUp() {
+	      // (2) volume의 값이 MAX_VOLUME보다 작을 때만 값을 1 증가시킨다
+		   if(volume < MAX_VOLUME)
+			   volume++;
+	   }
+
+	   void volumeDown() {
+	      // (3) volume의 값이  MIN_VOLUME보다 클 때만 값을 1 감소시킨다
+		   if(volume > MIN_VOLUME)
+			   volume--;
+	   }
+
+	   void channelUp() {
+	      // channel이 MAX_CHANNEL이면, channel의 값을 MIN_CHANNEL로 바꾼다
+	      // (4) channel의 값을 1 증가시킨다
+		   if(channel == MAX_CHANNEL)
+			   channel = MIN_CHANNEL;
+		   else
+			   channel++;
+	   }
+
+	   void channelDown() {
+	      // channel이 MIN_CHANNEL이면, channel의 값을 MAX_CHANNEL로 바꾼다
+	      // (5) channel의 값을 1 감소시킨다
+		   if(channel == MIN_CHANNEL)
+			   channel = MAX_CHANNEL;
+		   else
+			   channel--;
+	   }
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

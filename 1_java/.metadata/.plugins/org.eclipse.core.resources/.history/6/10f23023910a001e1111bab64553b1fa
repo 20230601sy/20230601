@@ -1,0 +1,49 @@
+/*
+ * 점수들의 합계를 계산해 반환시켜주는 메서드
+ * 점수들의 평균을 계산해서 반환해주는 메서드
+ * 점수들의 최대값을 계산해서 반환해주는 메서드
+ * 점수들의 최소값을 계산해서 반환해주는 메서드
+ * 점수들을 내림차순정렬해서 반환시켜주는 메서드(원본 변형 x)
+ */
+package N03_CallByReference;
+
+public class S04_Calc {
+	public int calSum(int[] arr) {
+		int sum = 0;
+		for(int i=0; i<arr.length; i++)
+			sum += arr[i];
+		return sum;
+	}
+	public double calAvg(int[] arr) { // (int[] arr, int cnt)로도, (int sum, int cnt) 할 수 있음 
+		return (double)calSum(arr)/arr.length; // 메서드에서 메서드는 자유롭게 호출 가능, Main에서 호출할 때는 인스턴스 생성 후에 호출 가능하고 인스턴스.메서드로 호출하는데 비해 같은 클래스에 있으면 인스턴스 생성 없이 그냥 메서드 이름으로만 호출가능함 
+	}
+	public int calMax(int[] arr) {
+		int max = arr[0];
+		for(int i=1; i<arr.length; i++)
+			if(max < arr[i])
+				max = arr[i]; 
+		return max;
+	}
+	public int calMin(int[] arr) {
+		int min = arr[0];
+		for(int i=1; i<arr.length; i++)
+			if(min > arr[i])
+				min = arr[i]; 
+		return min;
+	}
+	public int[] sortDec(int[] arr) {
+		int[] dec = new int[arr.length];
+		int tmp;
+		for(int i=0; i<arr.length; i++) {
+			dec[i] = arr[i];
+			for(int j=0; j<i; j++) {
+				if(dec[i]>dec[j]) {
+					tmp = dec[i]; 
+					dec[i] = dec[j];
+					dec[j] = tmp;
+				}
+			}
+		}
+		return dec;
+	}
+}

@@ -1,0 +1,16 @@
+package N01_입출력스트림;
+
+import java.io.File;
+
+public class S09_Sample09 {
+
+	public static void main(String[] args) {
+		File f = new File("src/N01_입출력스트림/S09_Sample09.java");
+		String fileName = f.getName();
+		int pos = fileName.lastIndexOf(".");
+		System.out.println(fileName);					// S09_Sample09.java
+		System.out.println(fileName.substring(0, pos)); // S09_Sample09, 확장자 제거
+		System.out.println(fileName.substring(pos+1));  // S09_Sample09, 확장자만
+	}
+
+}

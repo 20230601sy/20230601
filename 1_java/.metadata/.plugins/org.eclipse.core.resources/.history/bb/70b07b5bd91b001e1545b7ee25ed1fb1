@@ -1,0 +1,160 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Sample01 {
+	public static void main(String[] args) {
+		
+//		int a = 10;
+//		int f = 3;
+//		double b = 8.8;
+//		char c = 'a';
+//		String d = "hello";
+//		boolean e = true;
+////		System.out.println("a: " + a + "!\n"+ b + c + d + e);
+//		System.out.printf("a: %d, b: %f, c: %c, d: %s, e: %b\n", a, b, c, d, e);
+//		final int MAX_DAM=100;
+//		
+//		int sum = a+f+MAX_DAM;
+//		
+////		System.out.println("a+b: " + (a+b));
+//		System.out.println("a+b: " + sum);
+//		System.out.println("a-b: " + (a-b));
+//		System.out.println("a*b: " + (a*b));
+//		System.out.println("a/b: " + (a/b));
+//		System.out.println("a%b: " + (a%b));
+//		
+////		MAX_DAM = 5;
+//		Math.abs(-20);
+//		
+//		String str = "aBcDeFg";
+//		System.out.println(str.charAt(0));
+//		System.out.println(str.length());
+//		int i = 1;
+//		System.out.print((char)((str.charAt(i)<='Z') ? str.charAt(i)+'a'-'A' : str.charAt(i)+'A'-'a'));
+//		str.toLowerCase();
+//		str.substring(i, i);
+		String ab = "50";
+		ab.startsWith(ab);
+//		int abc = Integer.parseInt(ab);
+//		System.out.println();
+//		System.out.println("구분선");
+//		System.out.println("abc".substring("abc".length()-1, "abc".length()));
+////		str.replace(str, ab);
+////		str.contains(str);
+////		str.split(ab);
+//		int a1 = 50;
+//		System.out.println((a1+"").contains("5"));
+////		str.r
+//		str.trim();
+//		str.contains(str);
+//		str.compareTo(str);
+//		int[] arr = {0, 1, 2, 3, 4, 5};
+//		int[] query = {4, 1, 2};
+//        ArrayList<Integer> al = new ArrayList();
+//        for(int n:arr)
+//        	al.add(n);
+//        System.out.println(al);
+//        int tmp;
+//        for(int i=0; i<query.length; i++){
+//            if(i%2==0){
+//                tmp = query[i]+1;
+//                while(tmp < al.size())
+//                    al.remove(al.size()-1);
+//            }
+//            else{
+//                for(int j=0; j<query[i]; j++)
+//                    al.remove(0);
+//            }
+//            System.out.println(al);
+//        }
+//        int[] answer = new int[al.size()];
+//        for(int i=0; i<al.size(); i++)
+//            answer[i] = (int)al.get(i);
+//        System.out.println(Arrays.toString(answer));
+//        return answer;
+		
+		
+//		int[] arr = {293, 1000, 395, 678, 94};
+//		int[] delete_list = {94, 777, 104, 1000, 1, 12};
+//		int length = 0;
+//        boolean[] isRemain = new boolean[arr.length];
+//        System.out.println(Arrays.toString(isRemain));
+//        for(int i=0; i<arr.length; i++){
+//            for(int j=0; j<delete_list.length; j++){
+//            	
+//                isRemain[i] = true;
+//                System.out.println(arr[i] + " " + delete_list[j]);
+//                if(arr[i]==delete_list[j]){
+//                    isRemain[i] = false;
+//                    System.out.println(isRemain[i] + " " + length);
+//                    length++;
+//                    break;
+//                }
+//            }
+//        }
+//        int[] answer = new int[arr.length-length];
+//        int idx = 0;
+//        for(int i=0; i<arr.length; i++)
+//            if(isRemain[i])
+//                answer[idx++] = arr[i];
+//        System.out.println(Arrays.toString(isRemain));
+//        System.out.println(Arrays.toString(answer));
+		
+//		String[] str_list = {"l", "u", "u", "l"};
+//        int lidx = -1, ridx = -1;
+//        for(int i=0; i<str_list.length; i++){
+//            if(str_list[i].equals("l")){
+//                lidx = i;
+//                break;
+//            }
+//        }
+//        if(lidx==-1)
+//            System.out.println("l 없음");
+//        for(int i=0; i<str_list.length; i++){
+//            if(str_list[i].equals("r")){
+//                ridx = i;
+//                break;
+//            }
+//        }
+//        if(ridx==-1)
+//            System.out.println("r 없음");
+//        int start=0, end=lidx;
+//        if(lidx>ridx){
+//            start = ridx+1;
+//            end = str_list.length;
+//        }
+//        String[] answer = new String[end-start];
+//        int idx = 0;
+//        for(int i=start; i<end; i++)
+//            answer[idx++] = str_list[i];
+//        
+//        System.out.println(Arrays.toString(answer));
+		String str = "abcxxdxx";
+		str = str.replace("b", "x");
+		str = str.replace("a", "x");
+//		str.tr
+		System.out.println(Arrays.toString(str.split("x")));
+//		int[] arr = {3, 2, 4, 1, 3};
+//		boolean[] flag = {true, false, true, false, false};
+//		
+//		ArrayList<Integer> al = new ArrayList<>();
+//	        for(int i=0; i<arr.length; i++){
+//	            if(flag[i]){
+//	                for(int j=0; j<arr[i]*2; j++)
+//	                    al.add(arr[i]);
+//	            }
+//	            else{
+//	                for(int j=0; j<arr[i]; j++)
+//	                    al.remove(al.size()-1);
+//	            }
+//	            System.out.println(al);
+//	        }
+//	        int[] answer = new int[al.size()];
+//	        for(int i=0; i<arr.length; i++)
+//	            answer[i] = al.get(i);
+
+//		System.out.println(Integer.parseLong("18446744073709551615"));
+		
+		System.out.println("test : " + Integer.parseInt(str));
+	}
+}

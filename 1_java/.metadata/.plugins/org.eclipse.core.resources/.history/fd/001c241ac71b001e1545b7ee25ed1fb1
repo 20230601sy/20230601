@@ -1,0 +1,30 @@
+package N03_채팅서버;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+public class ReceiveThread extends Thread {
+	
+	Socket socket;
+
+	public ReceiveThread(Socket socket) {
+		this.socket = socket;
+	}
+
+	@Override
+	public void run() {
+		try {
+			DataInputStream dis = new DataInputStream(socket.getInputStream());
+			String reMsg;
+			
+			while(true) {
+				reMsg = dis.readUTF(); // 한글 안 깨지게 해주는 거!
+				System.out.println("상대 : " + reMsg);
+				
+			}
+		} catch (Exception e) {
+			System.out.println("상대가 연결 종료했거나..."); // 원래는 SocketException이 따로 있다심
+		}
+	}
+}

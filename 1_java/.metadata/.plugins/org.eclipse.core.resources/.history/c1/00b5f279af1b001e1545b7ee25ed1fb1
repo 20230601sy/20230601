@@ -1,0 +1,31 @@
+package N01_입출력스트림;
+
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+public class S06_Sample06 {
+
+	public static void main(String[] args) throws Exception{
+		FileInputStream fis = new FileInputStream("x.txt");
+		FileReader fr = new FileReader("x.txt");
+		
+		int data;
+		System.out.println("바이트입출력스트림 사용~~~");
+		while((data = fis.read())!=-1)
+			System.out.print((char)data); // ìëíì¸ì! 한글 깨짐~~, 인코딩 방식 바꾸면 되긴 한다심 ㄷㄷ
+		fis.close();
+		System.out.println();
+		System.out.println();
+		
+		System.out.println("문자입출력스트림 사용~~");
+		FileWriter fw = new FileWriter("N01_입출력스트림_S06_Sample06.txt");
+		while((data = fr.read())!=-1) {
+			System.out.print((char)data); // 안녕하세요! 한글 안 깨짐~
+			fw.write(data);// 입력 방식이 같으면 출력 방식도 똑같겄쥬!
+		}
+		fw.close();
+		fr.close();
+	}
+
+}

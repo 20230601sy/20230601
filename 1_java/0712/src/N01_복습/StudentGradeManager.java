@@ -1,0 +1,95 @@
+/*
+ * 문제: 학생 성적 관리 프로그램
+ * 학생들의 이름과 성적 정보를 관리하는 프로그램을 작성하세요. 프로그램은 다음의 클래스와 컬렉션을 이용하여 작성되어야 합니다:
+ * 프로그램은 다음과 같은 기능을 제공해야 합니다:
+ * 1. 학생 성적 정보 입력: 사용자로부터 학생 이름과 성적을 입력받아 저장합니다.
+ * 2. 학생 성적 정보 검색: 사용자로부터 학생 이름을 입력받아 해당 학생의 성적을 출력합니다.
+ * 3. 전체 학생 성적 출력: 저장된 모든 학생의 이름과 성적을 출력합니다.
+ * 4. 프로그램 종료
+ */
+package N01_복습;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class StudentGradeManager {
+
+	static Scanner sc = new Scanner(System.in);
+
+	public static void main(String[] args) {
+		HashMap<String, Integer> gradeMap = new HashMap<>();
+
+		boolean exit = false;
+		while (!exit) {
+			System.out.println("1. 학생 성적 정보 입력");
+			System.out.println("2. 학생 성적 정보 검색");
+			System.out.println("3. 전체 학생 성적 출력");
+			System.out.println("4. 프로그램 종료");
+			System.out.print("원하는 기능을 선택하세요: ");
+			int choice = sc.nextInt();
+
+			switch (choice) {
+				case 1:
+					inputStudentGrade(gradeMap);
+					break;
+				case 2:
+					searchStudentGrade(gradeMap);
+					break;
+				case 3:
+					printAllStudentGrades(gradeMap);
+					break;
+				case 4:
+					exit = true;
+					System.out.println("프로그램을 종료합니다.");
+					break;
+				default:
+					System.out.println("잘못된 선택입니다. 다시 선택해주세요.");
+					break;
+			}
+
+			System.out.println();
+		}
+	}
+
+	// 학생 성적 정보 입력 메소드
+	public static void inputStudentGrade(HashMap<String, Integer> gradeMap) {
+		// 여기에 코드를 작성하세요.
+		try {
+			System.out.print("학생 이름을 입력하세요: ");
+			String studentName = sc.next();
+			if(gradeMap.containsKey(studentName)) {
+				System.out.print("▶ " + studentName + " 학생의 성적이 " + gradeMap.get(studentName) + "점으로 등록되어 있습니다. 새로 등록하시겠습니까? (y/n): ");
+				if(sc.next().charAt(0) == 'n')
+					return;
+			}
+			System.out.print(studentName + " 학생 성적을 입력하세요: ");
+	 		int studentGrade = sc.nextInt();
+			gradeMap.put(studentName, studentGrade);
+		} catch (InputMismatchException e) {
+			System.out.println("▶ 잘못 입력하셨습니다. 다시 선택 후 입력해주세요.");
+		}
+   }
+
+	// 학생 성적 정보 검색 메소드
+	public static void searchStudentGrade(HashMap<String, Integer> gradeMap) {
+		// 여기에 코드를 작성하세요.
+		System.out.print("조회할 학생 이름을 입력하세요: ");
+		String studentName = sc.next();
+		if(gradeMap.containsKey(studentName))
+			System.out.println("▶ " + studentName + " 학생 성적 : " + gradeMap.get(studentName) + "점입니다.");
+		else
+			System.out.println("▶ 입력한 학생의 이름과 점수가 등록되지 않았습니다.");
+	}
+
+	// 전체 학생 성적 출력 메소드
+	public static void printAllStudentGrades(HashMap<String, Integer> gradeMap) {
+		if(!gradeMap.isEmpty())
+//			for(String studentName : gradeMap.keySet())
+//				System.out.println("▶ " + studentName + " 학생 점수 : " + gradeMap.get(studentName) + "점입니다.");
+			gradeMap.forEach((k, v) -> System.out.println("▶ " + k + " 학생 점수 : " + v + "점입니다."));
+		else
+			System.out.println("▶ 출력할 학생이 없습니다.");
+	}
+}

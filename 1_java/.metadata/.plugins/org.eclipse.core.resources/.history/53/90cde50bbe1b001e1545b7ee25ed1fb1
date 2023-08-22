@@ -1,0 +1,49 @@
+/*
+ * 직렬화 662p
+ * 객체를 입출력하려면??? 객체 안에는 수많은 정보들이 더 많이 있잖여
+ * 그럴 때 직렬화와 역직렬화의 과정을 필요로 함
+ * 예를 들어
+ * class Student{
+ *   String name;
+ *   int age;
+ * }
+ * 객체는 약간 입체적이라 생각하면 된다심
+ * name이나 age를 한줄로 일자로 쫙 풀어서 내보내줘야 하니까 그런 걸 직렬화라고함
+ * 마찬가지로 어디서 예를 들어 메모장에 있는 데이터를 받아오는데, 내용이 이것저것 있는데,
+ * 객체로 변환하는 과정이 필요하잖음 그거를 역직렬화라고 함 
+ */
+
+package N01_입출력스트림;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+class Person implements Serializable { // 직렬화 명시하는 건 Serializable 인터페이스 구현 명시
+	private static final long serialVersionUID = 7716060245867420178L;
+	// 안 넣어도 자바에서 알아서 넣어주긴 하지만... 아무튼 직렬화, 역직렬화 할 필요가 있다면 식별가능한 번호가 있어야 한다고 하심  
+	
+	String name;
+	int age;
+//	static String str; // static 변수는 직렬화 제외
+//	transient int t; // 일반변수도 직렬화 제외시키고 싶으면 transient 붙이면 됨!
+	
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	
+}
+
+public class S10_Sample10 {
+
+	public static void main(String[] args) throws Exception{
+		
+		Person p = new Person("나사람", 30);
+		FileOutputStream fos = new FileOutputStream("person.ser"); // 보통 객체명.ser로 명명한다심...ser은 시리얼 약자
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(p); //
+		oos.close();
+		fos.close();
+	}
+}

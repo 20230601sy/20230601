@@ -1,0 +1,10 @@
+package N02_소켓프로그래밍;
+
+public class TimeClient {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

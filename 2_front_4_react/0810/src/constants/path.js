@@ -1,0 +1,1 @@
+export const IMG_PATH = 'https://20230601sy.github.io/0810/src/assets/';

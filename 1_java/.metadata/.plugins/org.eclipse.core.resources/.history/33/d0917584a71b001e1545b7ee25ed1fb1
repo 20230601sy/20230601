@@ -1,0 +1,33 @@
+package N01_입출력스트림;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+public class S03_Sample03 {
+
+	public static void main(String[] args) throws Exception {
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		int data;
+		long start;
+		long end;
+		
+		// 보조스트림 사용 안함
+		fis = new FileInputStream("src/N01_입출력스트림/sky.jpg");
+		fos = new FileOutputStream("N01_입출력스트림_S03_Sample03_Copy_sky1.jpg");
+		start = System.currentTimeMillis();
+		while((data=fis.read()) != -1) {
+			fos.write(data);
+		}
+		fos.flush();
+		end = System.currentTimeMillis();
+		fos.close();
+		fis.close();
+		System.out.println("보조스트림 안쓴 작업 소요 시간 : " + (end-start));
+	}
+
+}

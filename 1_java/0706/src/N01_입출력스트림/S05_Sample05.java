@@ -1,0 +1,25 @@
+/*
+ * 시퀀스스크림 : 여러개의 스트림을 하나로 합쳐주는 스트림이다!
+ * 여러개의 파일을 처리하고 싶을 때라든지~~~
+ */
+package N01_입출력스트림;
+
+import java.io.FileInputStream;
+import java.io.SequenceInputStream;
+
+public class S05_Sample05 {
+
+	public static void main(String[] args) throws Exception{
+		FileInputStream fis1 = new FileInputStream("S05_Sample05_input1.txt");
+		FileInputStream fis2 = new FileInputStream("S05_Sample05_input2.txt");
+		
+		SequenceInputStream sis = new SequenceInputStream(fis1, fis2);
+		
+		int data;
+		while((data=sis.read())!=-1)
+			System.out.print((char)data);
+		sis.close();
+		fis1.close();
+		fis2.close();
+	}
+}

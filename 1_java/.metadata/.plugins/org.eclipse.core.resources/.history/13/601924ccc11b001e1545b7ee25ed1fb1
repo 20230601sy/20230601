@@ -1,0 +1,17 @@
+package N02_소켓프로그래밍;
+
+import java.net.Socket;
+
+public class TimeClient {
+
+	public static void main(String[] args) {
+		try {
+			Socket socket = new Socket("localhost", 9000);
+			
+		} catch(Exception e) {
+			
+		}
+
+	}
+
+}

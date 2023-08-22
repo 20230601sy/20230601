@@ -1,0 +1,46 @@
+package N04_복습;
+
+public class Test01 {
+
+	public static void main(String[] args) {
+		
+		System.out.println("문제 1");
+		// 1 + (1+2) + (1+2+3) + (1+ ... +10)의 결과를 계산하시오
+		int sum=0;
+		for(int i=1; i<=10; i++)
+			for(int j=1; j<=i; j++)
+				sum += j;
+		System.out.println("이중for문 결과 : " + sum);
+		
+		sum = 0;
+		int n = 10;
+		for (int i = 1; i <= 10; i++)
+			sum += i*(n+1-i);
+		System.out.println("이중for문 안 하고 결과 : " + sum);
+		
+		// 1 + (1+2) + (1+2+3) + (1+ ... +10)의 결과를 계산하시오
+		sum = 0;
+		int temp = 0;
+		for (int i = 1; i <= 10; i++) {
+			temp += i;
+			sum += temp;
+		}
+		System.out.println("이중for문 안 하고 결과2 : " + sum);
+		
+		// (sig n + sig n^2) / 2 니까... (n(n+1)/2 + n(n+1)(2n+1)/6)/2 이었던가..ㅋㅋ
+		System.out.println("반복문 안 하고 결과 : " + (n*(n+1)/2 + n*(n+1)*(2*n+1)/6)/2);
+		
+		System.out.println("문제 2");
+		// 1+(-2)+3+(-4)+...몇까지 더해야 총합이 100이상이 되는지 구하시오.
+		int sum2 = 0;
+		int k = 1;
+		int num = 0;
+		while(sum2<100) {
+			sum += k*++num;
+			k = -k;
+		}
+		System.out.println(num);
+
+	}
+
+}

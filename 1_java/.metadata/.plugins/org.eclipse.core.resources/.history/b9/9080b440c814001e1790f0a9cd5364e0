@@ -1,0 +1,47 @@
+
+
+public class Sample01 {
+	public static void main(String[] args) {
+		
+		int a = 10;
+		int f = 3;
+		double b = 8.8;
+		char c = 'a';
+		String d = "hello";
+		boolean e = true;
+//		System.out.println("a: " + a + "!\n"+ b + c + d + e);
+		System.out.printf("a: %d, b: %f, c: %c, d: %s, e: %b\n", a, b, c, d, e);
+		final int MAX_DAM=100;
+		
+		int sum = a+f+MAX_DAM;
+		
+//		System.out.println("a+b: " + (a+b));
+		System.out.println("a+b: " + sum);
+		System.out.println("a-b: " + (a-b));
+		System.out.println("a*b: " + (a*b));
+		System.out.println("a/b: " + (a/b));
+		System.out.println("a%b: " + (a%b));
+		
+//		MAX_DAM = 5;
+		Math.abs(-20);
+		
+		String str = "aBcDeFg";
+		System.out.println(str.charAt(0));
+		System.out.println(str.length());
+		int i = 1;
+		System.out.print((char)((str.charAt(i)<='Z') ? str.charAt(i)+'a'-'A' : str.charAt(i)+'A'-'a'));
+		str.toLowerCase();
+		str.substring(i, i);
+		String ab = "50";
+		int abc = Integer.parseInt(ab);
+		System.out.println();
+		System.out.println("구분선");
+		System.out.println("abc".substring("abc".length()-1, "abc".length()));
+//		str.replace(str, ab);
+//		str.contains(str);
+//		str.split(ab);
+		int a1 = 50;
+		System.out.println((a1+"").contains("5"));
+//		str.r
+	}
+}
