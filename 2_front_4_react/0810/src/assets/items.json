@@ -3,7 +3,11 @@
   { "id" : 9557062361811, "title" : "HEYROO감자칩득템오리지널" , "img" : "9557062361811.jpg" , "price" : 1600, "category" : "snack", "new" : "New", "event" : "", "freq" : "", "best" : "" },
   { "id" : 9555614201424, "title" : "위글위글)포도주스P320ml" , "img" : "9555614201424.jpg" , "price" : 1500, "category" : "beverage", "new" : "", "event" : "", "freq" : "", "best" : "" },
   { "id" : 9555614201417, "title" : "위글위글)리치주스P320ml" , "img" : "9555614201417.jpg" , "price" : 1500, "category" : "beverage", "new" : "", "event" : "", "freq" : "", "best" : "" },
+<<<<<<< HEAD:2_front_4_react/0810/src/assets/items.json
   { "id" : 9414932382959, "title" : "카피티)바닐라빈1L" , "img" : "9414932382959.jpg" , "price" : 13900, "category" : "icecream", "new" : "", "event" : "", "freq" : "1", "best" : "" },
+=======
+  { "id" : 9414932382959, "title" : "카피티)바닐라빈1L" , "img" : "9414932382959.jpg" , "price" : 13900, "category" : "icecream", "new" : "", "event" : "", "freq" : "", "best" : "" },
+>>>>>>> 0dd23455cebaf1c06036a3d2010e991ffb5e25d1:4_react/0810/src/assets/items.json
   { "id" : 9414932382942, "title" : "카피티)트리플초코1L" , "img" : "9414932382942.jpg" , "price" : 13900, "category" : "icecream", "new" : "", "event" : "", "freq" : "", "best" : "" },
   { "id" : 9002490232887, "title" : "동서)레드불캔355ml" , "img" : "9002490232887.jpg" , "price" : 3200, "category" : "beverage", "new" : "New", "event" : "", "freq" : "", "best" : "" },
   { "id" : 8886467124785, "title" : "프링글스)BBQ피자맛102g" , "img" : "8886467124785.jpg" , "price" : 4000, "category" : "snack", "new" : "New", "event" : "2+1", "freq" : "", "best" : "" },
