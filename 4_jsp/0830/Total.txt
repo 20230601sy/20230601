@@ -25175,6 +25175,8 @@ github 가입 https://github.com/
 git push -u https://github.com/20230601sy/test.git main
 git push -u https://github.com/20230601sy/0810.git main
 git push -u https://github.com/20230601sy/20230601.git main
+
+cd /d/Y/20230601ezen/ && git add . && git commit -m '20230830' && git push https://github.com/20230601sy/20230601.git main
 -u 옵션이 뒤에 주소 저장좀 해주세요하는 거임..
 뒤에 main은 branch명
 하면 로그인하라고 창이 뜸 Sign in browser 파란색 선택 후 Authorize git-ecosystem 초록색 선택
@@ -27364,61 +27366,7 @@ package p1_test;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * Servlet implementation class TestServlet
- */
-@WebServlet("/TestServlet")
-// "/test" 실제로 class명을 노출하지는 않으니까 변경하고 실행시키면 브라우저 주소창에 http://localhost:8181/0830/TestServlet 이게 변경됨
-public class TestServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public TestServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		// TODO Auto-generated method stub
-//		response.getWriter().append("Served at: ").append(request.getContextPath());
-		int num1 = 20;
-		int num2 = 10;
-		int add = num1 + num2;
-		PrintWriter out = response.getWriter();
-//		옛날에는 여기 html 작업을 다 했다심, 이런 거 안 하려고 jsp 쓰는 거라심
-		out.println("<html><head><title>Test</title></head><body><h1>hello servlet"+add+"</h1></body></html>");
-//		한번에 다 써도 되고 솔직히 이런 거 다 안 써도 보이기는 한다심
-		
-//		HttpServletRequest request 로그인을 예로 들면 아이디랑 비번이 담기는 객체, 각종 요청에 관한 정보가 담기는 객체
-//		HttpServletResponse response 응답 객체
-//		PrintWriter 외에도 입출력스트림 PrintStream 같은 거도 있었는데 PrintWriter를 쓴 이유는 언어 제약이 적어서인가봄
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
-}
-package p1_test;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27450,14 +27398,21 @@ public class TestServlet extends HttpServlet {
 		int num1 = 20;
 		int num2 = 10;
 		int add = num1 + num2;
-		PrintWriter out = response.getWriter();
+//		PrintWriter out = response.getWriter();
+//		out.println("<html><head><title>Test</title></head><body><h1>hello servlet"+add+"</h1></body></html>");
 //		옛날에는 여기 html 작업을 다 했다심, 이런 거 안 하려고 jsp 쓰는 거라심
-		out.println("<html><head><title>Test</title></head><body><h1>hello servlet"+add+"</h1></body></html>");
 //		한번에 다 써도 되고 솔직히 이런 거 다 안 써도 보이기는 한다심
 		
 //		HttpServletRequest request 로그인을 예로 들면 아이디랑 비번이 담기는 객체, 각종 요청에 관한 정보가 담기는 객체
 //		HttpServletResponse response 응답 객체
 //		PrintWriter 외에도 입출력스트림 PrintStream 같은 거도 있었는데 PrintWriter를 쓴 이유는 언어 제약이 적어서인가봄
+		
+		request.setAttribute("num1", num1); // key와 value로 속성 담는 거
+		request.setAttribute("num2", num2);
+		request.setAttribute("add", add);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("helloworld.jsp"); // 담아놓은 걸 보내줄 jsp 파일명
+		rd.forward(request, response);
 	}
 
 	/**
@@ -27480,6 +27435,7 @@ jsp는 결국 제스퍼란 애가 있어가지고 java코드로 다 변환함...
 .jsp는 프론트 쪽만 쓰고 서블릿에는 자바 코드 쓰나봄
 일부러 이런 스파게티 코드(이렇게 섞인) 짜볼 거라고는 하심
 
+helloworld.jsp ver1
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <!DOCTYPE html>
@@ -27501,6 +27457,7 @@ jsp는 결국 제스퍼란 애가 있어가지고 java코드로 다 변환함...
 </body>
 </html>
 // ====================================================================================================
+helloworld.jsp ver2
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <!DOCTYPE html>
@@ -27531,3 +27488,1240 @@ MVC 모델, 뷰, 컨트롤러
 패키지별로 서블릿을 분리해서 관리한다심
 New / 서블릿 / next 눌러보면 URL mapping 아까 어노테이션으로 수정했던 거 / 또 next 눌러보면 추가적인 설정해줄 수 있음 doGet, doPost 같은 거
 서블릿에서 한글은 깨져서 나옴 추가 세팅 필요한가봄 html 인코딩 넣어주면 되지 않낭? 모르겠당
+package p2_unit01;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class HelloServlet
+ */
+@WebServlet("/hello")
+public class HelloServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L; // 직렬화 역직렬화 스트림할 때 했다심 ㅋㅋㅋ
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public HelloServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+//		톰캣의 인코딩 방식이 1byte씩인데, 한글은 2byte기 때문에 한글 깨짐...인코딩 방식 변경 필요.
+//		response.setCharacterEncoding("utf-8"); // get요청이냐 post 요청이냐에 따라서 달라지기도 하고 이런 식으로 넣어야 할 수도 있다심
+//		나중엔 트리거처럼 필터라는 거를 만들어서 매번 서블릿을 만들 때마다 utf-8 바꿔달라고 하지 않고 한번에 걍 자동으로 작업하게끔 해두는 것도 할 거라심
+//		그때까지는 매번 때려 넣어야 함... 걍 영어로 쓰자 케케케
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<body>");
+		out.println("	<h1>");
+		out.println("		Hello Servelet text/html;charset=utf-8으로 넣으면 한글 안 깨짐~");
+		out.println("	<h1>");
+		out.println("<body>");
+		out.println("<html>");
+		out.close();
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+URL에 프로젝트명이 노출되는 게 뭔가 구린거 같아! 그거는
+Servers-Tomcat 폴더-server.xml 클릭한 다음 Source 탭에서 하단에
+      <Context docBase="0830" path="/0830" reloadable="true" source="org.eclipse.jst.jee.server:0830"/>
+path="/0830" 프로젝트 명을 빼려면 "/"로 수정하면 되는데,
+프로젝트를 여러개 만들어도 path가 겹치면 안됨. 겹치게 하려면 동일한 톰캣서버를 계속 추가해줘야 한다심
+
+서블릿의 라이프사이클
+첫요청인 경우 메모리에 로딩해서 생성된 객체는 메모리에 남아 있음 두번째이상의 요청의 경우 불필요한 작업이 줄어들어 응답속도가 빨라진다심
+호출 → 처음 요청인지 확인 ? → 처음이면 인스턴스 생성 / 처음이 아니면 건너뜀 → 없어지는 거는 섭종했을 때
+
+직접 해본다심
+init, destroy 선택하고 서블릿 New LifeCycle.java
+package p3_unit02;
+
+import java.io.IOException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class LifeCycle
+ */
+@WebServlet("/LifeCycle")
+public class LifeCycle extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+	int initCount = 0;
+	int dogetCount = 0;
+	int destroyCount = 0;
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public LifeCycle() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see Servlet#init(ServletConfig)
+	 */
+	public void init(ServletConfig config) throws ServletException {
+		initCount++;
+		System.out.println("처음 한 번만 실행 : " + initCount);
+	}
+
+	/**
+	 * @see Servlet#destroy()
+	 */
+	public void destroy() {
+		destroyCount++;
+		System.out.println("톰캣 종료시 한 번만 실행 : " + destroyCount);
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		dogetCount++;
+		System.out.println("get요청마다 실행 : " + dogetCount);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
+Servers에서 서버 껐다가 다시 켜고 주소창에 http://localhost:8181/0830/LifeCycle 입력해서 요청 날림
+처음 한 번만 실행 : 1
+get요청마다 실행 : 1
+get요청마다 실행 : 2
+get요청마다 실행 : 3
+get요청마다 실행 : 4
+서버를 끄면...끄는 걸 우클릭하거나 해야 destroy 실행되넹. 아무튼 네모만 되어 있는 거 누르면 안되는 듯
+// ====================================================================================================
+<form method="get" action="MethodServlet">
+<form method="post" action="MethodServlet">
+action이 같은 건 하나의 서블릿에서 하면 되니까...만들기 나름
+a태그는 따지고 보면 get방식.
+요새 실제 서비스는 restAPI...doPut, doDelete 같은 거도 좀더 쓴다심 이런 거 스프링할 때 볼거라심
+
+method.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="get" action="MethodServlet">
+		<input type="submit" value="get요청">
+	</form>
+	<a href="/0830/MethodServlet">a 태그 요청</a>
+	<form method="post" action="MethodServlet">
+		<input type="submit" value="post요청">
+	</form>
+</body>
+</html>
+
+package p4_unit03;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class MethodServlet
+ */
+@WebServlet("/MethodServlet")
+public class MethodServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public MethodServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.print("<h1>get 방식 처리<h1>");
+		out.close();
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.print("<h1>post 방식 처리<h1>");
+		out.close();
+	}
+
+}
+// ====================================================================================================
+쿼리스트링 91p
+리소스?이름=값&이름=값&...&이름=값
+<input type="text" name="id">
+input 태그를 각각 식별하려면 이제부터는 name 설정을 필수로 해야 함~~
+나이를 입력한 거라든지 요청은 다 문자로 주고받음...형변환해야함...
+// ====================================================================================================
+03_param.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="get" action="ParamServlet">
+		아이디 : <input type="text" name="id"><br>
+		나이 : <input type="text" name="age"><br>
+		<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+package p4_unit03;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class ParamServlet
+ */
+@WebServlet("/ParamServlet")
+public class ParamServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public ParamServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		String id = request.getParameter("id");
+//		String age = request.getParameter("age"); // parameter로 받아온 거는 일단 문자라서 명시적 형변환해야 함, 그리고 입력을 안 했을 때의 처리...서버나 클라이언트 모두 할 수 있는데,,, 일반적으로는 입력안했을 때는 전송 자체를 못하게 함. 자바스크립트로 하겠죠라심ㅋㅋㅋ
+		int age = Integer.parseInt(request.getParameter("age"));
+		PrintWriter out = response.getWriter();
+		out.print("<html><body>"
+					+ "<h1>아이디 : " + id + "</h1>"
+					+ "<h1>나이 : " + age + "</h1>"
+					+ "<h1>" + (age>18 ? "성인" : "청소년") + "</h1>"
+				+ "</body></html>");
+		out.close();
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		request.setCharacterEncoding("UTF-8");
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+유효성 검사는 클라이언트쪽에서 하라심
+서버는 쓰는 순간 계속 돈이라심...이건 맞지... 하아아.
+04_param.js
+function check() {
+	if(document.frm.id.value == '') {
+		alert("아이디를 입력하세요");
+		document.frm.id.focus(); // id 입력하게 작업
+		return false; 
+	} else if(document.frm.age.value == '') {
+		alert("나이를 입력하세요");
+		document.frm.age.focus();
+		return false; 
+	} else {
+		return true;
+	}
+}
+// ====================================================================================================
+03_param.jsp ver2
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src='/04_param.js'></script>
+</head>
+<body>
+	<form method="get" action="ParamServlet" name="frm">
+		아이디 : <input type="text" name="id"><br>
+		나이 : <input type="text" name="age"><br>
+		<input type="submit" value="전송" onclick="return check()">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+한글 깨지는 거
+response.setContentType("text/html;charset=utf-8"); 의 경우 응답쪽에 거를 수정하는 거. 우리가 톰캣으로 보내줄 html 코드에서의 한글이 깨지지말라고 하는 거임
+받아오는 한글이 깨지는 거는 아까 그 톰캣 폴더 server.xml에서 수정 (URIEncoding="UTF-8" 추가) 필요함
+    <Connector connectionTimeout="20000" maxParameterCount="1000" port="8181" protocol="HTTP/1.1" redirectPort="8443"/>
+    <Connector URIEncoding="UTF-8" connectionTimeout="20000" maxParameterCount="1000" port="8181" protocol="HTTP/1.1" redirectPort="8443"/>
+form type post에서는 쿼리스트링으로 받아오는 것이 아니라서 URIEncoding으로 적용이 안됨
+request 받아오는 것부터 엔코딩 방식을 바꿔줘야 함. request.setCharacterEncoding("UTF-8");
+// ====================================================================================================
+05_loginform.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="get" action="LoginServlet">
+		아이디 : <input type="text" name="id">
+		비밀번호 : <input type="password" name="pw">
+		<input type="submit" value="get	로그인">
+	</form>
+	<hr>
+	<form method="post" action="LoginServlet">
+		아이디 : <input type="text" name="id">
+		비밀번호 : <input type="password" name="pw">
+		<input type="submit" value="post	로그인">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+package p5_loginform;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/LoginServlet")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+     
+    public LoginServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		PrintWriter out = response.getWriter();
+		out.print("<html><body>"
+					+ "<h1>아이디 : " + id + "</h1>"
+					+ "<h1>비밀번호 : " + pw + "</h1>"
+				+ "</body></html>");
+		out.close();
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+06_radio.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="get" action="RadioServlet">
+		성별 : 
+    	<input id="m" type="radio" name="gender" value="남자">
+    	<label for="m">남자</label>
+    	<input id="f" type="radio" name="gender" value="여자">
+    	<label for="f">여자</label>
+    	<br><br>
+    	메일 정보 수신 여부 : 
+    	<input id="y" type="radio" name="chk_mail" value="yes">
+    	<label for="y">수신</label>
+    	<input id="n" type="radio" name="chk_mail" value="no">
+    	<label for="n">거부</label>
+    	<br><br>
+    	<label for="content">간단한 가입 인사를 적어주세요^o^<br></label>
+      	<textarea name="content" id="content" rows=3 cols=40></textarea>
+    	<br>
+    	<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+package p6_radio;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/RadioServlet")
+public class RadioServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public RadioServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		String gender = request.getParameter("gender");
+		String chk_mail = request.getParameter("chk_mail");
+		String content = request.getParameter("content");
+		
+		PrintWriter out = response.getWriter();
+		out.print("<html><body>");
+		out.print("<p>당신이 입력한 정보입니다.</p><hr>");
+		out.print("<p>성별 : <b>" + gender + "</b></p>");
+		out.print("<p>메일 정보 수신 여부 : <b>" + chk_mail + "</b></p>");
+		out.print("<p>가입 인사 : <br><pre><b>" + content + "</b></pre></p>");
+		out.print("<a href='javascript:history.go(-1)'>다시</a>");
+		out.print("</body></html>");
+		out.close();
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+07_checkbox.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>악세사리</h1>
+	<p>관심항목을 선택하세요</p>
+	<form method="get" action="CheckboxServlet">
+		<input type="checkbox" name="item" id="shoe" value="신발">
+		<label for="shoe">신발</label>
+		<input type="checkbox" name="item" id="bag" value="가방">
+		<label for="bag">가방</label>
+		<input type="checkbox" name="item" id="belt" value="벨트">
+		<label for="belt">벨트</label> <br>
+		<input type="checkbox" name="item" id="cap" value="모자">
+		<label for="cap">모자</label>
+		<input type="checkbox" name="item" id="watch" value="시계">
+		<label for="watch">시계</label>
+		<input type="checkbox" name="item" id="jewelry" value="쥬얼리">
+		<label for="jewelry">쥬얼리</label> <br>
+		
+		<select name="job">
+			<option value="학생">학생</option>
+			<option value="군인">군인</option>
+			<option value="공무원">공무원</option>
+		</select>
+		
+		<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+package p7_checkbox;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/CheckboxServlet")
+public class CheckboxServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public CheckboxServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		String[] items = request.getParameterValues("item"); // checkbox는 여러 개가 같은 이름으로 담겨있음 /CheckboxServlet?item=가방&item=시계
+		String job = request.getParameter("job");
+		
+		PrintWriter out = response.getWriter();
+		if(items == null) {
+			out.print("<html><body><p>선택한 항목이 없습니다.</p></body></html>");
+			return;
+		}
+		out.print("<html><body><p>당신이 선택한 항목입니다.</p><hr><p>");
+		for(String item : items)
+			out.print(item + " ");
+		out.print("</p><hr>"
+				+ "<p>" + job + "</p>"
+				+ "</body></html>");
+		out.close();
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+128p 도전 예제
+08_join.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+</head>
+<body>
+	<form action="JoinServlet">
+		<table>
+			<tr>
+				<td>이름</td>
+				<td><input type="text" name="name"></td>
+			</tr>
+			<tr>
+				<td>주민등록번호</td>
+				<td><input type="text" name="societyId1"> - <input type="password" name="societyId2"></td>
+			</tr>
+			<tr>
+				<td>아이디</td>
+				<td><input type="text" name="id"></td>
+			</tr>
+			<tr>
+				<td>비밀번호</td>
+				<td><input type="password" name="pw"></td>
+			</tr>
+			<tr>
+				<td>비밀번호 확인</td>
+				<td><input type="password" name="chk_pw"></td>
+			</tr>
+			<tr>
+				<td>이메일</td>
+				<td><input type="text" name="mailId"> @ <input type="text" class="mail_input" name="mailDomain1">
+					<select class="mail_select" onchange="aa()" name="mailDomain2">
+						<option value="nate.com">nate.com</option>
+						<option value="gmail.com">gmail.com</option>
+						<option value="kakao.com">kakao.com</option>
+						<option value="naver.com">naver.com</option>
+					</select></td>
+			</tr>
+			<tr>
+				<td>우편번호</td>
+				<td><input type="text" name="zip"></td>
+			</tr>
+			<tr>
+				<td>주소</td>
+				<td><input type="text" name="address1"> <input type="text" name="address2"></td>
+			</tr>
+						<tr>
+				<td>핸드폰 번호</td>
+				<td><input type="text" name="phone"></td>
+			</tr>
+			<tr>
+				<td>직업</td>
+				<td><select name="job" size="4">
+						<option value="학생">학생</option>
+						<option value="컴퓨터/인터넷">컴퓨터/인터넷</option>
+						<option value="언론">언론</option>
+						<option value="공무원">공무원</option>
+					</select></td>
+			</tr>
+			<tr>
+				<td>메일/SMS 정보 수신</td>
+				<td>	<input type="radio" name="chk_mail" value="yes"> 수신
+						<input type="radio" name="chk_mail" value="no"> 수신거부 </td>
+			</tr>
+			<tr>
+				<td>관심분야</td>
+				<td><input type="checkbox" name="interests" value="생두"> 생두
+					<input type="checkbox" name="interests" value="원두"> 원두
+					<input type="checkbox" name="interests" value="로스팅"> 로스팅
+					<input type="checkbox" name="interests" value="핸드드립"> 핸드드립
+					<input type="checkbox" name="interests" value="에스프레소"> 에스프레소 
+					<input type="checkbox" name="interests" value="창업"> 창업 </td>
+			</tr>
+			<tr>
+				<td>
+					<input type="submit" value="회원가입">
+					<input type="reset" value="취소">
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	<script>
+		const input = document.querySelector('.mail_input');
+		const select = document.querySelector('.mail_select');
+		function aa() {
+			input.value = select.value;
+		}
+	</script>
+</body>
+</html>
+// ====================================================================================================
+package p8_join;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/JoinServlet")
+public class JoinServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    public JoinServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		String name = request.getParameter("name");
+		String societyId1 = request.getParameter("societyId1");
+		String societyId2 = request.getParameter("societyId2");
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		String mailId = request.getParameter("mailId");
+		String mailDomain1 = request.getParameter("mailDomain1");
+		String mailDomain2 = request.getParameter("mailDomain2");
+		String mailDomain = mailDomain1!=""? mailDomain1 : mailDomain2; 
+		String zip = request.getParameter("zip");
+		String address1 = request.getParameter("address1");
+		String address2 = request.getParameter("address2");
+		String phone = request.getParameter("phone");
+		String job = request.getParameter("job");
+		String[] interests = request.getParameterValues("interests");
+		
+		PrintWriter out = response.getWriter();
+		out.print("<html><body>");
+		out.print("<p>이름 : <b>" + name + "</b></p>");
+		out.print("<p>주민번호 : <b>" + societyId1 + "-" + societyId2 + "</b></p>");
+		out.print("<p>아이디 : <b>" + id + "</b></p>");
+		out.print("<p>비밀번호 : <b>" + pw + "</b></p>");
+		out.print("<p>이메일 : <b>" + mailId + "@" + mailDomain + "</b></p>");
+		out.print("<p>우편번호 : <b>" + zip + "</b></p>");
+		out.print("<p>주소 : <b>" + address1 + " " + address2 + "</b></p>");
+		out.print("<p>핸드폰번호 : <b>" + phone + "</b></p>");
+		out.print("<p>직업 : <b>" + job + "</b></p>");
+		out.print("<p>관심분야 : <b>");
+		if(interests!=null)
+			for(String i : interests)
+				out.print(i + " ");
+		out.print("</b></p>");
+		out.print("</body></html>");
+		out.close();
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+Day0831
+// ====================================================================================================
+갑작스러운 뒷북 시험 케케케 별점 매기기
+D:\Y\20230601ezen\2_front_3_js\0831\index.html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- css link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>사용자 평가 시스템</h1>
+  <form method="post" action="">
+    <textarea placeholder="리뷰를 작성하세요" name="review" id="review"></textarea>
+    <p>평점: 
+      <span class="star ">★</span>
+      <span class="star ">★</span>
+      <span class="star ">★</span>
+      <span class="star ">★</span>
+      <span class="star ">★</span>
+    </p>
+    <input type="submit" id="submit-button" value="제출">
+  </form>
+  <ul class="review-list">
+    <!-- <li>평점: 4 / 리뷰: ㅇㅇㅇㅇㅇㅇ</li> -->
+  </ul>
+  <!-- js link -->
+  <script src="script.js"></script>
+</body>
+</html>
+// ====================================================================================================
+D:\Y\20230601ezen\2_front_3_js\0831\style.css
+.star {
+  cursor: pointer;
+}
+
+.selected-star {
+  color: yellow;
+}
+// ====================================================================================================
+D:\Y\20230601ezen\2_front_3_js\0831\script.js
+const review = document.getElementById('review');
+const stars = document.querySelectorAll('.star');
+const list = document.querySelector('.review-list');
+const submit = document.getElementById('submit-button');
+let cntStar;
+
+const setStar = () => {
+  stars.forEach(star => star.className = "star ");
+  for(let i=0; i<cntStar; i++)
+    stars[i].className += "selected-star";
+}
+
+stars.forEach((star, i) => star.addEventListener('click', ()=> {
+  cntStar = i + 1;
+  setStar();
+}));
+
+submit.addEventListener('click', (e)=>{
+  e.preventDefault();
+  
+  if(cntStar && review.value) {
+    list.insertAdjacentHTML("beforeend", `<li>평점: ${cntStar} / 리뷰: ${review.value}</li>`);
+    cntStar = 0;
+    setStar();
+    review.value='';
+  }
+});
+// ====================================================================================================
+교재는 JSP 쭉 하고, Servlet 쭉 하고 합치는 거 다룬다심
+일단 JSP...
+Thymeleaf 같은 거 할지는 모르겠지만... 나중에 웹 및 독립환경에서 모두 동작하는 서버사이드 자바 템플릿 엔진 ... HTML + JS
+예전에는 JSP를 많이 썼는데 요즘에는 업데이트가 안되고 있어서 안 쓴다심
+133p에는 Content directory 경로가 WebContent → 우리는 src/main/webapp인 거는 이클립스 버전이 올라가면서 생긴 변화라심
+그 화면에서 Context root를 수정하면 컨텍스트 패스 바뀜... 안 바꿀래... 나는 걍 0831 프로젝트명 그대로 함
+// ====================================================================================================
+01_test.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Hello Jsp</h1>
+	<%
+		int num1 = 20;
+		int num2 = 10;
+		int add = num1 + num2;
+		
+		out.print(num1 + " + " + num2 + " = " + add); // 이것도 되긴 된다심 ㄷㄷㄷ
+		// 일단 jsp는 servlet으로 변환된 다음
+		// 변환시킨 거 실제로 구경해보려면...
+		// D:\Y\20230601ezen\4_jsp\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\work\Catalina\localhost\0831\org\apache\jsp
+		// 톰캣 안에 재스퍼란 애가 만들어준 _01_005ftest_jsp.java vscode로 열어보면 아래쪽에 익숙한 코드가 보임
+		// 컴파일을 해서 _01_005ftest_jsp.class라는 것도 만들음
+		// .java에서 out을 만들어두기 때문에 갖다 쓸 수 있는 거라심...
+		// 서블릿에 직접 작업하는 게 빠르긴 함. 왜냐면 변환 과정이 생략되니까. 근데 속도 차이는 별로 안남. 서블릿 생명주기랑 똑같이 이닛 외에는 날 일이 없음...
+		// 근데 쓰면 복잡하니까 나눠서 쓰는 거임...
+	%>
+</body>
+</html>
+// ====================================================================================================
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<% 
+		int num = Integer.parseInt(request.getParameter("num"));
+		// http://localhost:8181/0831/02_spaghetti.jsp?num=10 같은 걸로 접속해야 함
+		if(num%2 == 0) {
+		// 태그는 스크립트릿 안에 넣을 수는 없으니... 바깥
+	%>
+			<h1>짝수입니다.</h1>
+	<%
+		} else {
+	%>		
+			<h1>홀수입니다.</h1>
+	<%
+		}
+		// 블럭 닫겠다고 스크립트릿을 또 써야 하다니 화가 난다!!! 이런 게 맛없는 스파게티 코드 우웩 
+	%>
+</body>
+</html>
+// ====================================================================================================
+이런 거 때문에 MVC 패턴을 씀
+MVC1이 있고, MVC2가 있다심 MVC2를 쓰긴 쓴다심
+MVC1 패턴 : 코드 블럭을 최소화 시키는 작업
+MVC2 패턴 : 각 파일별로 분리 (계속 얘기했지만,,, 애초에 자바 코드는 서블릿으로 구현하면 변환할 필요가 없다 이말이야) 유지보수나 속도 측면에서 여러모로 MVC1보다 유리
+// ====================================================================================================
+03_mvc1.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		// MVC1 패턴은 컨트롤러 자바 코드를 한 곳에 몰아 넣음
+		int num = Integer.parseInt(request.getParameter("num"));
+		// http://localhost:8181/0831/03_mvc1.jsp?num=10
+		String result;
+		if(num%2 == 0) {
+			result = "짝수";
+		} else {
+			result = "홀수";
+		}
+		// 모델은 result라고 생각하면 된다심
+	%>
+	<h1><%=result%>입니다. 여기가 뷰단</h1>
+</body>
+</html>
+// ====================================================================================================
+04_mvc2.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1><%=request.getAttribute("result")%>입니다.</h1>
+</body>
+</html>
+// ====================================================================================================
+package p4_mvc2;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class Mvc2
+ */
+@WebServlet("/Mvc2")
+public class Mvc2 extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public Mvc2() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		int num = Integer.parseInt(request.getParameter("num"));
+		// http://localhost:8181/0831/Mvc2?num=10
+		String result;
+		if(num%2 == 0) {
+			result = "짝수";
+		} else {
+			result = "홀수";
+		}
+		request.setAttribute("result", result);
+		RequestDispatcher rd = request.getRequestDispatcher("04_mvc2.jsp");
+		rd.forward(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+JSP 기본 태그
+<% %> : 스크립트릿 / 자바코드를 쓰는 공간, 여기에 변수 선언하면 지역변수 느낌
+<%! %> : 선언 / 변수, 메서드를 선언하는 공간 / 여기에 변수 선언하면 전역변수 느낌
+<%= %> : 표현식 / 계산식이나 함수를 호출한 결과를 문자열 형태로 출력함
+<%-- --%> : 주석 / JSP 페이지에 설명을 넣음
+<%@ %> : 지시자 / JSP 페이지의 속성을 지정함 / import 같은 거나 라이브러리 끌어올 때 씀!
+스크립트릿이나 선언 둘다 변수 선언할 수 있지만 들어가는 위치가 달라진다심!
+선언문은 어디 들어가도 사실 상관 없지만 일반적으로는 지시자 바로 밑에... html 시작 전에 넣는다심
+표현식으로 작성한 <% %>는 out.print( 기입한 내용 ); 으로 변환됨
+
+지시자 종류
+page : 본 jsp 파일 속성에 관한 거
+include : 이건 다른 jsp 파일 불러오고 싶을 때
+taglib : 라이브러리
+자바 코드를 쓰기 때문에 import 쓰는데 이거는 page 속성으로 쓰는 거임 eg. <%@page import="java.util.Calendar"%> 자동 완성, import 됨~ 굳이 투닥투닥 쓸필요 없음 ctrl+shift+o 근데 나중에 이런 작업들은 서블릿에서 할 거니껜~~~...
+<%@page session="true"%> 세션 스토리지와 개념이 유사한데 로그인 구현할 때 할 거라심 안 쓰면 기본 true, 유지함. 유지 안 하려면 false 설정 필요.
+<%@page buffer="none"%> 설정안하면 기본값은 8KB, 유튜브 동영상 클릭했을 때 none으로 설정되어 있으면 동영상을 다 다운 받을 때까지 재생 안하고 대기하다가 다 다운 받으면 재생이 되는 형태, 근데 그러면 사람들이 다 나가징...떼잉.
+autoFlush, isThreadSafe, info, errorPage, isErrorPage... errorPage는 실제로 써먹을 거니까 하면서 구경하자심
+// ====================================================================================================
+05_dec.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%!
+	String str = "안녕하세요";
+	int a = 5, b = -5;
+	int global_cnt = 0;
+	public int abs(int n) {
+		return (n<0)? -n : n;
+	}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int local_cnt = 0;
+		global_cnt++;
+		local_cnt++;
+		out.print("<h1>스크립트릿에 작성한 코드 결과</h1>");
+		out.print("global : " + global_cnt + "<br>"); // 변경이 안 됐을 때, 브라우저 새로 고침하면 global_cnt는 계속 증가됨...서버 쪽에 만들어진 변수 개념...클래스 변수 개념이랑 똑같음
+		out.print("local : " + local_cnt + "<br>");
+		
+		out.print(str + "<br>");
+		out.print(a + "의 절대값 : " + abs(a) + "<br>");
+		out.print(b + "의 절대값 : " + abs(b) + "<br>");
+	%>
+	<h1>html영역에 표현식으로 작성한 코드 결과</h1>
+	<h1>global : <%=global_cnt %></h1>
+	<h1>local : <%=local_cnt %></h1>
+	<h1>5 + 10 = <%=5+10%></h1>
+	<h1>abs함수 호출 결과 : <%=abs(-12)%></h1>
+	<h1>함수 호출 결과 : <%="리턴해주는값이 없는 함수를 표현식 안에 호출하면 에러 발생, 이런 거 하지 맙시다"%></h1>
+	<!-- html 주석은 개발자도구에서 볼 수 있엄 -->
+	<%-- 이렇게 쓴 주석은 개발자도구에서 볼 수 없음! --%>
+</body>
+</html>
+// ====================================================================================================
+06_divide.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page errorPage="06_error.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%=2/0 %>
+	<!-- 강제로 에러 발생 시킴 -->
+</body>
+</html>
+// ====================================================================================================
+06_error.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page isErrorPage = "true" %>
+<!-- 이걸 true로 하면 exceptio 객체 사용 가능해짐... -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>에러발생 페이지</h1>
+	<%= exception.getMessage() %>
+</body>
+</html>
+// ====================================================================================================
+include는 넣어줄 곳 위치에 들어가는 것이기 때문에 기입 위치 주의
+보통은 header에 설정 등 다 집어 넣고 body, html 닫는 태그를 넣지 않음
+main은 다 필요 없고 메인 작업 후 헤더 푸터 위아래로 include만
+footer에서는 작업 후에 body, html 닫는 태그 넣음 요러면 html 전체적인 태그가 중복 없이 잘 들어가짐...
+page 속성 utf-8 기입 안 하면 한글 깨지니까 이거 정도는 각각 다 넣어줘야 한가봄... 
+// ====================================================================================================
+07_1_header.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>header영역</h1>
+// ====================================================================================================
+07_2_footer.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+	<h1>footer 영역</h1>
+</body>
+</html>
+// ====================================================================================================
+07_3_main.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%@ include file="07_1_header.jsp" %>
+
+<h1>메인페이지 작업</h1>
+
+<%@ include file="07_2_footer.jsp" %>
+// ====================================================================================================
+두개의 숫자를 받아서 합한 결과를 출력하는 페이지들을 작성하시오.
+1. 페이지 - 두 개의 숫자를 사용자가 입력할 수 있도록 구현 → 계산 버튼
+2. 페이지 - 1페이지에서 계산 버튼을 누르면 여기 페이지로 넘어와서 사용자가 입력한 숫자의 합을 출력
+// ====================================================================================================
+08_1_sample01.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="08_2_result.jsp">
+		<input type="number" name="num1">
+		<input type="number" name="num2">
+		<input type="submit" value="계산">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+08_2_result.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int num1 = Integer.parseInt(request.getParameter("num1"));
+		int num2 = Integer.parseInt(request.getParameter("num2"));
+	%>
+	<h1>입력한 숫자 <%=num1 %>, <%=num2 %>의 합: <%=num1+num2 %></h1>
+</body>
+</html>
+// ====================================================================================================
+숫자 하나를 입력받고 누적 버튼을 클릭하면 입력된 숫자가 매번 누적되서 출력(그니껜 지금까지 입력된 값들의 합을 계속 출력해주는 프로그램)
+// ====================================================================================================
+09_1_sample02.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="09_2_acc.jsp">
+		<input type="number" name="num">
+		<input type="submit" value="누적">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+09_2_acc.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%! int sum=0; %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int num = Integer.parseInt(request.getParameter("num"));
+		sum += num;
+	%>
+	<h1>+<%=num %> → 누적 결과: <%=sum %></h1>
+</body>
+</html>
+// ====================================================================================================
+사용자가 숫자를 입력하면 1부터 입력한 숫자까지 합 출력
+심심하면 1 + 2 + 3 + 4 + 5 = 15 안심심할 예정
+// ====================================================================================================
+10_1_sample03.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="10_2_acc.jsp">
+		<input type="number" name="num">
+		<input type="submit" value="합계">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+10_2_acc.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int num = Integer.parseInt(request.getParameter("num"));
+		int sum = 0;
+		String str = ""; 
+		for(int i=1; i<=num; i++){
+			sum += i;
+			str = str + i + ((i != num) ? " + " : " = ");
+		}
+	%>
+	<h1><%=str+sum%></h1>
+</body>
+</html>
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
