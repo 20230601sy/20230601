@@ -28675,53 +28675,768 @@ page 속성 utf-8 기입 안 하면 한글 깨지니까 이거 정도는 각각 
 </body>
 </html>
 // ====================================================================================================
+Day0901
+// ====================================================================================================
+상품 검색 페이지 예제
+01_1_sample01.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>상품 검색 페이지</h1>
+	<form action="01_2_result.jsp">
+		연령대 :&nbsp;&nbsp;	<input type="text" name="age"><br>
+		카테고리 :&nbsp;&nbsp;<select name="category">
+								<option value="상의">상의</option>
+								<option value="하의">하의</option>
+								<option value="악세사리">악세사리</option>
+							</select><br>
+		선호하는 색상 :&nbsp;&nbsp;<input type="checkbox" name="color" value="빨강">빨강
+					 			<input type="checkbox" name="color" value="주황">주황
+					 			<input type="checkbox" name="color" value="노랑">노랑
+					 			<input type="checkbox" name="color" value="파랑">파랑
+					 			<input type="checkbox" name="color" value="검정">검정
+		<input type="submit" value="검색">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+01_2_result.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.util.Enumeration"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int age = Integer.parseInt(request.getParameter("age"));
+		String category = request.getParameter("category");
+		String[] colorArr = request.getParameterValues("color");
+		String colors="";
+		if(colorArr==null)
+			colors = "선호하는 색상이 없습니다.";
+		else
+			colors = "선호하는 색상은 " + String.join(", ", colorArr)+"입니다.";
+		
+		Enumeration<String> names = request.getParameterNames();
+		while(names.hasMoreElements())
+			out.print(names.nextElement());
+	%>
+	<h1><%=age %>세가 가장 많이 구매한 <%=category %>들을 조회합니다.</h1>
+	<p><%= colors%></p>
+</body>
+</html>
+// ====================================================================================================
+180p jsp - 내장객체
+자동으로 만들어져 있어서 그냥 쓸 수 있는 것들, jsp에만 관련된 내용, out, request 같은 거 선언 안해도 바로바로 쓸 수 있는 거
+어제 뜯어서 봤던 _jspService 메서드...에 servlet으로 변환되면서 자동으로 만들어져 있었징.
 
+입출력 관련 객체 request/response/out
+서블릿 관련 객체 page/config
+외부 환경 정보를 제공하는 객체 session/application/pageContext
+예외 관련 객체 exception
+
+request 객체 메서드
+getContextPath()
+getMethod() : GET인지 POST인지
+getRequestURL() : Form tag에서 action에 쓴 내용...같은 거 알려주는
+getRequestURI() : URL에서 쿼리스트링 제외 // 폴더 구조라고 생각하는 게 편하다심...
+getQueryString() : 쿼리스트링
+getSession(flag)
+getRequestDispacher(path)
+
+URL에서 직접 두들긴 건 다 기본적으로 다 get 방식이라심. a태그도 다 get 방식
+
+request.메서드 로 호출
+// ====================================================================================================
+02_requestInfo.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	컨택스트 패스 	: <%=request.getContextPath() %><br>
+	요청방식		: <%=request.getMethod() %><br>
+	요청 URL		: <%=request.getRequestURL() %><br>
+	요청 ULI		: <%=request.getRequestURI() %><br>
+	서버이름		: <%=request.getServerName() %><br>
+	프로토콜		: <%=request.getProtocol() %><br>
+	
+	<!-- 
+		컨택스트 패스 : /0901
+		요청방식 : GET
+		요청 URL : http://localhost:8181/0901/02_requestInfo.jsp
+		요청 ULI : /0901/02_requestInfo.jsp
+		서버이름 : localhost
+		프로토콜 : HTTP/1.1
+		프로토콜 요즘은 HTTPS이긴 한데 그거 지금 다루면 더 힘들어지니껜...
+	 -->
+</body>
+</html>
+// ====================================================================================================
+requset.getParameter()
+requset.getParameterNames() 이건 name들 이름, 열거타입으로 리턴한다심...쓸라믄 import해야 혀...
+requset.getParameterValues() 이것도... name=value&&name=value...니껜
+
+<%@ page import="java.util.Enumeration"%>
+	<%
+		Enumeration<String> names = request.getParameterNames();
+		while(names.hasMoreElements())
+			out.print(names.nextElement());
+	%>
+// ====================================================================================================
+03_1_redirect.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>메인페이지</h1>
+	<%
+		// response.sendRedirect("http://www.google.com");
+
+		// 보통 리다이렉트는 서블릿으로 작업이 된다심 
+		// jsp에는 버튼 같은 거 만들고 서블릿으로 넘어가도록 구현하고, 서블릿에서 sendRedirect 처리를 한다심
+		// 지금 단계에서는 단순해서 걍 바로 링크해도 될 것 같지만 나중에 선처리할 것들이 생기면 그것도 다 처리를 하려고 징검다리 역할을 하도록 하게 하는 거라심...
+		// 예를 들어 로그인의 경우 사용자들이 버튼은 같은 걸 눌렀지만 로그인 성공했을 경우 다음으로 넘어 가고 로그인 실패했을 경우 로그인 실패 페이지가 나오게 해야 하는 그런...
+	%>
+	<form action="03_2_sendRedirect.jsp">
+		<input type="number" name="id">
+		<input type="submit" value="이동">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+03_2_sendRedirect.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		// String id = request.getParameter("id"); trim해도 안되고 json형태로 출력되넹...equals 써야 하나봄
+		int id = Integer.parseInt(request.getParameter("id"));
+		if(id==1)
+			response.sendRedirect("http://www.google.com");
+		else if(id==2)
+			response.sendRedirect("http://www.naver.com");
+		else
+			response.sendRedirect("http://www.kakao.com");
+	%>
+</body>
+</html>
+// ====================================================================================================
+04_1_test_login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="04_2_login.jsp">
+		id : <input type="text" name="id">
+		pw : <input type="password" name="pw">
+		<input type="submit" value="로그인">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+04_2_login.jsp
+<%@page import="java.net.URLEncoder"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String id = "user";
+		String pw = "1234";
+		//String name = "user1234";
+		String name = "홍길동";
+		
+		String userId = request.getParameter("id");
+		String userPw = request.getParameter("pw");
+		
+		if(id.equals(userId) && pw.equals(userPw))
+			response.sendRedirect("04_3_success.jsp?id=" + id + "&name=" + URLEncoder.encode(name, "utf-8"));
+			//한글은 url 보낼 때 변환 필요...
+			//response.sendRedirect("04_3_success.jsp?id=" + id + "&name=" + name);
+		else
+			response.sendRedirect("04_1_test_login.jsp");
+	%>
+</body>
+</html>
+// ====================================================================================================
+04_3_success.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String userId = request.getParameter("id");
+		String userName = request.getParameter("name");
+	%>
+	<h1><%=userId %> 로그인 성공</h1>
+	<h1><%=userName %>님 안녕하세요!</h1>
+</body>
+</html>
+// ====================================================================================================
+sendRedirect는 request, response 유지가 안되는 url이 바뀌는 페이지이동
+정보를 주려면 쿼리스트링에 넣어줘야 함
+다른 이동 방식은 포워드방식, url이 안 바뀌는 방식 서버에서 그냥 응답을 주는 방식, request, response가 유지되기 때문에 원하는 정보를 포함시킬 수 있음
+포워드 방식은 우선 객체를 생성하고 forward를 통해서 이동하는 형식 2steps... 
+RequestDispatcher rd = request.getRequestDispatcher("이동할 페이지.jsp");
+rd.forward(request, response);
+형변환 필요하다는 거 기억하기
+// ====================================================================================================
+05_1_forward.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="post" action="05_2_forwardTest.jsp">
+		나이: <input type="text" name="age">
+		<input type="submit" value="입장">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+05_2_forwardTest.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int age = Integer.parseInt(request.getParameter("age"));
+		String name = "홍길동";
+		
+		if(age>=20) {
+			request.setAttribute("name", name);
+			RequestDispatcher rd = request.getRequestDispatcher("05_3_forwardResult.jsp");
+			rd.forward(request, response);
+		}
+		else
+			response.sendRedirect("05_1_forward.jsp");
+	%>
+</body>
+</html>
+// ====================================================================================================
+05_3_forwardResult.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String name = (String)request.getAttribute("name");
+		String age = request.getParameter("age");
+	%>
+	<h1><%=name %>(<%=age %>)님 입장 환영합니다~</h1>
+</body>
+</html>
+// ====================================================================================================
+session은 브라우저 꺼질 때까지 유지
+application은 서버 꺼질 때까지 유지
+application.setAtrribute("name", name);
+
+내장 객체 영역 page⊂request⊂session⊂application 언제까지 정보를 유지시키느냐... 사용용도에 따라 어디에 저장할 것인지 결정
+로그인은 보통 세션에 담는다심, 나머지는 상황에 따라... 유효 범위 잘 기억해서 사용하라심
+저장 방법은 request와 동일함...
+setAttribute(name, value) / getAttribute(name) / getAttributeNames() / removeAtrribute(name)
+
+범위 확인은 페이지 여러개 만들어서 링크...
+session은 브라우저를 닫는 걸로 확인은 안되고 chrome에서 연결했으면 edge로 새로 열면 확인되고...
+application은 서버 껐다 켜면 확인됨 
+// ====================================================================================================
+06_1_first.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+	pageContext.setAttribute("name", "page");
+	request.setAttribute("name", "request");
+	session.setAttribute("name", "session");
+	application.setAttribute("name", "application");
+%>
+<h1>1st page</h1>
+<h1>page : <%=pageContext.getAttribute("name") %></h1>
+<h1>request : <%=request.getAttribute("name") %></h1>
+<h1>session : <%=session.getAttribute("name") %></h1>
+<h1>application : <%=application.getAttribute("name") %></h1>
+<a href="06_2_move.jsp">이동</a>
+</body>
+</html>
+// ====================================================================================================
+06_2_move.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+	request.setAttribute("name", "request");
+	RequestDispatcher rd = request.getRequestDispatcher("06_3_second.jsp");
+	rd.forward(request, response);
+%>
+</body>
+</html>
+// ====================================================================================================
+06_3_second.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>2nd page</h1>
+	<h1>page : <%=pageContext.getAttribute("name") %></h1>
+	<h1>request : <%=request.getAttribute("name") %></h1>
+	<h1>session : <%=session.getAttribute("name") %></h1>
+	<h1>application : <%=application.getAttribute("name") %></h1>
+	<a href="06_4_third.jsp">이동</a>
+</body>
+</html>
+// ====================================================================================================
+06_4_third.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>3rd page</h1>
+	<h1>page : <%=pageContext.getAttribute("name") %></h1>
+	<h1>request : <%=request.getAttribute("name") %></h1>
+	<h1>session : <%=session.getAttribute("name") %></h1>
+	<h1>application : <%=application.getAttribute("name") %></h1>
+</body>
+</html>
+// ====================================================================================================
+액션태그 : 자바 코드를 사용하지 않고 jsp 태그들로 구현하는 거.../코드 양이 확 줄으니 가독성도 높아짐
+<jsp:forward>, <jsp:include>, <jsp:param>, <jsp:useBean>, <jsp:setProperty>, <jsp:getProperty>
+XML 문법이기 때문에 react(jsx)처럼 닫는 태그가 있어야 함!
+<jsp:forward page="이동할 주소"/> 또는 <jsp:forward page="이동할 주소"> 내용내용 </jsp:forward> // 자동완성 기능
+근데 뭐...서블릿에선 액션태그 못 쓰는 걍 java니까 결국엔 잘 안 쓴다심...
+// ====================================================================================================
+06_2_move.jsp ver2
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+	request.setAttribute("name", "request");
+//	RequestDispatcher rd = request.getRequestDispatcher("06_3_second.jsp");
+//	rd.forward(request, response);
+%>
+	<jsp:forward page="06_3_second.jsp">
+		<jsp:param value="1234" name="num"/>
+	</jsp:forward>
+</body>
+</html>
+// ====================================================================================================
+06_3_second.jsp에서 받는 거는...getParameter를 사용
+	<%
+		String num = request.getParameter("num");
+	%>
+// ====================================================================================================
+07_1_action_login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="07_2_actionTag.jsp">
+		id : <input type="text" name="id"><br>
+		pw : <input type="text" name="pw"><br>
+		<input type="radio" name="logincheck" value="사용자">사용자
+		<input type="radio" name="logincheck" value="관리자">관리자<br>
+		<input type="submit" value="로그인">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+07_2_actionTag.jsp
+<jsp:param value='<%=URLEncoder.encode("홍길동", "utf-8") %>' name="name"/>
+한글 전송이 안되기 때문에 변환하는 거. 따옴표 안에 따옴표, 자바는 큰따옴표 써야 하니까 바깥에는 작은 따옴표
+<%@page import="java.net.URLEncoder"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		String logincheck = request.getParameter("logincheck");
+		
+		if(logincheck.equals("관리자")) {
+	%>
+			<jsp:forward page="07_3_admin.jsp">
+				<jsp:param value='<%=URLEncoder.encode("홍길동", "utf-8") %>' name="name"/>
+			</jsp:forward>
+	<%
+		} else {
+	%>
+			<jsp:forward page="07_4_user.jsp">
+				<jsp:param value='<%=URLEncoder.encode("홍길동", "utf-8") %>' name="name"/>
+			</jsp:forward>		
+	<%
+		}
+	%>
+			
+</body>
+</html>
+// ====================================================================================================
+07_3_admin.jsp
+<%@page import="java.net.URLDecoder"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String name = URLDecoder.decode(request.getParameter("name"));
+	%>
+	<h1>관리자 페이지입니다.</h1>
+	<h2>관리자명 : <%=name %></h2>
+</body>
+</html>
+// ====================================================================================================
+07_4_user.jsp
+<%@page import="java.net.URLDecoder"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String name = URLDecoder.decode(request.getParameter("name"));
+	%>
+	<h1>사용자 페이지입니다.</h1>
+	<h2>사용명 : <%=name %></h2>
+</body>
+</html>
+// ====================================================================================================
+액션태그 include는 지시자와 달리 통합되는 방식이 다름. 지시자 사용하는 거는 컴파일할 때 통합되는 거.
+액션태그는 사용자가 볼 때 불러오기 때문에 변수를 공용으로 사용할 수 없음.
+파일 쪼개는 건 리액트 컴포넌트 만드는 거랑 똑같이 모듈화할 때 많이 쓴다심
+// ====================================================================================================
+08_1_header.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<h1>header 영역</h1>
+<hr>
+// ====================================================================================================
+08_2_footer.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<hr>
+<h1>footer 영역</h1>
+// ====================================================================================================
+08_3_main.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="08_1_header.jsp"/>
+	<h1>main 영역</h1>
+	<jsp:include page="08_2_footer.jsp"/>
+</body>
+</html>
+// ====================================================================================================
+232p 교재 도전 문제...
+09_1_1_redirect.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>검색 엔진 정보 페이지</h1>
+	<p>검색 엔진을 선택하세요.</p>
+	<form action="09_1_2_searchResult.jsp">
+		<select name="search">
+			<option value="naver.com">네이버</option>
+			<option value="daum.net">다음</option>
+			<option value="nate.com">네이트</option>
+			<option value="google.com">구글</option>			
+		</select>
+		<input type="submit" value="확인">
+	</form>
+</body>
+</html>
+// ====================================================================================================
+09_1_2_searchResult.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String search = request.getParameter("search");
+		response.sendRedirect("http://" + search);
+	%>
+</body>
+</html>
+// ====================================================================================================
+09_2_1_forForm.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>For문 예제</h1>
+	<form action="09_2_2_for.jsp" method="post">
+		1부터 더할 end 값: <input type="number" name="num"><br>
+		<input type="submit" value="확인">
+	</form>	
+</body>
+</html>
+// ====================================================================================================
+09_2_2_for.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		int num = Integer.parseInt(request.getParameter("num"));
+		String exp = "";
+		int sum = 0;
+		for(int i=1; i<=num; i++) {
+			sum += i;
+			exp += i + ((i!=num) ? "+" : ("=" + sum));
+		}
+	%>
+	<h1>1부터 <%=num %>까지 자연수 합 구하기</h1>
+	<p><%=exp %></p>
+</body>
+</html>
+// ====================================================================================================
+쿠키 234p
+쿠키도 객체 new 이용해서 객체 생성
+Cookie info = new Cookie("testCookie", "I'm Fisrt Cookie!"); 매개변수 처음은 쿠키 이름, 두번째는 쿠키 값, 값은 문자열~
+웹사이트에 치명적인 정보를 담고 있는 것들은 쿠키를 쓰지는 않는다심
+예전에는 사용자 정보를 수집했는데...www에서 무조건 물어봐라는 식으로 해서 페이지 방식이...
+쿠키는 AppData/Roaming/.../Cookies 폴더에서 볼 수도 있는데... 개발자도구 application에서도 볼 수 있음~
+쿠키를 삭제하는 메서드는 없고 유효기간을 0으로 바꿔서 지움, 같은 name의 쿠키를 생성할 수 없음. map이랑 비슷한 구조인가봄 그러니깐 삭제가 아니라 똑같은 이름의 쿠키를 생성해서 유효기간을 0으로 설정함
+// ====================================================================================================
+10_1_setCookie.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		Cookie c = new Cookie("id", "user");
+		c.setMaxAge(365 * 24 * 60 * 60); // 유효기간, second 단위, 1년
+		response.addCookie(c);
+		response.addCookie(new Cookie("pwd", "1234"));
+		response.addCookie(new Cookie("age", "20"));
+	%>
+</body>
+</html>
+// ====================================================================================================
+10_2_getCookie.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		Cookie[] cs = request.getCookies();
+		for(Cookie c : cs)
+			out.print(c.getName() + " : " + c.getValue() + "<br>");
+	%>
+</body>
+</html>
+// ====================================================================================================
+10_3_removeCookie.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		Cookie c = new Cookie("id", "");
+		c.setMaxAge(0);
+		response.addCookie(c);
+	%>
+	<a href="10_2_getCookie.jsp">이동</a>
+</body>
+</html>
+// ====================================================================================================
+쿠키는 일단 보안에 취약, 중요한 정보는 담을 수 없음 게다가 용량 제한이 있음
+세션은 용량 제한이 없음, 
+좀 다른 점은 컴퓨터를 껐다 켜도 파일로 저장되는 것이기 때문에 쿠키는 남아 있는데,
+세션은 브라우저에 남아 있는 것이기 때문에 브라우저만 끄면 날아감
+새 탭을 열면 유지는 되는데 새브라우저로 켜면 유지는 안됨
+대표적인 게 로그인 정보 유지... 
+세션 제거 메서드는 invalidate
+세션 setAtrribute는 쿠키와 달리 다양햔 자료형을 담을 수 있음
+jsp에서 session 작업하는 건 내장 객체 생성되어 있어서 사용하면 되는데, 나중에 서블릿에서 할 때는 session 생성 부터 해야 함...
+HttpSession session = request.getSession();
+// ====================================================================================================
+11_1_setSession.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+	session.setAttribute("id", "user");
+	session.setAttribute("pw", "1234");
+	session.setAttribute("age", 20); // 쿠키와는 달리 숫자도 넣을 수 있음 
+%>
+	<a href="11_2_getSession.jsp">세션 확인</a>
+</body>
+</html>
+// ====================================================================================================
+11_2_getSession.jsp
+<%@page import="java.util.Enumeration"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		String id = (String)session.getAttribute("id");
+		String pw = (String)session.getAttribute("pw");
+		Integer age = (Integer)session.getAttribute("age"); // null 값을 가질 수 있기 때문에 Integer 사용
+		int age2 = (int)session.getAttribute("age"); // null 값을 가질 수 없기 때문에 문제가 생길 수 있음
+		
+		Enumeration<String> names = session.getAttributeNames();
+		while(names.hasMoreElements()) {
+			String name = names.nextElement();
+			out.print("<p>" + name + " : " + session.getAttribute(name).toString() + "</p>"); // age는 자료형이 숫자였어서...오버라이딩된 toString이 대부분 클래스변수들 출력시키는 형태
+		}
+	%>
+	<p> <%= id %> <%= pw %> <%= age %> <%= age2 %> </p>
+</body>
+</html>
 // ====================================================================================================
 
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
