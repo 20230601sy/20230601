@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+h1, div {
+	text-align: center;
+}
+
+table {
+	border : 1px solid lightgrey;
+	border-spacing: 0;
+}
+
+table tr td:first-child{
+	font-weight : bolder;
+	text-align: center;
+	background: lightgrey;
+}
+
+td {
+	padding : 1px 10px;
+}
