@@ -29,19 +29,21 @@
 			
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			conn = DriverManager.getConnection(url, uid, pw);
-			pstmt = conn.prepareStatement("insert into member values(?, ?, ?, ?, ?, ?)");
+//			pstmt = conn.prepareStatement("insert into member values(?, ?, ?, ?, ?, ?)");
 			// pstmt = conn.prepareStatement("insert into member values(sysdate, 0, '1234', ?, ?, ?)"); 변동되지 않을 값은 걍 집어 넣으면 됨
 			// 비어있는 물음표에는 바인딩 시켜줘야 함. 이거는 1부터 시작하나봄. 흐음.
-			pstmt.setString(1, name);
-			pstmt.setString(2, userid);
-			pstmt.setString(3, pwd);
-			pstmt.setString(4, email);
-			pstmt.setString(5, phone);
-			pstmt.setInt(6, admin);
+//			pstmt.setString(1, name);
+//			pstmt.setString(2, userid);
+//			pstmt.setString(3, pwd);
+//			pstmt.setString(4, email);
+//			pstmt.setString(5, phone);
+//			pstmt.setInt(6, admin);
 			
-			pstmt.executeUpdate(); // 걍 execute만 때려도 된다심...
+//			pstmt.executeUpdate(); // 걍 execute만 때려도 된다심...
+			conn.createStatement().executeUpdate("insert into member values('"+ name + "', '" + userid + "', '" +  pwd + "', '" + email + "', '" + phone + "', " + admin + ")");
 			out.print("<h1>DB 저장 성공<h1>");
 		} catch(Exception e) {
+			e.printStackTrace();
 			out.print("<h1>DB 저장 실패<h1>");
 		} finally {
 			if(pstmt != null) pstmt.close();
