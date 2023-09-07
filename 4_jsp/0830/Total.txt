@@ -31382,14 +31382,888 @@ public class MemberVO {
 // ====================================================================================================
 package p03_com.study.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+import p03_com.study.dto.MemberVO;
+
+public class MemberDAO {
+	private MemberDAO() {
+		
+	}
+	private static MemberDAO instance = new MemberDAO();
+	
+	public static MemberDAO getInstance() {
+		return instance;
+	}
+	
+	public Connection getConnection() throws Exception {
+		Context initContext = new InitialContext();
+		Context envContext  = (Context)initContext.lookup("java:/comp/env");
+		DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
+		Connection conn = ds.getConnection();
+		return conn;
+	}
+	
+	public int userCheck(String userid, String pwd) throws SQLException {
+		int result = -1;
+		String sql = "select pwd from member where userid=?";
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, userid);
+			rs = ps.executeQuery();
+			rs.next();
+			if(rs.getString("pwd") != null && pwd.equals(rs.getString("pwd"))) {
+				result = 1;
+			} else if(rs.getString("pwd") != null) {
+				result = -1;
+			} else {
+				result = 0;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(rs != null) rs.close(); // 이것도 예외 처리해야 해서 throws SQLException 처리함
+			if(ps != null) ps.close();
+			if(conn != null) conn.close();
+		}
+		
+		return result;
+	}
+	
+	public MemberVO getMember(String userid) throws SQLException {
+		MemberVO mVo = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "select * from member where userid=?";
+
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, userid);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				mVo = new MemberVO();
+				mVo.setName(rs.getString("name"));
+				mVo.setUserid(rs.getString("userid"));
+				mVo.setPwd(rs.getString("pwd"));
+				mVo.setEmail(rs.getString("email"));
+				mVo.setPhone(rs.getString("phone"));
+				mVo.setAdmin(rs.getInt("admin"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(rs != null) rs.close();
+			if(ps != null) ps.close();
+			if(conn != null) conn.close();
+		}
+		
+		return mVo;
+	}
+	
+	public int confirmID(String userid) {
+		int result = -1; // 중복된 아이디가 있으면 1 없으면 -1
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "select userid from member where userid=?";
+
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, userid);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				result = 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public int insertMember(MemberVO vo) {
+		int result = -1;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		String sql = "insert into member values(?, ?, ?, ?, ?, ?)";
+
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, vo.getName());
+			ps.setString(2, vo.getUserid());
+			ps.setString(3, vo.getPwd());
+			ps.setString(4, vo.getEmail());
+			ps.setString(5, vo.getPhone());
+			ps.setInt(6, vo.getAdmin());
+			
+			result = ps.executeUpdate(); // executeUpdate는 레코드 수를 리턴 시킴~
+			// insert 삽입된 레코드 수 리턴 시킴, delete 삭제를 성공한 레코드 수 리턴 시킴, update 업데이트를 성공한 레코드 수를 리턴시킴
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+		
+		/*
+		 * 이제....
+		 * 회원가입 페이지에서 입력한 파라미터를 서블릿으로 요청 날림
+		 * 서블릿에서 요청받은 파라미터드를 빼와서 vo 객체에 넣음
+		 * vo객체를 insertMember메서드에 보냄
+		 * 결과를 리턴 -1, 0, 1
+		 * 결과 값을 가지고 회원가입 성공, 실패여부를 처리
+		 * 다시 로그인 페이지로 이동
+		 */
+		
+	}
+	
+	public int updateMember(MemberVO vo) {
+		int result = -1;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		String sql = "update member set pwd=?, email=?, phone=?, admin=? where userid=?";
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, vo.getPwd());
+			ps.setString(2, vo.getEmail());
+			ps.setString(3, vo.getPhone());
+			ps.setInt(4, vo.getAdmin());
+			ps.setString(5, vo.getUserid());
+			
+			result = ps.executeUpdate();
+			System.out.print(vo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public void deleteMember(String userid) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		String sql = "delete from member where userid=?";
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, userid);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
 // ====================================================================================================
-03_member > login.jsp
+03_0_test.jsp
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Connection"%>
+<%@ page import="p03_com.study.dao.MemberDAO" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		MemberDAO memberDAO = MemberDAO.getInstance();
+		Connection conn = memberDAO.getConnection();
+		// out.print("연결 성공");
+		PreparedStatement ps = conn.prepareStatement("select * from member");
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			out.println(rs.getString(1));
+		}
+	%>
+</body>
+</html>
+// ====================================================================================================
+03_1_index.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>메인페이지</h1>
+	<a href="login.do">로그인 페이지 이동</a>
+	<!-- a 태그는 get요청이니까 login.jsp와 다름 -->
+</body>
+</html>
+// ====================================================================================================
+package p03_com.study.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import p03_com.study.dao.MemberDAO;
+import p03_com.study.dto.MemberVO;
+
+@WebServlet("/login.do")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public LoginServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("03_4_login.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id = request.getParameter("userid");
+		String pwd = request.getParameter("pwd");
+		String url = "03_4_login.jsp";
+		MemberDAO dao = MemberDAO.getInstance();
+		try {
+			int result = dao.userCheck(id, pwd);
+			//result 결과에 따라서 로그인 성공, 실패, result가 1이면 로그인 성공처리, 세션에 로그인한 사람의 정보를 남김, 로그인 성공페이지로 이동
+			// 0, -1 로그인 실패 → 다시 로그인 페이지로 이동, 0 : 비밀번호가 틀림 message를 담아서 넘김, -1 : 아이디가 없음 message를 담아서 넘김
+			if(result==1) {
+				MemberVO vo = dao.getMember(id);
+				HttpSession session = request.getSession();
+				session.setAttribute("loginUser", vo);
+				request.setAttribute("message", "로그인 성공");
+				// 로그인 성공 페이지로 이동, request 전달하려면 forward방식으로 해야함 sendRedirect 안됨
+				url = "03_2_main.jsp"; // url만 바꿈
+			} else if(result==0) {
+				request.setAttribute("message", "비밀번호가 다름");
+				// 로그인 페이지로 이동
+			} else {
+				request.setAttribute("message", "아이디가 없음");
+				// 로그인 페이지로 이동
+			}
+			RequestDispatcher rd = request.getRequestDispatcher(url);
+			rd.forward(request, response);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+	}
+}
+// ====================================================================================================
+03_3_member.js
+function loginCheck() {
+	if(document.frm.userid.value.length == 0){
+		alert("아이디를 써주세요");
+		frm.userid.focus();
+		return false;
+	}
+	if(document.frm.pwd.value == ""){
+		alert("비밀번호를 입력하세요");
+		frm.pwd.focus();
+		return false;
+	}
+	return true;
+}
+
+// 보통 중복창은 팝업창을 뜨게 하기도 하지만 ajax로... 새로고침 안되고 해당 화면에서 출력되도록 처리한다심
+function idCheck() {
+	if(document.frm.userid.value=="") {
+		alert("아이디를 써주세요");
+		frm.userid.focus();
+		return false;
+	}
+	const url = "idcheck.do?userid=" + document.frm.userid.value;
+	window.open(url, "_blank_1", "toolbar=no, menubar=no, scrollbar=yes, resizable=no, width=450, height=200"); 
+}
+
+function idok() {
+	opener.frm.userid.value = document.frm.userid.value;
+	opener.frm.reid.value = document.frm.userid.value;
+	
+	self.close();
+}
+
+// 애초에 이런 건 클라이언트에서 처리한다심 서버단에 넘기지 않는다심ㅋㅋㅋ 돈 아끼고 얼마나 좋음 ...
+function joinCheck() {
+	if (document.frm.name.value.length == 0) {
+		alert("이름을 써주세요.");
+		frm.name.focus();
+		return false;
+	}
+	if (document.frm.userid.value.length == 0) {
+		alert("아이디를 써주세요");
+		frm.userid.focus();
+		return false;
+	}
+	if (document.frm.userid.value.length < 4) {
+		alert("아이디는 4글자이상이어야 합니다.");
+		frm.userid.focus();
+		return false;
+	}
+	if (document.frm.pwd.value == "") {
+		alert("암호는 반드시 입력해야 합니다.");
+		frm.pwd.focus();
+		return false;
+	}
+	if (document.frm.pwd.value != document.frm.pwd_check.value) {
+		alert("암호가 일치하지 않습니다.");
+		frm.pwd.focus();
+		return false;
+	}
+	if (document.frm.reid.value.length == 0) {
+//	if (document.frm.reid.value != document.frm.userid.value) {
+		alert("중복 체크를 하지 않았습니다.");
+		frm.userid.focus();
+		return false;
+	}
+	return true;
+}
+// ====================================================================================================
+03_4_login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>로그인</h1>
+	<form action="login.do" method="post" name="frm">
+		<table>
+			<tr>
+				<td>아이디</td>
+				<td><input name="userid" value="${userid}"></td>
+			</tr>
+			<tr>
+				<td>암호</td>
+				<td><input type="password" name="pwd"></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="로그인" onclick="return loginCheck()">
+					<input type="reset" value="취소">
+					<input type="button" value="회원 가입" onclick="location.href='join.do'">
+				</td>
+			</tr>
+		</table>
+	</form>
+	<br>
+	<span>${message}</span>
+	<script src="03_3_member.js"></script>
+	<!-- <script src="script/member.js"></script> 애초에 처음 index 페이지를 생성하면 경로 가능 -->
+	<!-- <script src="../script/member.js"></script> -->
+</body>
+</html>
+// ====================================================================================================
+03_2_main.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:if test="${empty loginUser}">
+	<jsp:forward page="login.do"/>
+</c:if>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>회원 전용 페이지</h1>
+	
+	<form action="logout.do">
+		<p>${message}</p>
+		<p>안녕하세요. ${loginUser.name}(${loginUser.userid})님</p>
+		<input type="submit" value="로그아웃">
+		<input type="button" value="회원정보변경" onclick="location.href='memberUpdate.do?userid=${loginUser.userid}'">
+		<input type="button" value="회원탈퇴" onclick="location.href='memberDelete.do'">
+	</form>
+	<script src="03_3_member.js"></script>
+</body>
+</html>
+// ====================================================================================================
+package p03_com.study.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/logout.do")
+public class LogoutServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public LogoutServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		RequestDispatcher rd = request.getRequestDispatcher("03_4_login.jsp");
+		request.setAttribute("message", "로그아웃성공");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+회원가입 페이지를 구현
+해당 페이지로 이동되도록 구현(서블릿)
+회원가입 페이지에 내용입력하고 가입벼튼 누르면
+입력한 내용이 DB에 저장 → 로그인 페이지 이동
+중복 체크...버튼 DB에 접속해서 확인 필요
+
+***예외처리할 때 받아오는 것에서 try catch 처리 뭔가 모호한 영역이 있는 듯 에러 핸들링 함 봅시다.
+// ====================================================================================================
+package p03_com.study.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import p03_com.study.dao.MemberDAO;
+import p03_com.study.dto.MemberVO;
+
+@WebServlet("/join.do")
+public class JoinServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public JoinServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("03_5_join.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MemberVO vo = new MemberVO();
+		
+		vo.setName(request.getParameter("name"));
+		vo.setUserid(request.getParameter("userid"));
+		vo.setPwd(request.getParameter("pwd"));
+		vo.setEmail(request.getParameter("email"));
+		vo.setPhone(request.getParameter("phone"));
+		vo.setAdmin(Integer.parseInt(request.getParameter("admin")));
+		// System.out.print(vo);
+		
+		MemberDAO dao = MemberDAO.getInstance();
+		int result = dao.insertMember(vo);
+		HttpSession session = request.getSession();
+		if(result == 1) {
+			// 회원가입 성공
+			request.setAttribute("message", "회원가입 성공");
+			session.setAttribute("userid", vo.getUserid());
+		} else {
+			// 회원가입 실패
+			request.setAttribute("message", "회원가입 실패");
+		}
+		RequestDispatcher rd = request.getRequestDispatcher("03_4_login.jsp");
+		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+03_5_join.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>회원 가입</h1>
+	<form action="join.do" method="post" name="frm">
+		<table>
+			<tr>
+				<td>이름</td>
+				<td><input name="name">*</td>
+			</tr>
+			<tr>
+				<td>아이디</td>
+				<td>
+					<input name="userid">*
+					<input name="reid" type="hidden">
+					<input type="button" value="중복체크" onclick="idCheck()">
+				</td>
+			</tr>
+			<tr>
+				<td>암호</td>
+				<td><input type="password" name="pwd">*</td>
+			</tr>
+			<tr>
+				<td>암호 확인</td>
+				<td><input type="password" name="pwd_check">*</td>
+			</tr>
+			<tr>
+				<td>이메일</td>
+				<td><input name="email"></td>
+			</tr>
+			<tr>
+				<td>전화번호</td>
+				<td><input name="phone"></td>
+			</tr>
+			<tr>
+				<td>등급</td>
+				<td>
+					<input type="radio" name="admin" value="0"> 일반회원
+					<input type="radio" name="admin" value="1"> 관리자
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="가입" onclick="return joinCheck()">
+					<input type="reset" value="취소">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					${message}
+				</td>
+			</tr>
+		</table>
+	</form>
+	<br>
+	<script src="03_3_member.js"></script>
+</body>
+</html>
+// ====================================================================================================
+package p03_com.study.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import p03_com.study.dao.MemberDAO;
+
+@WebServlet("/idcheck.do")
+public class IdCheckServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public IdCheckServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MemberDAO dao = MemberDAO.getInstance();
+		String userid = request.getParameter("userid");
+		int result = dao.confirmID(userid);
+		request.setAttribute("userid", userid);
+		request.setAttribute("result", result);
+		// 그냥 메세지로 구현해도 됨 구현하는 사람 마음... 서블릿 쪽에서 하는게 좀더 낫다심 헤헤 책이 마음에 안드는 거여
+		RequestDispatcher rd = request.getRequestDispatcher("03_6_idCheck.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+03_6_idCheck.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>아이디 중복확인</h2>
+	<form action="idcheck.do" name="frm">
+		아이디 <input name="userid" value="${userid}">
+		<input type="submit" value="중복체크">
+	</form>
+	<c:if test="${result == 1}">
+		<script>
+			opener.document.frm.userid.value = "";
+		</script>
+		<p>${userid}는 이미 사용중인 아이디입니다.</p>
+	</c:if>
+	<c:if test="${result == -1}">
+		<p>
+			${userid}는 사용 가능한 아이디입니다.
+			<input type="button" value="사용" class="cancel" onclick="idok()">
+		</p>
+	</c:if>
+	<script src="03_3_member.js"></script>
+</body>
+</html>
+// ====================================================================================================
+package p03_com.study.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import p03_com.study.dao.MemberDAO;
+import p03_com.study.dto.MemberVO;
+
+@WebServlet("/memberUpdate.do")
+public class MemberUpdateServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MemberUpdateServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		/*
+		 * 정보수정 페이지로 이동
+		 * 정보수정 페이지에는 현재 로그인한 사용자의 정보가 다 출력
+		 * 로그인한 사람의 정보를 세션, 리퀘스트 객체에 담고 정보수정 페이지로 이동을 해줘야 함
+		 * 지금 작업한 프로젝트는 이미 세션에 그 정보가 다 담겨있음
+		 * 페이지 이동할 때 로그인한 사람의 아이디를 파라미터로 보냄
+		 * 그 아이디를 이용해서 DB에서 정보를 빼옴
+		 * 빼온 정보를 리퀘스트 객체에 담음 → 페이지 이동
+		 */
+		String userid = request.getParameter("userid");
+		MemberDAO dao = MemberDAO.getInstance();
+		try {
+			MemberVO vo = dao.getMember(userid);
+			request.setAttribute("vo", vo);
+			RequestDispatcher rd = request.getRequestDispatcher("03_7_memberUpdate.jsp");
+			rd.forward(request, response);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MemberVO vo = new MemberVO();
+		
+		vo.setName(request.getParameter("name"));
+		vo.setUserid(request.getParameter("userid"));
+		vo.setPwd(request.getParameter("pwd"));
+		vo.setEmail(request.getParameter("email"));
+		vo.setPhone(request.getParameter("phone"));
+		vo.setAdmin(Integer.parseInt(request.getParameter("admin")));
+		
+		MemberDAO dao = MemberDAO.getInstance();
+		HttpSession session = request.getSession();
+//		int result = dao.updateMember(vo);
+		if(dao.updateMember(vo) == 1) {
+			session.setAttribute("loginUser", vo); // DB만 수정하고 session 정보 업데이트 안 하면 나중에 문제가 생길 수 있음~
+			request.setAttribute("message", "정보수정 성공");
+		} else {
+			request.setAttribute("message", "정보수정 실패");
+		}
+//		RequestDispatcher rd = request.getRequestDispatcher("03_4_login.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("03_2_main.jsp");
+		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+03_7_memberUpdate.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>회원 정보 수정</h1>
+	<form action="memberUpdate.do" method="post" name="frm">
+		<table>
+			<tr>
+				<td>이름</td>
+				<td>
+					<input name="name" value="${vo.name}" disabled>*
+					<input name="name" value="${vo.name}" type="hidden">
+				</td>
+			</tr>
+			<tr>
+				<td>아이디</td>
+				<td>
+					<input name="userid" value="${vo.userid}" disabled>*
+					<input name="userid" value="${vo.userid}" type="hidden">
+				</td>
+			</tr>
+			<tr>
+				<td>암호</td>
+				<td><input type="password" name="pwd">*</td>
+			</tr>
+			<tr>
+				<td>암호 확인</td>
+				<td><input type="password" name="pwd_check">*</td>
+			</tr>
+			<tr>
+				<td>이메일</td>
+				<td><input name="email" value="${vo.email}"></td>
+			</tr>
+			<tr>
+				<td>전화번호</td>
+				<td><input name="phone" value="${vo.phone}"></td>
+			</tr>
+			<tr>
+				<td>등급</td>
+				<td>
+				<!-- 
+					<c:choose>
+						<c:when test="${vo.admin == 1}">
+							<input type="radio" name="admin" value="0"> 일반회원
+							<input type="radio" name="admin" value="1" checked> 관리자
+						</c:when>
+						<c:otherwise>
+							<input type="radio" name="admin" value="0" checked> 일반회원
+							<input type="radio" name="admin" value="1"> 관리자
+						</c:otherwise>
+					</c:choose>
+				 -->
+					<input type="radio" name="admin" value="0" checked="${vo.admin == 0}"> 일반회원
+					<input type="radio" name="admin" value="1" checked="${vo.admin == 1}"> 관리자
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="수정" onclick="return joinCheck()">
+					<input type="reset" value="취소">
+				</td>
+			</tr>
+		</table>
+	</form>
+	<br>
+	<script src="03_3_member.js"></script>
+</body>
+</html>
+// ====================================================================================================
+package p03_com.study.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import p03_com.study.dao.MemberDAO;
+import p03_com.study.dto.MemberVO;
+
+@WebServlet("/memberDelete.do")
+public class MemberDeleteServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MemberDeleteServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		MemberVO vo = (MemberVO) session.getAttribute("loginUser");
+		
+		MemberDAO dao = MemberDAO.getInstance();
+		dao.deleteMember(vo.getUserid());
+		session.invalidate();
+		response.sendRedirect("03_1_index.jsp");
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+Day0907
+// ====================================================================================================
+어제 하던 로그인 페이지 구현 마무리...그러니껜 오늘한 건 어제꺼에 있다 이말이야.
+구조가 복잡하다 한들... 기본 골격은 JSP(page) ↔ Servlet [ ↔ DAO ↔ DB ] 요런 식
+이모든 게 mvc2 패턴화하려고 한다는...  
+// ====================================================================================================
+
 
 // ====================================================================================================
-03_member > member.js
-
-// ====================================================================================================
-03_index.jsp
 
 
 // ====================================================================================================
@@ -31422,39 +32296,8 @@ package p03_com.study.dao;
 // ====================================================================================================
 
 
-// ====================================================================================================
 
 
-// ====================================================================================================
 
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
 
 

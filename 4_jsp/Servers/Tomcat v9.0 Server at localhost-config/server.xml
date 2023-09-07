@@ -163,12 +163,9 @@
       <Context docBase="0830" path="/0830" reloadable="true" source="org.eclipse.jst.jee.server:0830"/><Context docBase="0831" path="/0831" reloadable="true" source="org.eclipse.jst.jee.server:0831"/><Context docBase="0901" path="/0901" reloadable="true" source="org.eclipse.jst.jee.server:0901"/><Context docBase="0904" path="/0904" reloadable="true" source="org.eclipse.jst.jee.server:0904"/><Context docBase="0905" path="/0905" reloadable="true" source="org.eclipse.jst.jee.server:0905"/>
       	<!-- 커넥션풀을 사용하기 위한 설정 -->
       	<Context docBase="0906" path="/0906" reloadable="true" source="org.eclipse.jst.jee.server:0906">
-      		<Resource name="jdbc/myoracle" auth="Container"
-              type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
-              url="jdbc:oracle:thin:@127.0.0.1:1521:xe"
-              username="scott" password="tiger" maxTotal="20" maxIdle="10"
-              maxWaitMillis="-1"/>
+      		<Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver" maxIdle="10" maxTotal="20" maxWaitMillis="-1" name="jdbc/myoracle" password="tiger" type="javax.sql.DataSource" url="jdbc:oracle:thin:@127.0.0.1:1521:xe" username="scott"/>
       	</Context>
+	    
       </Host>
     </Engine>
   </Service>
