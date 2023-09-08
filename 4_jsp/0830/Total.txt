@@ -32261,43 +32261,355 @@ Day0907
 구조가 복잡하다 한들... 기본 골격은 JSP(page) ↔ Servlet [ ↔ DAO ↔ DB ] 요런 식
 이모든 게 mvc2 패턴화하려고 한다는...  
 // ====================================================================================================
+Day0908
+// ====================================================================================================
+517p 교재 연습문제
+CREATE TABLE EMPLOYEES(
+    id VARCHAR2(10) NOT NULL,
+    pass VARCHAR2(10) NOT NULL,
+    name VARCHAR2(24),
+    lev CHAR(1) DEFAULT 'A', -- A : 운영자, B : 일반회원
+    enter DATE DEFAULT SYSDATE, -- 등록일
+    gender CHAR(1) DEFAULT '1', -- 1 : 남자, 2 : 여자
+    phone VARCHAR2(30),
+    PRIMARY KEY(id)
+);
 
+INSERT INTO EMPLOYEES VALUES('pinksung', '3333', '성윤정', 'A', '2014-04-17', '2', '010-2222-2222');
+INSERT INTO EMPLOYEES VALUES('subin', '1234', '전원지', 'B', '2014-04-17', '1', '010-9999-9999');
+INSERT INTO EMPLOYEES VALUES('admin', '1111', '정운영', 'A', '2014-04-17', '1', '010-1111-1111');
+
+SELECT * FROM EMPLOYEES;
+
+COMMIT;
+// ====================================================================================================
+커넥션 풀 설정하기 위해서 프로젝트 폴더 우클릭 → Run As → 1. Run on Server 클릭 이거 하면 원래 index 페이지 실행되는데 지금은 없으니까 에러 페이지 뜨는 거 맞음 
+그러거나 말거나 이제 Tomcat 폴더 server.xml 파일 context 태그 수정 ㄱㄱ 하면 됨
+// ====================================================================================================
+package p01_vo;
+
+import java.util.Date;
+
+public class EmpVO {
+	private String id;
+	private String pass;
+	private String name;
+	private char lev;
+	private Date enter; // import java.util.Date; util꺼 사용해야 함. sql꺼 사용하는 거 아님!
+	private char gender;
+	private String phone;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getPass() {
+		return pass;
+	}
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public char getLev() {
+		return lev;
+	}
+	public void setLev(char lev) {
+		this.lev = lev;
+	}
+	public Date getEnter() {
+		return enter;
+	}
+	public void setEnter(Date enter) {
+		this.enter = enter;
+	}
+	public char getGender() {
+		return gender;
+	}
+	public void setGender(char gender) {
+		this.gender = gender;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
+	@Override
+	public String toString() {
+		return "EmpVO [id=" + id + ", pass=" + pass + ", name=" + name + ", lev=" + lev + ", enter=" + enter
+				+ ", gender=" + gender + ", phone=" + phone + "]";
+	}
+}
+// ====================================================================================================
+#####EmpDAO
 
 // ====================================================================================================
+프로그램을 실행시키면 login.do로 이동하는 index.jsp
+login 페이지로 이동하는 login.do servlet
+실제 화면 login.jsp
+// ====================================================================================================
+01_1_index.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		response.sendRedirect("login.do");
+	%>
+</body>
+</html>
+// ====================================================================================================
+package p01_controller;
 
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import p01_dao.EmpDAO;
+import p01_vo.EmpVO;
+
+@WebServlet("/login.do")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public LoginServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("01_2_login.jsp"); // 주소가 login.do에서 안 바뀌게 하기 위해서 forward 방식 (not sendredirect) 
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id = request.getParameter("id");
+		String pass = request.getParameter("pass");
+		String lev = request.getParameter("lev");
+		String url = "01_2_login.jsp";
+		
+		EmpDAO dao = EmpDAO.getInstance();
+		EmpVO vo = dao.getUser(id, pass, lev);
+		if(vo != null) {
+			HttpSession session = request.getSession();
+			session.setAttribute("vo", vo);
+			url = "01_4_main.jsp";
+		} else {
+			request.setAttribute("msg", "로그인 실패");
+		}
+		RequestDispatcher rd = request.getRequestDispatcher(url); 
+		rd.forward(request, response);
+	}
+}
 
 // ====================================================================================================
+01_2_login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="01_3_header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.login-table td {
+		padding: 10px;
+	}
+</style>
+</head>
+<body>
+	<form action="login.do" method="post">
+		<table class="login-table">
+			<tr>
+				<td colspan="2">로그인</td>
+			</tr>
+			<tr>
+				<td>아이디</td>
+				<td>
+					<input name="id">
+				</td>
+			</tr>
+			<tr>
+				<td>비밀번호</td>
+				<td>
+					<input type="password" name="pass">
+				</td>
+			</tr>
+			<tr>
+				<td>레벨</td>
+				<td>
+					<select name="lev">
+						<option value="B">일반회원</option>
+						<option value="A">운영자</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="로그인">
+					<input type="reset" value="취소">
+				</td>
+			</tr>
+		</table>
+	</form>
+	<p>${msg}</p>
+</body>
+</html>
+// ====================================================================================================
+01_3_header.jsp
+<%@page import="p01_vo.EmpVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	* {
+		text-decoration: none;
+		color : black;
+	}
+	table {
+		margin : auto;
+	}
+	td {
+		width : 250px;
+		border : 1px solid black;
+		text-align : center;
+	}
+	p {
+		line-height: 10px;
+		height: 10px;
+	}
+	a {
+		text-decoration: none;
+	}
+	.header-table{
+		border-spacing: 5px;
+	}
+</style>
+</head>
+<body>
+	<%
+		EmpVO vo = (EmpVO)session.getAttribute("vo");
+		String tdtxt1 = "";
+		String tdtxt2 = "";
+		String tdtxt3 = "<p>로그인</p>";
+		String tdtxt4 = "<p>사원 등록</p><p style='color: lightgrey; font-size: 0.5rem;'>(관리자로 로그인 후 사용 가능)</p>";
+		String tdtxt5 = "<p>마이페이지</p>";
+		String url4="";
+		String url5="";
+		
+		if(vo != null) {
+			tdtxt1 = "<p>" + vo.getName() + "님 반갑습니다.</p>";
+			tdtxt2 = "<p>레벨 : " + vo.getLev() + "</p>";
+			tdtxt3 = "<p>로그아웃</p>";
+			if(vo.getLev().equals("A")){
+				tdtxt4 = "<p>사원 등록</p>";
+				url4 = "custom.do";
+			}
+			url5 = "mypage.do";
+		} else {
+			tdtxt5 += "<p style='color: lightgrey; font-size: 0.5rem;'>(로그인 후 사용 가능)</p>";
+		}
+		/* 
+		 * 강사님은 <c:if test="${!empty loginUser"> ${loginUser.name}님 반갑습니다.로 구현하심...
+		*/
+	%>
+	<table class="header-table">
+		<tr>
+			<td><%=tdtxt1 %></td>
+			<td><%=tdtxt2 %></td>
+			<td><a href="logout.do" ><%=tdtxt3 %></a></td>
+			<td><a href=<%=url4 %> ><%=tdtxt4 %></a></td>
+			<td><a href=<%=url5 %> ><%=tdtxt5 %></a></td>
+		</tr>
+	</table>
+</body>
+</html>
+// ====================================================================================================
+01_4_main.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="01_3_header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>회원 전용 페이지</h1>
+</body>
+</html>
+// ====================================================================================================
+package p01_controller;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/logout.do")
+public class LogoutServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public LogoutServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		response.sendRedirect("login.do");
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+@WebServlet("/mypage.do")
+public class MyPageServlet extends HttpServlet {
 
 // ====================================================================================================
-
-
-// ====================================================================================================
-
+01_5_update.jsp
 
 // ====================================================================================================
-
-
-// ====================================================================================================
-
+@WebServlet("/custom.do")
+public class CustomServlet extends HttpServlet {
 
 // ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
-
-
-// ====================================================================================================
+01_6_insert.jsp
 
 
 
 
 
 
+#####EmpDAO
 
