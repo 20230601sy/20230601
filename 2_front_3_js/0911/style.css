@@ -1,0 +1,29 @@
+.wrapper{
+  width: 40%;
+  border: 1px solid lightgrey;
+  padding: 1.5rem;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+h4 {
+  margin-bottom: 0;
+}
+
+.input {
+  width: 90%;
+  height: 1.5rem;
+  border: 1px solid lightgrey;
+}
+
+.join-btn {
+  background: rgb(0, 110, 255);
+  color: white;
+  border-radius: 0.3rem;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-top: 2rem;
+}

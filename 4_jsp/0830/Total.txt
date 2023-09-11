@@ -30098,7 +30098,7 @@ null 값인지 알려주는 거는 empty ${empty input}
 \${5/2} ${5/2}를 그냥 문자로 출력하려면 역슬래시 사용
 
 jstl 하고 parameterValues와 반복문 태그할 거라심
-<c:forEach items:"${paramValues.season}" var="season">
+<c:forEach items="${paramValues.season}" var="season">
 	${season}
 </c:forEach>
 ${pageScope.title}, ${requestScope.title}, ${sessionScope.title}, ${applicationScope.title} 같은 거도 있나봄
@@ -32349,8 +32349,240 @@ public class EmpVO {
 	}
 }
 // ====================================================================================================
-#####EmpDAO
+package p01_dao;
 
+import java.sql.Connection;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+import p01_vo.EmpVO;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmpDAO {
+	private EmpDAO() {
+		
+	}
+	private static EmpDAO instance = new EmpDAO();
+	public static EmpDAO getInstance() {
+		return instance;
+	}
+	
+	public Connection getConnection() throws Exception {
+		Context initContext = new InitialContext();
+		Context envContext  = (Context)initContext.lookup("java:/comp/env");
+		DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
+		Connection conn = ds.getConnection();
+		return conn;
+	}
+	
+/*	public boolean userCheck(String id, String pass, String lev) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("select * from employees where id=? and pass=? and lev=?");
+			ps.setString(1, id);
+			ps.setString(2, pass);
+			ps.setString(3, lev);
+			rs = ps.executeQuery();
+			if(rs.next())
+				return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return false;
+	}
+	
+	public EmpVO getUser(String id) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		EmpVO vo = new EmpVO();
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("select * from employees where id=?");
+			ps.setString(1, id);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo.setId(rs.getString("id"));
+				vo.setPass(rs.getString("pass"));
+				vo.setName(rs.getString("name"));
+				vo.setLev(rs.getString("lev"));
+				vo.setEnter(rs.getDate("enter"));
+				vo.setGender(rs.getString("gender"));
+				vo.setPhone(rs.getString("phone"));
+			}
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return vo;
+	}
+*/
+	public EmpVO getUser(String id, String pass, String lev) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		EmpVO vo = new EmpVO();
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("select * from employees where id=? and pass=? and lev=?");
+			ps.setString(1, id);
+			ps.setString(2, pass);
+			ps.setString(3, lev);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo.setId(rs.getString("id"));
+				vo.setPass(rs.getString("pass"));
+				vo.setName(rs.getString("name"));
+				vo.setLev(rs.getString("lev"));
+				vo.setEnter(rs.getDate("enter"));
+				vo.setGender(rs.getString("gender"));
+				vo.setPhone(rs.getString("phone"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return vo;
+	}
+	
+	public int updateUser(EmpVO vo, String OriginId) {
+		int result = -1;
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("update employees set id=?, pass=?, name=?, lev=?, gender=?, phone=? where id=?");
+			ps.setString(1, vo.getId());
+			ps.setString(2, vo.getPass());
+			ps.setString(3, vo.getName());
+			ps.setString(4, vo.getLev());
+			ps.setString(5, vo.getGender());
+			ps.setString(6, vo.getPhone());
+			ps.setString(7, OriginId);
+			result = ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public int insertUser(EmpVO vo) {
+		int result = -1;
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("insert into employees values(?, ?, ?, ?, SYSDATE, ?, ?)");
+			ps.setString(1, vo.getId());
+			ps.setString(2, vo.getPass());
+			ps.setString(3, vo.getName());
+			ps.setString(4, vo.getLev());
+			ps.setString(5, vo.getGender());
+			ps.setString(6, vo.getPhone());
+//			ps = conn.prepareStatement("insert into employees values(?, ?, ?, ?, ?, ?, ?)");
+//			ps.setString(1, vo.getId());
+//			ps.setString(2, vo.getPass());
+//			ps.setString(3, vo.getName());
+//			ps.setString(4, vo.getLev());
+//			ps.setString(5, vo.getEnter().toString());
+//			ps.setString(6, vo.getGender());
+//			ps.setString(7, vo.getPhone());
+			result = ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public List<EmpVO> getEmpList() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<EmpVO> empList = new ArrayList<>();
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("select * from employees order by name");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				EmpVO vo = new EmpVO();
+				vo.setId(rs.getString("id"));
+				vo.setPass(rs.getString("pass"));
+				vo.setName(rs.getString("name"));
+				vo.setLev(rs.getString("lev"));
+				vo.setEnter(rs.getDate("enter"));
+				vo.setGender(rs.getString("gender"));
+				vo.setPhone(rs.getString("phone"));
+				empList.add(vo);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return empList;
+	}	
+}
 // ====================================================================================================
 프로그램을 실행시키면 login.do로 이동하는 index.jsp
 login 페이지로 이동하는 login.do servlet
@@ -32492,7 +32724,7 @@ public class LoginServlet extends HttpServlet {
 	table {
 		margin : auto;
 	}
-	td {
+	td, th {
 		width : 250px;
 		border : 1px solid black;
 		text-align : center;
@@ -32519,7 +32751,7 @@ public class LoginServlet extends HttpServlet {
 		String tdtxt5 = "<p>마이페이지</p>";
 		String url4="";
 		String url5="";
-		
+				
 		if(vo != null) {
 			tdtxt1 = "<p>" + vo.getName() + "님 반갑습니다.</p>";
 			tdtxt2 = "<p>레벨 : " + vo.getLev() + "</p>";
@@ -32543,6 +32775,7 @@ public class LoginServlet extends HttpServlet {
 			<td><a href="logout.do" ><%=tdtxt3 %></a></td>
 			<td><a href=<%=url4 %> ><%=tdtxt4 %></a></td>
 			<td><a href=<%=url5 %> ><%=tdtxt5 %></a></td>
+			<td><a href="emplist.do">사원 목록</a></td>			
 		</tr>
 	</table>
 </body>
@@ -32593,23 +32826,512 @@ public class LogoutServlet extends HttpServlet {
 	}
 }
 // ====================================================================================================
+package p01_controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import p01_dao.EmpDAO;
+import p01_vo.EmpVO;
+
 @WebServlet("/mypage.do")
 public class MyPageServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MyPageServlet() {
+        super();
+    }
 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("01_5_update.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		EmpVO OriginVo  = (EmpVO)session.getAttribute("vo");
+		
+		EmpVO vo = new EmpVO();
+		vo.setId(request.getParameter("id"));
+		vo.setPass(request.getParameter("pass"));
+		vo.setName(request.getParameter("name"));
+		vo.setLev(request.getParameter("lev"));
+		vo.setGender(request.getParameter("gender"));
+		vo.setPhone(request.getParameter("phone"));
+		vo.setEnter(OriginVo.getEnter());
+		
+		EmpDAO dao = EmpDAO.getInstance();
+		String url="mypage.do";
+		
+		if(dao.updateUser(vo, OriginVo.getId()) == 1) {
+			url="01_7_result.jsp";
+			request.setAttribute("msg", "회원 정보가 수정되었습니다.");
+			session.setAttribute("vo", vo);
+		}
+		RequestDispatcher rd = request.getRequestDispatcher(url);
+		rd.forward(request, response);
+	}
+
+}
 // ====================================================================================================
 01_5_update.jsp
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="01_3_header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="mypage.do" method="post">
+		<table>
+			<tr>
+				<td colspan="2">마이페이지</td>
+			</tr>
+			<tr>
+				<td>아이디</td>
+				<td><input name="id" value="${vo.id}"></td>
+			</tr>
+			<tr>
+				<td>비밀번호</td>
+				<td><input type="password" name="pass" value="${vo.pass}"></td>
+			</tr>
+			<tr>
+				<td>이름</td>
+				<td><input name="name" value="${vo.name}"></td>
+			</tr>
+			<tr>
+				<td>권한</td>
+				<td>
+					<select name="lev">
+						<option value="B" ${vo.lev=="B" ? "selected" : ""}>일반회원</option>
+						<option value="A" ${vo.lev=="A" ? "selected" : ""}>운영자</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>성별</td>
+				<td>
+					<select name="gender">
+						<option value="1" ${vo.gender=="1" ? "selected" : ""}>남자</option>
+						<option value="2" ${vo.gender=="2" ? "selected" : ""}>여자</option>
+					</select>
+				</td>
+			</tr>			
+			<tr>
+				<td>전화번호</td>
+				<td><input name="phone" value="${vo.phone}"></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="수정">
+					<input type="reset" value="취소">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
 // ====================================================================================================
+package p01_controller;
+
+import java.io.IOException;
+//import java.util.Date;
+import java.util.Date;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import p01_dao.EmpDAO;
+import p01_vo.EmpVO;
+
 @WebServlet("/custom.do")
 public class CustomServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public CustomServlet() {
+        super();
+    }
 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("01_6_insert.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		EmpVO vo = new EmpVO();
+		vo.setId(request.getParameter("id"));
+		vo.setPass(request.getParameter("pass"));
+		vo.setName(request.getParameter("name"));
+		vo.setLev(request.getParameter("lev"));
+		vo.setGender(request.getParameter("gender"));
+		vo.setPhone(request.getParameter("phone"));
+		vo.setEnter(new Date());
+		
+		EmpDAO dao = EmpDAO.getInstance();
+		String url="custom.do";
+		
+		if(dao.insertUser(vo) == 1) {
+			url="01_7_result.jsp";
+			request.setAttribute("msg", "회원 등록에 성공했습니다.");
+			request.setAttribute("vo", vo); // 헤헤 원래 이러면 안 된다심ㅋㅋㅋ
+		}
+		RequestDispatcher rd = request.getRequestDispatcher(url);
+		rd.forward(request, response);
+	}
+}
 // ====================================================================================================
 01_6_insert.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="01_3_header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="custom.do" method="post">
+		<table>
+			<tr>
+				<td colspan="2">사원등록</td>
+			</tr>
+			<tr>
+				<td>아이디</td>
+				<td><input name="id"></td>
+			</tr>
+			<tr>
+				<td>비밀번호</td>
+				<td><input type="password" name="pass"></td>
+			</tr>
+			<tr>
+				<td>이름</td>
+				<td><input name="name"></td>
+			</tr>
+			<tr>
+				<td>권한</td>
+				<td>
+					<select name="lev">
+						<option value="B">일반회원</option>
+						<option value="A">운영자</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>성별</td>
+				<td>
+					<select name="gender">
+						<option value="1">남자</option>
+						<option value="2">여자</option>
+					</select>
+				</td>
+			</tr>			
+			<tr>
+				<td>전화번호</td>
+				<td><input name="phone"></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" value="등록">
+					<input type="reset" value="취소">
+					<a href="01_4_main.jsp"><input type="button" value="메인 페이지로 이동"></a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+// ====================================================================================================
+01_7_result.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="01_3_header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<td colspan="2">
+				<h1>사원정보</h1>
+				<p>${msg}</p>
+			</td>
+		</tr>
+ 		<tr>
+			<td>아이디</td>
+			<td>${vo.id}</td>
+		</tr>
+		<tr>
+			<td>비밀번호</td>
+			<td>${vo.pass}</td>
+		</tr>
+		<tr>
+			<td>이름</td>
+			<td>${vo.name}</td>
+		</tr>
+		<tr>
+			<td>권한</td>
+			<td>${vo.lev=="A" ? "관리자" : "일반회원"}</td>
+		</tr>
+		<tr>
+			<td>성별</td>
+			<td>${vo.gender=="1" ? "남자" : "여자"}</td>
+		</tr>			
+		<tr>
+			<td>전화번호</td>
+			<td>${vo.phone}</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<a href="01_4_main.jsp"><input type="button" value="메인 페이지로 이동"></a>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
+// ====================================================================================================
+package p01_controller;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import p01_dao.EmpDAO;
+import p01_vo.EmpVO;
+
+@WebServlet("/emplist.do")
+public class EmpListServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public EmpListServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		EmpDAO dao = EmpDAO.getInstance();
+		List<EmpVO> empList = dao.getEmpList();
+		request.setAttribute("empList", empList);
+		RequestDispatcher rd = request.getRequestDispatcher("01_8_list.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+01_8_list.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="01_3_header.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.empList-table {
+		border-collapse: collapse;
+	}
+</style>
+</head>
+<body>
+	<table class="empList-table">
+		<c:if test="${!empty empList}">
+			<tr>
+				<th>ID</th>
+				<th>PASS</th>
+				<th>NAME</th>
+				<th>LEV</th>
+				<th>ENTER</th>
+				<th>GENDER</th>
+				<th>PHONE</th>
+			</tr>
+			<c:forEach items="${empList}" var="emp">
+				<tr>
+					<td>${emp.id}</td>
+					<td>${emp.pass}</td>
+					<td>${emp.name}</td>
+					<td>${emp.lev=="A"? "관리자" : "일반회원"}</td>
+					<td>${emp.enter}</td>
+					<td>${emp.gender=="1"? "남자" : "여자"}</td>
+					<td>${emp.phone}</td>
+				</tr>
+			</c:forEach>
+		</c:if>
+	</table>
+</body>
+</html>
+// ====================================================================================================
+Day0911
+// ====================================================================================================
+0908 마무리 + UI test ㅡ_ㅡ + 다음 시험은 sql 이라심 ㄷㄷㄷ
+
+2_front_3_js > 0911 > index.html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 페이지</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <h1>회원가입</h1>
+    <form action="">
+      <h4>사용자 이름:</h4>
+      <input class="input name" name="name">
+      <h4>이메일:</h4>
+      <input class="input email" name="email">
+      <h4>비밀번호:</h4>
+      <input class="input pwd" type="password" name="pwd">
+      <br>
+      <input class="join-btn" type="submit" value="가입하기">
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+// ====================================================================================================
+2_front_3_js > 0911 > style.css
+.wrapper{
+  width: 40%;
+  border: 1px solid lightgrey;
+  padding: 1.5rem;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+h4 {
+  margin-bottom: 0;
+}
+
+.input {
+  width: 90%;
+  height: 1.5rem;
+  border: 1px solid lightgrey;
+}
+
+.join-btn {
+  background: rgb(0, 110, 255);
+  color: white;
+  border-radius: 0.3rem;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-top: 2rem;
+}
+// ====================================================================================================
+2_front_3_js > 0911 > script.js
+const joinBtn = document.querySelector(".join-btn");
+const userName = document.querySelector(".name");
+const userMail = document.querySelector(".email");
+const userPwd = document.querySelector(".pwd");
+const regexMail = /^([a-z]+\d*)+(\.?\w+)+@\w+(\.\w{2,3})+$/;
+
+joinBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  if(userName.value==="" || userMail.value==="" || userPwd.value==="")
+    alert("모든 필드를 입력하세요.");
+  else if(regexMail.test(userMail.value))
+    alert("유효한 이메일 주소를 입력하세요.");
+  else
+    alert("회원가입 성공!");
+});
+// ====================================================================================================
+게시판 구현할 거라심
+회원 기능도 넣을 거라심...
+데이터베이스에 테이블이 여러 개일 경우에 대해 DB 접속에 대한 코드를 메서드로 만드는 거 해주시려나봄 → util static 메서드 만드심... 
+
+SQL 새 계정 생성
+create USER study IDENTIFIED by 1234;
+grant connect, resource to study;
+grant create view to study;
+local-study로 접속 저장함
+server.xml connection pool 설정할 때 이제 study/1234로 변경...
+<Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver" maxIdle="10" maxTotal="20" maxWaitMillis="-1" name="jdbc/myoracle" type="javax.sql.DataSource" url="jdbc:oracle:thin:@127.0.0.1:1521:xe" username="study" password="1234"/>
+
+회원 테이블 boarduser, 현재 회원 3명
+create table boarduser(
+    id varchar2(10) primary key, 
+    pw varchar2(10),
+    name varchar(20),
+    regidate date default sysdate --가입일
+);
+
+insert into boarduser values('abc', '1234', '고길동', '20/01/01');
+insert into boarduser values('qwer', '4321', '둘리', '22/12/25');
+insert into boarduser values('zxc', '1212', '희동', '23/05/05');
+
+select * from boarduser;
+commit;
+
+게시글 저장 테이블, 게시글 번호/제목/내용/아이디/게시날짜/조회수 40개 시퀀스 만들어둠. PL 썼으니 한 번에 실행하면 오류남 ㅡㅡ
+create table board(
+    no number(6) primary key,
+    title varchar2(200),
+    content varchar2(2000),
+    id varchar2(10),
+    postdate date default sysdate,
+    visitcount number(6) default 0
+);
+create SEQUENCE board_seq start with 1 INCREMENT by 1;
+
+BEGIN
+FOR i IN 1..40 LOOP
+insert into board(no, title, content, id, postdate)
+    values(BOARD_SEQ.nextval, CONCAT('TEST제목', i), CONCAT('TEST내용', i), 'abc', '23/01/01');
+END LOOP;
+END;
+
+select * from board;
+commit;
+// ====================================================================================================
+아직까지는 새로운 것이 없어서...마무리하면 코드 정리하겠음
+
+// ====================================================================================================
 
 
+// ====================================================================================================
 
 
+// ====================================================================================================
 
 
-#####EmpDAO
+// ====================================================================================================
+
+
+// ====================================================================================================
+
+
 

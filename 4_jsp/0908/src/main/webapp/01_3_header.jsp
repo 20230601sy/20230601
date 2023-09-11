@@ -14,7 +14,7 @@
 	table {
 		margin : auto;
 	}
-	td {
+	td, th {
 		width : 250px;
 		border : 1px solid black;
 		text-align : center;
@@ -41,7 +41,7 @@
 		String tdtxt5 = "<p>마이페이지</p>";
 		String url4="";
 		String url5="";
-		
+				
 		if(vo != null) {
 			tdtxt1 = "<p>" + vo.getName() + "님 반갑습니다.</p>";
 			tdtxt2 = "<p>레벨 : " + vo.getLev() + "</p>";
@@ -65,6 +65,7 @@
 			<td><a href="logout.do" ><%=tdtxt3 %></a></td>
 			<td><a href=<%=url4 %> ><%=tdtxt4 %></a></td>
 			<td><a href=<%=url5 %> ><%=tdtxt5 %></a></td>
+			<td><a href="emplist.do">사원 목록</a></td>			
 		</tr>
 	</table>
 </body>

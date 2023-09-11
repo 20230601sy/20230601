@@ -9,6 +9,8 @@ import p01_vo.EmpVO;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmpDAO {
 	private EmpDAO() {
@@ -167,14 +169,18 @@ public class EmpDAO {
 		
 		try {
 			conn = getConnection();
-//			ps = conn.prepareStatement("insert into employees values=(?, ?, ?, ?, ?, ?, ?)");
-			ps = conn.prepareStatement("insert into employees values=(?, ?, ?, ?, SYSDATE, ?, ?)");
+			ps = conn.prepareStatement("insert into employees values(?, ?, ?, ?, SYSDATE, ?, ?)");
 			ps.setString(1, vo.getId());
 			ps.setString(2, vo.getPass());
 			ps.setString(3, vo.getName());
 			ps.setString(4, vo.getLev());
 			ps.setString(5, vo.getGender());
 			ps.setString(6, vo.getPhone());
+//			ps = conn.prepareStatement("insert into employees values(?, ?, ?, ?, ?, ?, ?)");
+//			ps.setString(1, vo.getId());
+//			ps.setString(2, vo.getPass());
+//			ps.setString(3, vo.getName());
+//			ps.setString(4, vo.getLev());
 //			ps.setString(5, vo.getEnter().toString());
 //			ps.setString(6, vo.getGender());
 //			ps.setString(7, vo.getPhone());
@@ -191,4 +197,39 @@ public class EmpDAO {
 		}
 		return result;
 	}
+	
+	public List<EmpVO> getEmpList() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<EmpVO> empList = new ArrayList<>();
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("select * from employees order by name");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				EmpVO vo = new EmpVO();
+				vo.setId(rs.getString("id"));
+				vo.setPass(rs.getString("pass"));
+				vo.setName(rs.getString("name"));
+				vo.setLev(rs.getString("lev"));
+				vo.setEnter(rs.getDate("enter"));
+				vo.setGender(rs.getString("gender"));
+				vo.setPhone(rs.getString("phone"));
+				empList.add(vo);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return empList;
+	}
+	
 }

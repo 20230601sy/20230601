@@ -2,6 +2,7 @@ package p01_controller;
 
 import java.io.IOException;
 //import java.util.Date;
+import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -34,7 +35,7 @@ public class CustomServlet extends HttpServlet {
 		vo.setLev(request.getParameter("lev"));
 		vo.setGender(request.getParameter("gender"));
 		vo.setPhone(request.getParameter("phone"));
-//		vo.setEnter(new Date());
+		vo.setEnter(new Date());
 		
 		EmpDAO dao = EmpDAO.getInstance();
 		String url="custom.do";
@@ -42,7 +43,7 @@ public class CustomServlet extends HttpServlet {
 		if(dao.insertUser(vo) == 1) {
 			url="01_7_result.jsp";
 			request.setAttribute("msg", "회원 등록에 성공했습니다.");
-			request.setAttribute("vo", vo);
+			request.setAttribute("vo", vo); // 헤헤 원래 이러면 안 된다심ㅋㅋㅋ
 		}
 		RequestDispatcher rd = request.getRequestDispatcher(url);
 		rd.forward(request, response);

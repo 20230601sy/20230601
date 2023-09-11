@@ -15,7 +15,7 @@
 				<p>${msg}</p>
 			</td>
 		</tr>
-<!-- 		<tr>
+ 		<tr>
 			<td>아이디</td>
 			<td>${vo.id}</td>
 		</tr>
@@ -43,7 +43,7 @@
 			<td colspan="2">
 				<a href="01_4_main.jsp"><input type="button" value="메인 페이지로 이동"></a>
 			</td>
-		</tr> -->
+		</tr>
 	</table>
 </body>
 </html>
