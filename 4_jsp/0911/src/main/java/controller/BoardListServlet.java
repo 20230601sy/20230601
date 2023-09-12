@@ -39,13 +39,20 @@ public class BoardListServlet extends HttpServlet {
 //		RequestDispatcher rd = request.getRequestDispatcher("boardList2.jsp?page=" + page);
 //		rd.forward(request, response);
 		
-//		List 잘라서 보내주는 거
-		List<BoardVO> boardList = dao.getBoardList();
-		request.setAttribute("boardList", boardList);
-		String page = request.getParameter("page");
-		if(page==null)
-			page="1";
-		RequestDispatcher rd = request.getRequestDispatcher("boardList2.jsp?page=" + page);
+//		애초에 페이지 보내줄 때 List 잘라서 보내주는 거
+		List<BoardVO> boardList = dao.getBoardList();		
+		String page_ = request.getParameter("page");
+		int page;
+		if(page_==null)
+			page=1;
+		else
+			page = Integer.parseInt(page_);
+		
+		List<BoardVO> selectList = boardList.subList(10*(page-1), Math.min(boardList.size(), 10*page)); 
+		request.setAttribute("boardList", selectList);
+		int pageNo = (int)((boardList.size()+9)/10); 
+		request.setAttribute("pageNo", pageNo);
+		RequestDispatcher rd = request.getRequestDispatcher("boardList3.jsp");
 		rd.forward(request, response);
 	}
 

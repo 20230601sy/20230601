@@ -36,8 +36,7 @@
 					</c:if>
 				</c:forEach>
 			</table>
-			<div class="text-center">
-				
+			<div class="text-center">				
 				<c:forEach items="${boardList}" var="board" varStatus="status">
 					<c:if test="${status.count%10==1}">
 						<a href="boardlist.do?page=${(status.count-1)/10+1}">
