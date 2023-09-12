@@ -8,22 +8,26 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-@WebServlet("/logout.do")
-public class LogoutServlet extends HttpServlet {
+import DAO.BoardDAO;
+import VO.BoardVO;
+
+@WebServlet("/detail.do")
+public class DetailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public LogoutServlet() {
+    public DetailServlet() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		session.invalidate();
-//		RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-//		rd.forward(request, response);
-		response.sendRedirect("index.jsp");
+		int no = Integer.parseInt(request.getParameter("no"));
+		BoardDAO dao = BoardDAO.getInstance();
+		dao.incVisitCnt(no);
+		BoardVO vo = dao.getBoard(no);
+		request.setAttribute("detailBoard", vo);
+		RequestDispatcher rd = request.getRequestDispatcher("detail.jsp");
+		rd.forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

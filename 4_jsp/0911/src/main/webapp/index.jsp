@@ -12,6 +12,7 @@
 	<div class="container">
 <!-- 
 		<h1>${loginUser==null? "비회원" : loginUser.name}님 환영합니다.</h1>
+		<h1>${(empty loginUser)? "비회원" : loginUser.name}님 환영합니다.</h1>
  -->
 		<c:if test="${empty loginUser}">
 			<h1>로그인 후 진행 가능합니다.</h1>

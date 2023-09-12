@@ -76,4 +76,67 @@ public class BoardDAO {
 		}
 		return boardList;
 	}
+	
+	public BoardVO getBoard(int no) {
+		Connection conn = DBConnection.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		BoardVO vo = null;
+		try {
+			ps = conn.prepareStatement("select * from board where no=?");
+			ps.setInt(1, no);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo = new BoardVO();
+				vo.setNo(rs.getInt(1));
+				vo.setTitle(rs.getString(2));
+				vo.setContent(rs.getString(3));
+				vo.setId(rs.getString(4));
+				vo.setPostdate(rs.getDate(5));
+				vo.setVisitcount(rs.getInt(6));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.close(conn, ps, rs);
+		}
+		return vo;
+	}
+	
+	public void updateSQL(String sql, String[] values, int no) {
+		Connection conn = DBConnection.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(sql);
+			int idx=1;
+			if(values != null) {
+				idx += values.length;
+				for(int i=1; i<=values.length; i++)
+					ps.setString(i, values[i-1]);
+			}
+			if(no != -1)
+				ps.setInt(idx, no);
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.close(conn, ps);
+		}
+	}
+	
+	public void writeBoard(String id, String title, String content) {
+		updateSQL("insert into board(no, id, title, content) values (board_seq.nextval, ?, ?, ?)", new String[]{id, title, content}, -1);
+	}
+	
+	public void incVisitCnt(int no) {
+		updateSQL("update board set visitcount = visitcount+1 where no=?", null, no);
+	}
+	
+	public void updateBoard(int no, String title, String content) {
+		updateSQL("update board set title=?, content=? where no=?", new String[]{title, content}, no);
+	}
+	
+	public void deleteBoard(int no) {
+		updateSQL("delete from board where no=?", null, no);
+	}
 }

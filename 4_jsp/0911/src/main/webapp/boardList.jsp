@@ -24,7 +24,9 @@
 				<c:forEach items="${boardList}" var="board">
 					<tr>
 						<td>${board.no}</td>
-						<td>${board.title}</td>
+						<td>
+							<a href="detail.do?no=${board.no}">${board.title}</a>
+						</td>
 						<td>${board.id}</td>
 						<td>${board.postdate}</td>
 						<td>${board.visitcount}</td>

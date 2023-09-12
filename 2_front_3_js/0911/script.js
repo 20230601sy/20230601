@@ -9,7 +9,7 @@ joinBtn.addEventListener("click", (e) => {
 
   if(userName.value==="" || userMail.value==="" || userPwd.value==="")
     alert("모든 필드를 입력하세요.");
-  else if(regexMail.test(userMail.value))
+  else if(!regexMail.test(userMail.value))
     alert("유효한 이메일 주소를 입력하세요.");
   else
     alert("회원가입 성공!");

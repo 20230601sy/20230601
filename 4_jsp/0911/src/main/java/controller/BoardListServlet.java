@@ -23,9 +23,29 @@ public class BoardListServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BoardDAO dao = BoardDAO.getInstance();
+		
+//		List 전체 다 보여주는 거
+//		List<BoardVO> boardList = dao.getBoardList();
+//		request.setAttribute("boardList", boardList);
+//		RequestDispatcher rd = request.getRequestDispatcher("boardList.jsp");
+//		rd.forward(request, response);
+		
+//		List 잘라서 보여주는데 List 전체가 왔다갔다 하는 불필요한 거 ㅡㅡ
+//		List<BoardVO> boardList = dao.getBoardList();
+//		request.setAttribute("boardList", boardList);
+//		String page = request.getParameter("page");
+//		if(page==null)
+//			page="1";
+//		RequestDispatcher rd = request.getRequestDispatcher("boardList2.jsp?page=" + page);
+//		rd.forward(request, response);
+		
+//		List 잘라서 보내주는 거
 		List<BoardVO> boardList = dao.getBoardList();
 		request.setAttribute("boardList", boardList);
-		RequestDispatcher rd = request.getRequestDispatcher("boardList.jsp");
+		String page = request.getParameter("page");
+		if(page==null)
+			page="1";
+		RequestDispatcher rd = request.getRequestDispatcher("boardList2.jsp?page=" + page);
 		rd.forward(request, response);
 	}
 
