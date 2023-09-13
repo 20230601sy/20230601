@@ -10,8 +10,8 @@
 </head>
 <body>
 	<c:if test="${! empty boardList}">	
-		<div class="container">
-			<table class="table table-striped text-center">
+		<div class="container text-center">
+			<table class="table table-striped">
 				<thead class="table-dark">
 					<tr>
 						<th>번호</th>
@@ -33,6 +33,9 @@
 					</tr>
 				</c:forEach>
 			</table>
+			<c:forEach var="page" begin="1" end="${paging.totalPage}">
+				<a class="btn btn${page== paging.page ? '' : '-outline'}-dark" href="boardlist.do?searchWord=${param.searchWord}&page=${page}&">${page}</a>
+			</c:forEach>
 		</div>
 	</c:if>
 </body>

@@ -119,7 +119,10 @@
 				<Context docBase="0911" path="/0911" reloadable="true" source="org.eclipse.jst.jee.server:0911">
 					<Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver" maxIdle="10" maxTotal="20" maxWaitMillis="-1" name="jdbc/myoracle" password="1234" type="javax.sql.DataSource" url="jdbc:oracle:thin:@127.0.0.1:1521:xe" username="study"/>
 				</Context>
-			<Context docBase="0913" path="/0913" reloadable="true" source="org.eclipse.jst.jee.server:0913"/></Host>
+				<Context docBase="0913" path="/0913" reloadable="true" source="org.eclipse.jst.jee.server:0913">
+					<Resource auth="Container" driverClassName="oracle.jdbc.OracleDriver" maxIdle="10" maxTotal="20" maxWaitMillis="-1" name="jdbc/myoracle" password="1234" type="javax.sql.DataSource" url="jdbc:oracle:thin:@127.0.0.1:1521:xe" username="study"/>
+				</Context>
+				</Host>
 		</Engine>
 	</Service>
 </Server>

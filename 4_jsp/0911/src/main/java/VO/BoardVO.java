@@ -46,10 +46,4 @@ public class BoardVO {
 	public void setVisitcount(int visitcount) {
 		this.visitcount = visitcount;
 	}
-	
-	@Override
-	public String toString() {
-		return "BoardVO [no=" + no + ", title=" + title + ", content=" + content + ", id=" + id + ", postdate="
-				+ postdate + ", visitcount=" + visitcount + "]";
-	}
 }

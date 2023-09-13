@@ -1,6 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>    
 <%@ include file="header.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -21,7 +20,9 @@
         </div>
         <button type="submit" class="btn btn-dark">로그인</button>
       </form>
-      ${msg}
+      <c:if test="${!empty msg}">
+	      <div class="alert alert-danger mt-4">${msg}</div>
+      </c:if>
    </div>
    
 </body>
