@@ -27,10 +27,8 @@
 					<a class="btn btn-outline-light" href="write.do">글쓰기</a>
 				</c:if>
 			</div>
-			<form class="d-flex" role="search" method="post"
-				action="boardlist.do">
-				<input class="form-control me-2" type="search" placeholder="Search"
-					name="searchWord">
+			<form class="d-flex" role="search" method="get" action="boardlist.do">
+				<input class="form-control me-2" type="search" placeholder="Search" name="searchWord">
 				<button class="btn btn-outline-success" type="submit">Search</button>
 			</form>
 		</div>

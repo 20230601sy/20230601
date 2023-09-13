@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import DAO.BoardDAO;
 import VO.BoardVO;
+import util.Paging;
 
 @WebServlet("/boardlist.do")
 public class BoardListServlet extends HttpServlet {
@@ -40,30 +41,51 @@ public class BoardListServlet extends HttpServlet {
 //		rd.forward(request, response);
 		
 //		애초에 페이지 보내줄 때 List 잘라서 보내주는 거
-		List<BoardVO> boardList = dao.getBoardList();		
-		String page_ = request.getParameter("page");
-		int page;
-		if(page_==null)
-			page=1;
-		else
-			page = Integer.parseInt(page_);
+//		List<BoardVO> boardList = dao.getBoardList();		
+//		String page_ = request.getParameter("page");
+//		int page;
+//		if(page_==null)
+//			page=1;
+//		else
+//			page = Integer.parseInt(page_);
+//		List<BoardVO> selectList = boardList.subList(10*(page-1), Math.min(boardList.size(), 10*page)); 
+//		request.setAttribute("boardList", selectList);
+//		int pageNo = (int)((boardList.size()+9)/10); 
+//		request.setAttribute("pageNo", pageNo);
+//		RequestDispatcher rd = request.getRequestDispatcher("boardList3.jsp");
+//		rd.forward(request, response);
+//		DB를 잘라서 받는다면... https://gent.tistory.com/254
+//			SELECT *
+//			  FROM (
+//			        SELECT ROW_NUMBER() OVER (ORDER BY ENAME) NUM
+//			             , A.*
+//			          FROM EMP A
+//			         ORDER BY ENAME
+//			        ) 
+//			 WHERE NUM BETWEEN 7 AND 9
+		String searchWord = request.getParameter("searchWord");
+		int page = 1;
+		Paging paging = new Paging();
+		if(request.getParameter("page") != null)
+			page = Integer.parseInt(request.getParameter("page")); // paging.setPage(Integer.parseInt(request.getParameter("page")));
+		paging.pageCalc(dao.cntBoard(searchWord), page);
 		
-		List<BoardVO> selectList = boardList.subList(10*(page-1), Math.min(boardList.size(), 10*page)); 
-		request.setAttribute("boardList", selectList);
-		int pageNo = (int)((boardList.size()+9)/10); 
-		request.setAttribute("pageNo", pageNo);
-		RequestDispatcher rd = request.getRequestDispatcher("boardList3.jsp");
+		List<BoardVO> boardList = dao.getBoardList(searchWord, paging);		
+		request.setAttribute("boardList", boardList);
+		request.setAttribute("paging", paging);
+		RequestDispatcher rd = request.getRequestDispatcher("boardList4.jsp");
 		rd.forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String searchWord = request.getParameter("searchWord");
-		BoardDAO dao = BoardDAO.getInstance();
-		List<BoardVO> boardList = dao.getBoardList(searchWord);
-		
-		request.setAttribute("boardList", boardList);
-		RequestDispatcher rd = request.getRequestDispatcher("boardList.jsp");
-		rd.forward(request, response);
+//		String searchWord = request.getParameter("searchWord");
+//		BoardDAO dao = BoardDAO.getInstance();
+//		List<BoardVO> boardList = dao.getBoardList(searchWord);
+//		
+//		request.setAttribute("boardList", boardList);
+//		RequestDispatcher rd = request.getRequestDispatcher("boardList.jsp");
+//		rd.forward(request, response);
+		doGet(request, response);
 	}
 
 }
