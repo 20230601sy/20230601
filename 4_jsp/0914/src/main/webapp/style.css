@@ -1,0 +1,25 @@
+.text-right {
+	text-align: right;
+}
+
+.text-center, h1 {
+	text-align: center;
+}
+
+table {
+	border-collapse: collapse;
+	margin: auto;
+}
+
+th, td {
+	border: 1px solid;
+	padding: 5px;
+}
+
+th {
+	background: lightgrey;
+}
+
+img {
+	height: 300px;
+}

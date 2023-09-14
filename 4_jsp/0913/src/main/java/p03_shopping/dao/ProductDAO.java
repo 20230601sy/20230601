@@ -66,15 +66,37 @@ public class ProductDAO {
 		return vo;
 	}
 	
-	public void insertProduct(ProductVO vo) {
+	public void updateSql(ProductVO vo, String sql, int[] idx) {
 		Connection conn = DBManager.getConnection();
 		PreparedStatement ps = null;
 		try {
-			ps = conn.prepareStatement("insert into product values(product_seq.nextval, ?, ?, ?, ?)");
-			ps.setString(1, vo.getName());
-			ps.setInt(2, vo.getPrice());
-			ps.setString(3, vo.getPictureUrl());
-			ps.setString(4, vo.getDescription());
+			ps = conn.prepareStatement(sql);
+			if(idx[0]!=0) ps.setInt(idx[0], vo.getCode());
+			if(idx[1]!=0) ps.setString(idx[1], vo.getName());
+			if(idx[2]!=0) ps.setInt(idx[2], vo.getPrice());
+			if(idx[3]!=0) ps.setString(idx[3], vo.getPictureUrl());
+			if(idx[4]!=0) ps.setString(idx[4], vo.getDescription());
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+
+	public void insertProduct(ProductVO vo) {
+		updateSql(vo, "insert into product values(product_seq.nextval, ?, ?, ?, ?)", new int[] {0, 1, 2, 3, 4});
+	}
+	public void updateProduct(ProductVO vo) {
+		updateSql(vo, "update product set name=?, price=?, pictureUrl=?, description=? where code=?", new int[] {5, 1, 2, 3, 4});
+	}
+	public void deleteProduct(int code) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("delete from product where code=?");
+			ps.setInt(1, code);
 			ps.executeUpdate();
 		} catch(Exception e) {
 			e.printStackTrace();

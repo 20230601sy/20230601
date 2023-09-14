@@ -34540,29 +34540,1426 @@ DB에는 보통 파일이 있지는 않고 파일 경로가 들어가 있는데 
 // ====================================================================================================
 게시판 만드는 거에서 MultipartRequest 사용한 거 밖에 없으니 복습하라심...우움...
 // ====================================================================================================
-
+03_index.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<a href="productList.do">상품 목록 페이지</a>
+</body>
+</html>
 // ====================================================================================================
+03_style > shopping.css
+#wrap {
+	width: 90%;
+	margin: 0;
+	margin-left: auto;
+	margin-right: auto;
+}
 
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 12px;
+	line-height: 24px;
+}
+
+table td, th {
+	border: 1px solid darkgrey;
+	padding: 5px;
+}
+
+th {
+	background: lightgrey;
+}
+
+img {
+	width: 220px;
+	height: 300px;
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+a:HOVER {
+	text-decoration: underline;
+	color: red;
+}
 // ====================================================================================================
-
+03_script > product.js
+function productCheck() {
+	if(document.frm.name.value.length==0) {
+		alert("상품명을 써주세요.");
+		frm.name.focus();
+		return false;
+	}
+	if(document.frm.price.value.length==0) {
+		alert("가격을 써주세요.");
+		frm.price.focus();
+		return false;
+	}
+	if(isNaN(document.frm.price.value)) {
+		alert("가격은 숫자를 입력해야 합니다.");
+		frm.price.focus();
+		return false;
+	}
+	return true;
+}
 // ====================================================================================================
-
+03_product > productList.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="03_style/shopping.css">
+</head>
+<body>
+	<div id="wrap" align="center">
+		<h1>상품 리스트 - 관리자 페이지</h1>
+		<table class="list">
+			<tr>
+				<td colspan="5" style="border: white; text-align: right"><a href="productWrite.do">상품 등록</a></td>
+			</tr>
+			<tr>
+				<th>번호</th>
+				<th>이름</th>
+				<th>가격</th>
+				<th>수정</th>
+				<th>삭제</th>
+			</tr>
+			<c:forEach var="product" items="${productList}">
+				<tr class="record">
+					<td>${product.code}</td>
+					<td>${product.name}</td>
+					<td>${product.price} 원</td>
+					<td><a href="productUpdate.do?code=${product.code}">상품 수정</a></td>
+					<td><a href="productDelete.do?code=${product.code}">상품 삭제</a></td>
+				</tr>
+			</c:forEach>
+		</table>
+	</div>
+</body>
+</html>
 // ====================================================================================================
-
+03_product > productWrite.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="03_style/shopping.css">
+<script type="text/javascript" src="03_script/product.js"></script>
+</head>
+<body>
+	<div id="wrap" align="center">
+		<h1>상품 등록 - 관리자 페이지</h1>
+		<form method="post" enctype="multipart/form-data" name="frm">
+		<!-- action 설정 안하면 productWrite.do 원래 페이지로 가는데... 안 쓰는 것보다는 명시해두라심 살빠지는 것도 아니잖슴이라심 흐음... -->
+			<table>
+				<tr>
+					<th>상품명</th>
+					<td><input type="text" name="name" size="75"></td>
+				</tr>
+				<tr>
+					<th>가격</th>
+					<td><input type="text" name="price"> 원</td>
+				</tr>
+				<tr>
+					<th>사진</th>
+					<td>
+						<input type="file" name="pictureUrl"><br>
+						(주의사항 : 이미지를 변경하고자 할때만 선택하시오)
+					</td>
+				</tr>
+				<tr>
+					<th>설명</th>
+					<td><textarea cols="75" rows="10" name="description"></textarea></td>
+				</tr>
+			</table>
+			<br>
+			<input type="submit" value="등록" onclick="return productCheck()">
+			<input type="reset" value="다시작성">
+			<input type="button" value="목록" onclick="location.href='productList.do'">
+		</form>
+	</div>
+</body>
+</html>
 // ====================================================================================================
-
+03_product > productUpdate.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>상품 수정</title>
+<link rel="stylesheet" href="03_style/shopping.css">
+</head>
+<body>
+<%--
+	이미지 경로는 upload/파일명 // 만든 폴더명/파일명 // eg. <img src="upload/파일명">
+	
+	List 페이지에서 수정 버튼을 누르면 update 페이지로 넘어가야 함
+	
+	1. list 페이지 수정 버튼에 링크 설정
+	2. 요청 받을 서블릿 구현
+	   -. 해당 상품에 정보를 DB에서 뽑아와야 함 (dao에서 구현)
+	   -. 정보를 다 뽑아 온 후 update 페이지로 넘겨줘야 함
+	   -. update 페이지로 이동
+	3. update 페이지에서 받아온 정보를 화면에 출력
+	
+	수정 페이지에서 수정할 거 수정한 다음 수정버튼을 누르면 목록 페이지로 이동
+	
+	수정 요청을 받는 서블릿 구현
+	-. 수정할 데이터를 받아서 DB에 접속해서 수정 처리
+	-. 완료되면 목록페이지로 이동
+	
+	단, 이미지는 수정 안하면 기존 이미지가 유지되어야 함.
+--%>
+	<div id="wrap" align="center">
+		<h1>상품 수정</h1>
+		<form method="post" enctype="multipart/form-data" name="frm">
+			<table>
+				<tr>
+					<td>
+						<c:if test="${empty product.pictureUrl}">
+							<p>이미지가 없습니다</p>
+						</c:if>
+						<c:if test="${!empty product.pictureUrl}">
+							<img src="03_upload/${product.pictureUrl}">
+						</c:if>
+					</td>
+					<td>
+						<table>
+							<tr>
+								<th style="width: 80px">상품명</th>
+								<td><input type="text" name="name" value="${product.name}"></td>
+							</tr>
+							<tr>
+								<th>가격</th>
+								<td><input type="text" name="price" value="${product.price}"></td>
+							</tr>
+							<tr>
+								<th>사진</th>
+									<td>
+										<input type="file" name="pictureUrl">
+										<input type="hidden" name="originPictureUrl" value="${product.pictureUrl}">
+										<!-- 이렇게 하면 처음에는 보이는데 바뀐 게 업데이트는 안됨... 에효...
+											<input type="file" name="pictureUrl" id="files" style="display:none;"/>
+											<label for="files">
+												<span style="border:1px solid; background:rgb(240, 240, 240); padding:3px 6px; border-radius: 2px;">파일 선택</span> ${product.pictureUrl}
+											</label>
+										 -->
+									</td>
+							</tr>
+							<tr>
+								<th>설명</th>
+								<td><textarea cols=80 rows=10 name="description">${product.description}</textarea>
+								</td>
+							</tr>
+						</table> <br>
+						<input type="submit" value="수정" onclick="return productCheck()">
+						<input type="reset" value="다시작성">
+						<input type="button" value="목록" onclick="location.href='productList.do'">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script src="03_script/product.js"></script>
+</body>
+</html>
 // ====================================================================================================
-
+03_product > productDelete.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>상품 삭제</title>
+<link rel="stylesheet" href="03_style/shopping.css">
+</head>
+<body>
+	<div id="wrap" align="center">
+		<h1>상품 삭제</h1>
+		<form method="post" name="frm">
+			<table>
+				<tr>
+					<td>
+						<c:if test="${empty product.pictureUrl}">
+							<p>이미지가 없습니다</p>
+						</c:if>
+						<c:if test="${!empty product.pictureUrl}">
+							<img src="03_upload/${product.pictureUrl}">
+						</c:if>
+					</td>
+					<td>
+						<table>
+							<tr>
+								<th style="width: 80px">상품명</th>
+								<td>${product.name}</td>
+							</tr>
+							<tr>
+								<th>가격</th>
+								<td>${product.price}원</td>
+							</tr>
+							<tr>
+								<th>사진</th>
+								<td>${product.pictureUrl}</td>
+							</tr>
+							<tr>
+								<th>설명</th>
+								<td>${product.description}</td>
+							</tr>
+						</table> <br>
+						<input type="submit" value="삭제">
+						<input type="button" value="목록" onclick="location.href='productList.do'">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script src="03_script/product.js"></script>
+</body>
+</html>
 // ====================================================================================================
+package p03_shopping.util;
 
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+
+@WebFilter("/*")
+public class EncodingFilter implements Filter {
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		request.setCharacterEncoding("utf-8");
+		chain.doFilter(request, response);
+	}
+}
 // ====================================================================================================
+package p03_shopping.util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class DBManager {	
+	public static Connection getConnection() {
+		Connection conn = null;
+		try {
+			Context initContext = new InitialContext();
+			Context envContext  = (Context)initContext.lookup("java:/comp/env");
+			DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
+			conn = ds.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
+	public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
+		try {
+			if(rs != null) rs.close();
+			if(ps != null) ps.close();
+			if(conn != null) conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void close(Connection conn, PreparedStatement ps) {
+		close(conn, ps, null);
+	}
+}
 // ====================================================================================================
+package p03_shopping.vo;
 
+public class ProductVO {
+	private Integer code;
+	private String name;
+	private Integer price;
+	private String description;
+	private String pictureUrl;
+	
+	public Integer getCode() {
+		return code;
+	}
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Integer getPrice() {
+		return price;
+	}
+	public void setPrice(Integer price) {
+		this.price = price;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getPictureUrl() {
+		return pictureUrl;
+	}
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
+	}
+}
 // ====================================================================================================
+package p03_shopping.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import p03_shopping.util.DBManager;
+import p03_shopping.vo.ProductVO;
+
+public class ProductDAO {
+	private ProductDAO() {}
+	private static ProductDAO instance = new ProductDAO();
+	public static ProductDAO getInstance() {
+		return instance;
+	}
+	
+	public List<ProductVO> getProductList() {
+		List<ProductVO> result = new ArrayList<>();
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement("select * from product order by code desc");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				ProductVO vo = new ProductVO();
+				vo.setCode(rs.getInt(1));
+				vo.setName(rs.getString(2));
+				vo.setPrice(rs.getInt(3));
+				vo.setPictureUrl(rs.getString(4));
+				vo.setDescription(rs.getString(5));
+				result.add(vo);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return result;
+	}
+	
+	public ProductVO getProduct(Integer code) {
+		ProductVO vo = null;
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement("select * from product where code=?");
+			ps.setInt(1, code);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo = new ProductVO();
+				vo.setCode(rs.getInt(1));
+				vo.setName(rs.getString(2));
+				vo.setPrice(rs.getInt(3));
+				vo.setPictureUrl(rs.getString(4));
+				vo.setDescription(rs.getString(5));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return vo;
+	}
+	
+	public void updateSql(ProductVO vo, String sql, int[] idx) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(sql);
+			if(idx[0]!=0) ps.setInt(idx[0], vo.getCode());
+			if(idx[1]!=0) ps.setString(idx[1], vo.getName());
+			if(idx[2]!=0) ps.setInt(idx[2], vo.getPrice());
+			if(idx[3]!=0) ps.setString(idx[3], vo.getPictureUrl());
+			if(idx[4]!=0) ps.setString(idx[4], vo.getDescription());
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+
+	public void insertProduct(ProductVO vo) {
+		updateSql(vo, "insert into product values(product_seq.nextval, ?, ?, ?, ?)", new int[] {0, 1, 2, 3, 4});
+	}
+	public void updateProduct(ProductVO vo) {
+		updateSql(vo, "update product set name=?, price=?, pictureUrl=?, description=? where code=?", new int[] {5, 1, 2, 3, 4});
+	}
+	public void deleteProduct(int code) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("delete from product where code=?");
+			ps.setInt(1, code);
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+}
 // ====================================================================================================
+package p03_shopping.controller;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import p03_shopping.dao.ProductDAO;
+import p03_shopping.vo.ProductVO;
+
+@WebServlet("/productList.do")
+public class ProductListServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public ProductListServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ProductDAO dao = ProductDAO.getInstance();
+		request.setAttribute("productList", dao.getProductList());
+		RequestDispatcher rd = request.getRequestDispatcher("03_product/productList.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+package p03_shopping.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
+import p03_shopping.dao.ProductDAO;
+import p03_shopping.vo.ProductVO;
+
+@WebServlet("/productWrite.do")
+public class ProductWriteServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public ProductWriteServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("03_product/productWrite.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// 받아온 파일을 서버에 저장 (webapp > 03_upload 폴더 생성함)
+		ServletContext context = getServletContext();
+		MultipartRequest multi = new MultipartRequest(
+														request,
+														context.getRealPath("03_upload"),
+														10*1024*1024,
+														"utf-8",
+														new DefaultFileRenamePolicy()
+													);
+		ProductVO vo = new ProductVO();
+		vo.setName(multi.getParameter("name"));
+		vo.setPrice(Integer.parseInt(multi.getParameter("price")));
+//		vo.setPictureUrl(multi.getParameter("pictureUrl"));
+		vo.setPictureUrl(multi.getFilesystemName("pictureUrl"));
+		vo.setDescription(multi.getParameter("description"));
+		
+		// 파라미터로 받아온 데이터를 DB에 저장
+		ProductDAO dao = ProductDAO.getInstance();
+		dao.insertProduct(vo);
+		
+		// 둘다 완료가 되면 목록페이지로 이동
+		response.sendRedirect("productList.do");
+	}
+}
+// ====================================================================================================
+package p03_shopping.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
+import p03_shopping.dao.ProductDAO;
+import p03_shopping.vo.ProductVO;
+
+@WebServlet("/productUpdate.do")
+public class ProductUpdateServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public ProductUpdateServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		ProductDAO dao = ProductDAO.getInstance();
+		request.setAttribute("product", dao.getProduct(code));
+		RequestDispatcher rd = request.getRequestDispatcher("03_product/productUpdate.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		ServletContext context = getServletContext();
+		MultipartRequest multi = new MultipartRequest(
+														request,
+														context.getRealPath("03_upload"),
+														10*1024*1024,
+														"utf-8",
+														new DefaultFileRenamePolicy()
+													);
+		ProductVO vo = new ProductVO();
+		vo.setCode(code);
+		vo.setName(multi.getParameter("name"));
+		vo.setPrice(Integer.parseInt(multi.getParameter("price")));
+		// 여기서 처리할 건가 아님 dao??? dao!!! 흐음... jsp에서 hidden 갖구 오시게 하시는 거면 여기서 처리하시려나 봄...
+		String picutreUrl = multi.getFilesystemName("pictureUrl");
+		if(picutreUrl == null)
+			picutreUrl = multi.getFilesystemName("originPictureUrl");
+		vo.setPictureUrl(picutreUrl);
+		vo.setDescription(multi.getParameter("description"));
+		ProductDAO dao = ProductDAO.getInstance();
+		dao.updateProduct(vo);
+		response.sendRedirect("productList.do");
+//		RequestDispatcher rd = request.getRequestDispatcher("productUpdate.do?code="+code);
+//		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+package p03_shopping.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import p03_shopping.dao.ProductDAO;
+
+@WebServlet("/productDelete.do")
+public class ProductDeleteServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public ProductDeleteServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		ProductDAO dao = ProductDAO.getInstance();
+		request.setAttribute("product", dao.getProduct(code));
+		RequestDispatcher rd = request.getRequestDispatcher("03_product/productDelete.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		ProductDAO dao = ProductDAO.getInstance();
+		dao.deleteProduct(code);
+		response.sendRedirect("productList.do");
+	}
+
+}
+// ====================================================================================================
+Day0914
+// ====================================================================================================
+0913 03_product 폴더 오늘 끝남
+그 이후에 하라는 594p Movie 하긴 다 했지만... 
+03_product만 정리하고... 강사님 추가로 다운로드 진행한다고 하시니 Movie는 끝나면 정리하겠음...
+아 아닌가 별로 안 바뀔 거 같기도 하고 날짜 자꾸 넘어가는 거 귀찮으니 걍 정리하겠음...
+// ====================================================================================================
+create table movie (
+    code number(4) primary key,
+    Title varchar2(50),
+    price number(10),
+    director varchar2(100),
+    actor varchar2(100),
+    poster varchar2(100),
+    synopsis varchar2(3000)
+);
+
+create SEQUENCE movie_seq start with 1 increment by 1;
+insert into movie 
+values(movie_seq.nextval, '아바타-물의길', 12000, '제임스 카메론', '조 샐다나 ,  샘 워싱턴', 'movie1.jpg',
+'<아바타: 물의 길>은 판도라 행성에서 
+제이크 설리와 네이티리가 이룬 가족이 겪게 되는 
+무자비한 위협과 살아남기 위해 떠나야 하는 긴 여정과 전투, 
+그리고 견뎌내야 할 상처에 대한 이야기를 그렸다.');
+
+insert into movie 
+values(movie_seq.nextval, '더 퍼스트 슬램덩크', 15000, '이노우에 다케히코', '강백호', 'movie2.jpg',
+'전국 제패를 꿈꾸는 북산고 농구부 5인방의 꿈과 열정, 멈추지 않는 도전을 그린 영화');
+
+insert into movie 
+values(movie_seq.nextval, '바빌론', 8000, '데이미언 셔젤', '브래드피트, 마고 로비', 'movie3.jpg',
+'황홀하면서도 위태로운 고대 도시, 바빌론에 비유되던 할리우드.
+꿈 하나만을 위해 모인 사람들이 이를 쟁취하기 위해 벌이는 강렬하면서도 매혹적인 이야기');
+
+insert into movie 
+values(movie_seq.nextval, '교섭', 10000, '임순례', '황정민, 현빈, 강기영', 'movie4.jpg',
+'분쟁지역 아프가니스탄에서 한국인들이 탈레반에게 납치되는 최악의 피랍사건이 발생한다.
+교섭 전문이지만 아프가니스탄은 처음인 외교관 재호(황정민)가 현지로 향하고,
+국정원 요원 대식(현빈)을 만난다.
+원칙이 뚜렷한 외교관과 현지 사정에 능통한 국정원 요원.
+입장도 방법도 다르지만, 두 사람은 인질을 살려야 한다는 목표를 향해 함께 나아간다.
+살해 시한은 다가오고, 협상 상대, 조건 등이 시시각각 변하는 상황에서
+교섭의 성공 가능성은 점점 희박해져 가는데...');
+
+select * from movie;
+commit;
+// ====================================================================================================
+package movie.util;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+
+@WebFilter("/*")
+public class EncodingFilter implements Filter {
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		request.setCharacterEncoding("utf-8");
+		chain.doFilter(request, response);
+	}
+}
+// ====================================================================================================
+package movie.util;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class DBManager {
+	public static Connection getConnection() {
+		Connection conn = null;
+		try {
+			Context initContext = new InitialContext();
+			Context envContext  = (Context)initContext.lookup("java:/comp/env");
+			DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
+			conn = ds.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
+		try {
+			if(conn!=null) conn.close();
+			if(ps!=null) ps.close();
+			if(rs!=null) rs.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void close(Connection conn, PreparedStatement ps) {
+		close(conn, ps, null);
+	}
+}
+// ====================================================================================================
+package movie.vo;
+
+public class MovieVO {
+    private int code;
+    private String Title;
+    private int price;
+    private String director;
+    private String actor;
+    private String poster;
+    private String synopsis;
+    
+	public int getCode() {
+		return code;
+	}
+	public void setCode(int code) {
+		this.code = code;
+	}
+	public String getTitle() {
+		return Title;
+	}
+	public void setTitle(String title) {
+		Title = title;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public String getDirector() {
+		return director;
+	}
+	public void setDirector(String director) {
+		this.director = director;
+	}
+	public String getActor() {
+		return actor;
+	}
+	public void setActor(String actor) {
+		this.actor = actor;
+	}
+	public String getPoster() {
+		return poster;
+	}
+	public void setPoster(String poster) {
+		this.poster = poster;
+	}
+	public String getSynopsis() {
+		return synopsis;
+	}
+	public void setSynopsis(String synopsis) {
+		this.synopsis = synopsis;
+	}   
+}
+// ====================================================================================================
+package movie.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import movie.util.DBManager;
+import movie.vo.MovieVO;
+
+public class MovieDAO {
+	private MovieDAO() {}
+	private static MovieDAO instance = new MovieDAO();
+	public static MovieDAO getInstance() {
+		return instance;
+	}
+	public List<MovieVO> findAll() {
+		List<MovieVO> movieList = new ArrayList<>();
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = conn.prepareStatement("select * from movie order by code desc");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				MovieVO vo = new MovieVO();
+				vo.setCode(rs.getInt(1));
+				vo.setTitle(rs.getString(2));
+				vo.setPrice(rs.getInt(3));
+				vo.setDirector(rs.getString(4));
+				vo.setActor(rs.getString(5));
+				vo.setPoster(rs.getString(6));
+				vo.setSynopsis(rs.getString(7));
+				movieList.add(vo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return movieList;
+	}
+	
+	public MovieVO findByCode(int code) {
+		MovieVO vo = null;
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = conn.prepareStatement("select * from movie where code=?");
+			ps.setInt(1, code);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo = new MovieVO();
+				vo.setCode(rs.getInt(1));
+				vo.setTitle(rs.getString(2));
+				vo.setPrice(rs.getInt(3));
+				vo.setDirector(rs.getString(4));
+				vo.setActor(rs.getString(5));
+				vo.setPoster(rs.getString(6));
+				vo.setSynopsis(rs.getString(7));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return vo;
+	}
+	
+	public void insertMovie(MovieVO vo) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("insert into movie values(movie_seq.nextval, ?, ?, ?, ?, ?, ?)");
+			ps.setString(1, vo.getTitle());
+			ps.setInt(2, vo.getPrice());
+			ps.setString(3, vo.getDirector());
+			ps.setString(4, vo.getActor());
+			ps.setString(5, vo.getPoster());
+			ps.setString(6, vo.getSynopsis());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+	public void updateMovie(MovieVO vo) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("update movie set title=?, price=?, director=?, actor=?, poster=?, synopsis=? where code=?");
+			ps.setString(1, vo.getTitle());
+			ps.setInt(2, vo.getPrice());
+			ps.setString(3, vo.getDirector());
+			ps.setString(4, vo.getActor());
+			ps.setString(5, vo.getPoster());
+			ps.setString(6, vo.getSynopsis());
+			ps.setInt(7, vo.getCode());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+	public void deleteMovie(int code) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("delete from movie where code=?");
+			ps.setInt(1, code);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import movie.dao.MovieDAO;
+
+@WebServlet("/movielist.do")
+public class MovieListServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MovieListServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MovieDAO dao = MovieDAO.getInstance();
+		request.setAttribute("movieList", dao.findAll());
+		RequestDispatcher rd = request.getRequestDispatcher("movieList.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
+import movie.dao.MovieDAO;
+import movie.vo.MovieVO;
+
+@WebServlet("/moviewrite.do")
+public class MovieWriteServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MovieWriteServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("movieWrite.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServletContext context = request.getServletContext();
+		MultipartRequest multi = new MultipartRequest(request, context.getRealPath("upload"), 10*1024*1024, "utf-8", new DefaultFileRenamePolicy());
+		MovieVO vo = new MovieVO();
+		vo.setTitle(multi.getParameter("title"));
+		vo.setPrice(Integer.parseInt(multi.getParameter("price")));
+		vo.setDirector(multi.getParameter("director"));
+		vo.setActor(multi.getParameter("actor"));
+		vo.setPoster(multi.getFilesystemName("poster"));
+		vo.setSynopsis(multi.getParameter("synopsis"));
+		MovieDAO dao = MovieDAO.getInstance();
+		dao.insertMovie(vo);
+		response.sendRedirect("movielist.do");
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
+import movie.dao.MovieDAO;
+import movie.vo.MovieVO;
+
+@WebServlet("/movieupdate.do")
+public class MovieUpdateServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MovieUpdateServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		MovieDAO dao = MovieDAO.getInstance();
+		request.setAttribute("movie", dao.findByCode(code));
+		RequestDispatcher rd = request.getRequestDispatcher("movieUpdate.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		ServletContext context = request.getServletContext();
+		MultipartRequest multi = new MultipartRequest(request, context.getRealPath("upload"), 10*1024*1024, "utf-8", new DefaultFileRenamePolicy());
+		MovieVO vo = new MovieVO();
+		vo.setCode(code);
+		vo.setTitle(multi.getParameter("title"));
+		vo.setPrice(Integer.parseInt(multi.getParameter("price")));
+		vo.setDirector(multi.getParameter("director"));
+		vo.setActor(multi.getParameter("actor"));
+		String poster = multi.getFilesystemName("poster");
+		if(poster == null)
+			poster = multi.getParameter("originPoster");
+		vo.setPoster(poster);
+		vo.setSynopsis(multi.getParameter("synopsis"));
+		MovieDAO dao = MovieDAO.getInstance();
+		dao.updateMovie(vo);
+		response.sendRedirect("movielist.do");
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
+import movie.dao.MovieDAO;
+import movie.vo.MovieVO;
+
+@WebServlet("/moviedelete.do")
+public class MovieDeleteServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MovieDeleteServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		MovieDAO dao = MovieDAO.getInstance();
+		request.setAttribute("movie", dao.findByCode(code));
+		RequestDispatcher rd = request.getRequestDispatcher("movieDelete.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		MovieDAO dao = MovieDAO.getInstance();
+		dao.deleteMovie(code);
+		response.sendRedirect("movielist.do");
+	}
+}
+// ====================================================================================================
+style.css
+.text-right {
+	text-align: right;
+}
+
+.text-center, h1 {
+	text-align: center;
+}
+
+table {
+	border-collapse: collapse;
+	margin: auto;
+}
+
+th, td {
+	border: 1px solid;
+	padding: 5px;
+}
+
+th {
+	background: lightgrey;
+}
+
+img {
+	height: 300px;
+}
+// ====================================================================================================
+index.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%-- 
+		교재 594p 연습문제
+		교재에는 없지만 포스터 다운로드 하는 것도 하신다심
+	--%>
+	<%
+		response.sendRedirect("movielist.do");
+	%>
+</body>
+</html>
+// ====================================================================================================
+movieList.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>영화 관리</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1 class="text-center">리스트</h1>
+	<table>
+		<tr>
+			<td colspan="6" class="text-right" style="border: none"><a href="moviewrite.do">정보 등록</a></td>
+		</tr>
+		<tr>
+			<th>제목</th>
+			<th>감독</th>
+			<th>배우</th>
+			<th>가격</th>
+			<th>수정</th>
+			<th>삭제</th>
+		</tr>
+		<c:forEach items="${movieList}" var="movie">
+			<tr>
+				<td>${movie.title}</td>
+				<td>${movie.director}</td>
+				<td>${movie.actor}</td>
+				<td>${movie.price}원</td>
+				<td><a href="movieupdate.do?code=${movie.code}">정보 수정</a></td>
+				<td><a href="moviedelete.do?code=${movie.code}">정보 삭제</a></td>
+			</tr>
+		</c:forEach>
+	</table>
+</body>
+</html>
+// ====================================================================================================
+movieWrite.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>영화 등록</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1>정보 등록</h1>
+	<form method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<th>제목</th>
+				<td><input name="title"></td>
+			</tr>
+			<tr>
+				<th>가격</th>
+				<td><input name="price">원</td>
+			</tr>
+			<tr>
+				<th>감독</th>
+				<td><input name="director"></td>
+			</tr>
+			<tr>
+				<th>배우</th>
+				<td><input name="actor"></td>
+			</tr>
+			<tr>
+				<th>설명</th>
+				<td><textarea name="synopsis"></textarea></td>
+			</tr>
+			<tr>
+				<th>사진</th>
+				<td><input type="file" name="poster"></td>
+			</tr>
+		</table>
+		<br>
+		<div class="text-center">
+			<input type="submit" value="확인">
+			<input type="reset" value="취소">
+			<input type="button" value="목록" onclick="location.href='movielist.do'">
+		</div>		
+	</form>
+</body>
+</html>
+// ====================================================================================================
+movieUpdate.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>영화 수정</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1>정보 수정</h1>
+	<form method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td>
+					<c:if test="${empty movie.poster}">
+						<p>등록된 사진이 없습니다.</p>
+					</c:if>
+					<c:if test="${!empty movie.poster}">
+						<img src="upload/${movie.poster}">
+					</c:if>
+				</td>
+				<td>
+					<table>
+						<tr>
+							<th>제목</th>
+							<td><input name="title" value="${movie.title}"></td>
+						</tr>
+						<tr>
+							<th>가격</th>
+							<td><input name="price" value="${movie.price}">원</td>
+						</tr>
+						<tr>
+							<th>감독</th>
+							<td><input name="director" value="${movie.director}"></td>
+						</tr>
+						<tr>
+							<th>배우</th>
+							<td><input name="actor" value="${movie.actor}"></td>
+						</tr>
+						<tr>
+							<th>설명</th>
+							<td><textarea name="synopsis">${movie.synopsis}</textarea></td>
+						</tr>
+						<tr>
+							<th>사진</th>
+							<td><input type="file" name="poster"></td>
+						</tr>
+					</table>
+					<input type="hidden" name="originPoster" value="${movie.poster}">
+				</td>
+			</tr>
+		</table>
+		<br>
+		<div class="text-center">
+			<input type="submit" value="수정">
+			<input type="button" value="목록" onclick="location.href='movielist.do'">
+		</div>
+	</form>
+</body>
+</html>
+// ====================================================================================================
+movieDelete.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>영화 삭제</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1>정보 삭제</h1>
+	<form method="post">
+		<table>
+			<tr>
+				<td>
+					<c:if test="${empty movie.poster}">
+						<p>등록된 사진이 없습니다.</p>
+					</c:if>
+					<c:if test="${!empty movie.poster}">
+						<img src="upload/${movie.poster}">
+					</c:if>
+				</td>
+				<td>
+					<table>
+						<tr>
+							<th>제목</th>
+							<td>${movie.title}</td>
+						</tr>
+						<tr>
+							<th>가격</th>
+							<td>${movie.price}</td>
+						</tr>
+						<tr>
+							<th>감독</th>
+							<td>${movie.director}</td>
+						</tr>
+						<tr>
+							<th>배우</th>
+							<td>${movie.actor}</td>
+						</tr>
+						<tr>
+							<th>설명</th>
+							<td>${movie.synopsis}</td>
+						</tr>
+						<tr>
+							<th>사진</th>
+							<td>${movie.poster}</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br>
+		<div class="text-center">
+			<input type="submit" value="삭제">
+			<input type="button" value="목록" onclick="location.href='movielist.do'">	
+		</div>
+	</form>
+
+</body>
+</html>
 // ====================================================================================================
 
 // ====================================================================================================
