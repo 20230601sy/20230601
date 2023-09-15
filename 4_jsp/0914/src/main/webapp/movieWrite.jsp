@@ -39,7 +39,7 @@
 		<div class="text-center">
 			<input type="submit" value="확인">
 			<input type="reset" value="취소">
-			<input type="button" value="목록" onclick="location.href='movielist.do'">
+			<input type="button" value="목록" onclick="location.href='movielist'">
 		</div>		
 	</form>
 </body>

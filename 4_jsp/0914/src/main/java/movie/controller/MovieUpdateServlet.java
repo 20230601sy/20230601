@@ -16,7 +16,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import movie.dao.MovieDAO;
 import movie.vo.MovieVO;
 
-@WebServlet("/movieupdate.do")
+@WebServlet("/movieupdate")
 public class MovieUpdateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -34,7 +34,7 @@ public class MovieUpdateServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int code = Integer.parseInt(request.getParameter("code"));
-		ServletContext context = request.getServletContext();
+		ServletContext context = getServletContext();
 		MultipartRequest multi = new MultipartRequest(request, context.getRealPath("upload"), 10*1024*1024, "utf-8", new DefaultFileRenamePolicy());
 		MovieVO vo = new MovieVO();
 		vo.setCode(code);
@@ -49,6 +49,6 @@ public class MovieUpdateServlet extends HttpServlet {
 		vo.setSynopsis(multi.getParameter("synopsis"));
 		MovieDAO dao = MovieDAO.getInstance();
 		dao.updateMovie(vo);
-		response.sendRedirect("movielist.do");
+		response.sendRedirect("movielist");
 	}
 }

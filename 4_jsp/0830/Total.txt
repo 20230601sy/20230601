@@ -35590,7 +35590,7 @@ public class MovieWriteServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext context = request.getServletContext();
+		ServletContext context = getServletContext();
 		MultipartRequest multi = new MultipartRequest(request, context.getRealPath("upload"), 10*1024*1024, "utf-8", new DefaultFileRenamePolicy());
 		MovieVO vo = new MovieVO();
 		vo.setTitle(multi.getParameter("title"));
@@ -35641,7 +35641,7 @@ public class MovieUpdateServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int code = Integer.parseInt(request.getParameter("code"));
-		ServletContext context = request.getServletContext();
+		ServletContext context = getServletContext();
 		MultipartRequest multi = new MultipartRequest(request, context.getRealPath("upload"), 10*1024*1024, "utf-8", new DefaultFileRenamePolicy());
 		MovieVO vo = new MovieVO();
 		vo.setCode(code);
@@ -35763,7 +35763,7 @@ movieList.jsp
 	<h1 class="text-center">리스트</h1>
 	<table>
 		<tr>
-			<td colspan="6" class="text-right" style="border: none"><a href="moviewrite.do">정보 등록</a></td>
+			<td colspan="7" class="text-right" style="border: none"><a href="moviewrite.do">정보 등록</a></td>
 		</tr>
 		<tr>
 			<th>제목</th>
@@ -35772,6 +35772,7 @@ movieList.jsp
 			<th>가격</th>
 			<th>수정</th>
 			<th>삭제</th>
+			<th>다운로드</th>
 		</tr>
 		<c:forEach items="${movieList}" var="movie">
 			<tr>
@@ -35781,6 +35782,7 @@ movieList.jsp
 				<td>${movie.price}원</td>
 				<td><a href="movieupdate.do?code=${movie.code}">정보 수정</a></td>
 				<td><a href="moviedelete.do?code=${movie.code}">정보 삭제</a></td>
+				<td><a href="download?title=${movie.title}&poster=${movie.poster}">다운로드</a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -35961,11 +35963,100 @@ movieDelete.jsp
 </body>
 </html>
 // ====================================================================================================
-
+Day0915
 // ====================================================================================================
+package movie.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/download")
+public class PosterDownloadServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public PosterDownloadServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServletContext context = getServletContext();
+		String path = context.getRealPath("upload");
+		String title = request.getParameter("title") + ".jpg"; // 확장자 일단은 걍 jpg로 한다심
+		String poster = request.getParameter("poster"); // 서버에 저장된 파일명
+		
+		try {
+			File f = new File(path, poster); // (경로, 파일명)의 파일이 객체에 담김, File import 필요함...
+			InputStream is = new FileInputStream(f); // 파일입출력스트림 써야 함. 파일을 서버쪽으로 가져온 거임.
+			// 사용자 브라우저에 따라 인코딩 방식이 달라서(익스플로러가 인코딩방식이 다름 다른 건 다 동일한데 ㅡ_ㅡ)
+			String client = request.getHeader("User-Agent"); // 요청을 날린 사람의 브라우저 정보를 client에 담음
+			if(client.indexOf("WOW64") == -1) // WOW64(익스프롤러)가 포함된 위치를 리턴해주는 거 -1이면 없는 거니 익스프롤러가 아니라는 얘기임
+				title = new String(title.getBytes("utf-8"),"iso-8859-1");
+			else
+				title = new String(title.getBytes("ksc5601"),"iso-8859-1");
+			
+			response.reset();
+			response.setContentType("application/octet-stream"); // octet은 8비트 단위의 데이터라는 걸 의미한다심...
+			response.setHeader("Content-Disposition", "attachment; filename=\""+title+"\"");
+			response.setHeader("Content-length", ""+f.length()); // 문자값으로 들어가야 해서 ""+ 처리함
+			OutputStream os = response.getOutputStream();
+			byte[] b = new byte[(int)f.length()]; // 바이트단위로 전송이되다보니깐...
+			int readBuffer = 0;
+			
+			while((readBuffer = is.read(b)) > 0) // 입력스트림에서 읽어온 값을 대입시키고, 대입시킨 값이 0보다 큰지 확인...
+				os.write(b, 0, readBuffer);
+			
+			os.close();
+			is.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
 // ====================================================================================================
+책의 내용은 끝났지만 이대로는 아깝다심... 
+회원기능 추가하라심 ㅡㅡ
+- 로그인
+- 로그아웃
+- 회원가입
+- 회원등급별로 처리가 달라져야 함 → 영화제목을 클릭하면 해당 영화 상세페이지로 이동 → 수정, 삭제, 목록 버튼이 있음 (관리자만 수정, 삭제 버튼이 보임)
+흐음... 밥 먹고 해야 겠다 추워서 아무 생각이 나지 않음
+// ====================================================================================================
+create table movieuser (
+    id varchar2(10) primary key,
+    pw varchar2(10) not null,
+    lv char(1) default 'b' -- a 관리자 b 일반 회원
+);
 
+insert into movieuser values('admin', '1234', 'a');
+select * from movieuser;
+commit;
+// ====================================================================================================
+로그아웃이나 그런 거 누른 이벤트 발생했을 때
+전페이지로 가고 싶을 때는 servlet에서 request.getHeader("referer")? 이런 거 쓰면 볼 수 있는 거 같은데...
+전전 페이지로 가고 싶을 경우는?? 이건 뭔가 개인정보보안에 위배되는 거 같기도 하고... 이건 js navigate(-2)로 처리해줘야 하는 건가? 서블릿 갔다가 와서 전전페이지로 가는 건 순서가 좀 이상한 거 같은디...
+동시에 처리도 되나? 이래저래 만사 귀찮으니 확인은 월요일에 합시다
+
+https://developyo.tistory.com/272 URL 직접 접근 막기 : referer 헤더정보 사용
+
+https://www.egovframe.go.kr/home/qainfo/qainfoRead.do?pagerOffset=40&searchKey=&searchValue=&menuNo=69&qaId=QA_00000000000020497
+PrintWriter out = response.getWriter();
+out.println("스크립트'window.history.go(-1)';스크립트");out.flush();
+
+https://ifuwanna.tistory.com/194
 // ====================================================================================================
 
 // ====================================================================================================

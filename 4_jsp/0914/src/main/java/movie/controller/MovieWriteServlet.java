@@ -16,7 +16,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import movie.dao.MovieDAO;
 import movie.vo.MovieVO;
 
-@WebServlet("/moviewrite.do")
+@WebServlet("/moviewrite")
 public class MovieWriteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -30,7 +30,7 @@ public class MovieWriteServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext context = request.getServletContext();
+		ServletContext context = getServletContext();
 		MultipartRequest multi = new MultipartRequest(request, context.getRealPath("upload"), 10*1024*1024, "utf-8", new DefaultFileRenamePolicy());
 		MovieVO vo = new MovieVO();
 		vo.setTitle(multi.getParameter("title"));
@@ -41,6 +41,6 @@ public class MovieWriteServlet extends HttpServlet {
 		vo.setSynopsis(multi.getParameter("synopsis"));
 		MovieDAO dao = MovieDAO.getInstance();
 		dao.insertMovie(vo);
-		response.sendRedirect("movielist.do");
+		response.sendRedirect("movielist");
 	}
 }
