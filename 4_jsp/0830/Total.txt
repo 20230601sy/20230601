@@ -35395,7 +35395,8 @@ public class MovieVO {
 	}
 	public void setSynopsis(String synopsis) {
 		this.synopsis = synopsis;
-	}   
+	}
+    
 }
 // ====================================================================================================
 package movie.dao;
@@ -35538,7 +35539,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import movie.dao.MovieDAO;
 
-@WebServlet("/movielist.do")
+@WebServlet("/movielist")
 public class MovieListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -35556,6 +35557,7 @@ public class MovieListServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+
 }
 // ====================================================================================================
 package movie.controller;
@@ -35576,7 +35578,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import movie.dao.MovieDAO;
 import movie.vo.MovieVO;
 
-@WebServlet("/moviewrite.do")
+@WebServlet("/moviewrite")
 public class MovieWriteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -35601,7 +35603,7 @@ public class MovieWriteServlet extends HttpServlet {
 		vo.setSynopsis(multi.getParameter("synopsis"));
 		MovieDAO dao = MovieDAO.getInstance();
 		dao.insertMovie(vo);
-		response.sendRedirect("movielist.do");
+		response.sendRedirect("movielist");
 	}
 }
 // ====================================================================================================
@@ -35623,7 +35625,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import movie.dao.MovieDAO;
 import movie.vo.MovieVO;
 
-@WebServlet("/movieupdate.do")
+@WebServlet("/movieupdate")
 public class MovieUpdateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -35656,7 +35658,7 @@ public class MovieUpdateServlet extends HttpServlet {
 		vo.setSynopsis(multi.getParameter("synopsis"));
 		MovieDAO dao = MovieDAO.getInstance();
 		dao.updateMovie(vo);
-		response.sendRedirect("movielist.do");
+		response.sendRedirect("movielist");
 	}
 }
 // ====================================================================================================
@@ -35678,7 +35680,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import movie.dao.MovieDAO;
 import movie.vo.MovieVO;
 
-@WebServlet("/moviedelete.do")
+@WebServlet("/moviedelete")
 public class MovieDeleteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -35698,7 +35700,41 @@ public class MovieDeleteServlet extends HttpServlet {
 		int code = Integer.parseInt(request.getParameter("code"));
 		MovieDAO dao = MovieDAO.getInstance();
 		dao.deleteMovie(code);
-		response.sendRedirect("movielist.do");
+		response.sendRedirect("movielist");
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import movie.dao.MovieDAO;
+
+@WebServlet("/moviedetail")
+public class MovieDetailServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MovieDetailServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int code = Integer.parseInt(request.getParameter("code"));
+		MovieDAO dao = MovieDAO.getInstance();
+		request.setAttribute("movie", dao.findByCode(code));
+		RequestDispatcher rd = request.getRequestDispatcher("movieDetail.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
 	}
 }
 // ====================================================================================================
@@ -35742,9 +35778,11 @@ index.jsp
 	<%-- 
 		교재 594p 연습문제
 		교재에는 없지만 포스터 다운로드 하는 것도 하신다심
+		서버에는 저장할 때 중복을 피하기 위해서 처음 파일명이랑 많이 다른 이상한 형태로 한다심...
+		그래서 poster랑 title을 세트로 한다심...
 	--%>
 	<%
-		response.sendRedirect("movielist.do");
+		response.sendRedirect("movielist");
 	%>
 </body>
 </html>
@@ -35752,6 +35790,7 @@ index.jsp
 movieList.jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ include file="header.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -35763,26 +35802,39 @@ movieList.jsp
 	<h1 class="text-center">리스트</h1>
 	<table>
 		<tr>
-			<td colspan="7" class="text-right" style="border: none"><a href="moviewrite.do">정보 등록</a></td>
+			<td colspan="6" class="text-right" style="border: none">
+				&nbsp;
+				<c:if test="${loginUser.lv=='a'}">
+					<a href="moviewrite">정보 등록</a>
+				</c:if>
+			</td>
 		</tr>
 		<tr>
 			<th>제목</th>
 			<th>감독</th>
 			<th>배우</th>
 			<th>가격</th>
-			<th>수정</th>
-			<th>삭제</th>
-			<th>다운로드</th>
+			<c:if test="${loginUser.lv!='a'}">
+				<th>다운로드</th>
+			</c:if>
+			<c:if test="${loginUser.lv=='a'}">
+<!--			<th>수정</th>  -->
+				<th>삭제</th>
+			</c:if>
 		</tr>
 		<c:forEach items="${movieList}" var="movie">
 			<tr>
-				<td>${movie.title}</td>
+				<td><a href="moviedetail?code=${movie.code}">${movie.title}</a></td>
 				<td>${movie.director}</td>
 				<td>${movie.actor}</td>
 				<td>${movie.price}원</td>
-				<td><a href="movieupdate.do?code=${movie.code}">정보 수정</a></td>
-				<td><a href="moviedelete.do?code=${movie.code}">정보 삭제</a></td>
-				<td><a href="download?title=${movie.title}&poster=${movie.poster}">다운로드</a></td>
+				<c:if test="${loginUser.lv!='a'}">
+					<td><a href="download?title=${movie.title}&poster=${movie.poster}">다운로드</a></td>
+				</c:if>
+				<c:if test="${loginUser.lv=='a'}">
+<!-- 				<td><a href="movieupdate?code=${movie.code}">정보 수정</a></td>  -->
+					<td><a href="moviedelete?code=${movie.code}">정보 삭제</a></td>
+				</c:if>
 			</tr>
 		</c:forEach>
 	</table>
@@ -35831,7 +35883,7 @@ movieWrite.jsp
 		<div class="text-center">
 			<input type="submit" value="확인">
 			<input type="reset" value="취소">
-			<input type="button" value="목록" onclick="location.href='movielist.do'">
+			<input type="button" value="목록" onclick="location.href='movielist'">
 		</div>		
 	</form>
 </body>
@@ -35894,7 +35946,7 @@ movieUpdate.jsp
 		<br>
 		<div class="text-center">
 			<input type="submit" value="수정">
-			<input type="button" value="목록" onclick="location.href='movielist.do'">
+			<input type="button" value="목록" onclick="location.href='movielist'">
 		</div>
 	</form>
 </body>
@@ -35956,10 +36008,75 @@ movieDelete.jsp
 		<br>
 		<div class="text-center">
 			<input type="submit" value="삭제">
-			<input type="button" value="목록" onclick="location.href='movielist.do'">	
+			<input type="button" value="목록" onclick="location.href='movielist'">	
 		</div>
 	</form>
 
+</body>
+</html>
+// ====================================================================================================
+movieDetail.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>영화 정보</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1>영화 정보</h1>
+	
+	<table>
+		<tr>
+			<td>
+				<c:if test="${empty movie.poster}">
+					<p>등록된 사진이 없습니다.</p>
+				</c:if>
+				<c:if test="${!empty movie.poster}">
+					<img src="upload/${movie.poster}">
+				</c:if>
+			</td>
+			<td>
+				<table>
+					<tr>
+						<th>제목</th>
+						<td>${movie.title}</td>
+					</tr>
+					<tr>
+						<th>가격</th>
+						<td>${movie.price}</td>
+					</tr>
+					<tr>
+						<th>감독</th>
+						<td>${movie.director}</td>
+					</tr>
+					<tr>
+						<th>배우</th>
+						<td>${movie.actor}</td>
+					</tr>
+					<tr>
+						<th>설명</th>
+						<td>${movie.synopsis}</td>
+					</tr>
+					<tr>
+						<th>사진</th>
+						<td>${movie.poster}</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<br>
+	<div class="text-center">
+		<c:if test="${loginUser.lv=='a'}">
+			<a class="btn btn-primary" href="movieupdate?code=${movie.code}">수정</a>
+			<a class="btn btn-primary" href="moviedelete?code=${movie.code}">삭제</a>
+		</c:if>
+		<a class="btn btn-primary" href="movielist">목록</a>
+	</div>
 </body>
 </html>
 // ====================================================================================================
@@ -36025,6 +36142,7 @@ public class PosterDownloadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+
 }
 // ====================================================================================================
 책의 내용은 끝났지만 이대로는 아깝다심... 
@@ -36045,6 +36163,337 @@ insert into movieuser values('admin', '1234', 'a');
 select * from movieuser;
 commit;
 // ====================================================================================================
+package movie.vo;
+
+public class UserVO {
+	private String id;
+	private String pw;
+	private String lv;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getPw() {
+		return pw;
+	}
+	public void setPw(String pw) {
+		this.pw = pw;
+	}
+	public String getLv() {
+		return lv;
+	}
+	public void setLv(String lv) {
+		this.lv = lv;
+	}
+}
+// ====================================================================================================
+package movie.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import movie.util.DBManager;
+import movie.vo.UserVO;
+
+public class UserDAO {
+	private UserDAO() {}
+	private static UserDAO instance = new UserDAO();
+	public static UserDAO getInstance() {
+		return instance;
+	}
+	public UserVO chkUser(String id, String pw) {
+		UserVO vo = null;
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement("select * from movieuser where id=? and pw=?");
+			ps.setString(1, id);
+			ps.setString(2, pw);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo = new UserVO();
+				vo.setId(rs.getString(1));
+				vo.setPw(rs.getString(2));
+				vo.setLv(rs.getString(3));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return vo;
+	}
+	
+	public boolean chkId(String id) {
+		boolean result = false;
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement("select * from movieuser where id=?");
+			ps.setString(1, id);
+			rs = ps.executeQuery();
+			if(rs.next())
+				result = true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return result;
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import movie.dao.UserDAO;
+
+@WebServlet("/check")
+public class IdChkServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public IdChkServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		System.out.println("요청 잘 받았나~");
+//		System.out.println(request.getParameter("id"));
+		String id = request.getParameter("id");
+		UserDAO dao = UserDAO.getInstance();
+//		if(dao.chkId(id)) // 한글 깨져서 감 숫자로 하신 이유가 이거인가봄
+//			response.getWriter().print(id + "는 사용할 수 없습니다.");
+//		else
+//			response.getWriter().print("사용 가능한 아이디입니다.");
+		response.getWriter().print(dao.chkId(id));
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import movie.dao.UserDAO;
+import movie.vo.UserVO;
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public LoginServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
+		rd.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		UserDAO dao = UserDAO.getInstance();
+		UserVO vo = dao.chkUser(id, pw);
+		String url = "login";
+		if(vo != null) {
+			url = "movielist";
+			HttpSession session = request.getSession();
+			session.setAttribute("loginUser", vo);
+		} else
+			request.setAttribute("msg", "로그인 실패");
+		
+		RequestDispatcher rd = request.getRequestDispatcher(url);
+		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+package movie.controller;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/logout")
+public class LogoutServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public LogoutServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		response.sendRedirect("movielist");
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+}
+// ====================================================================================================
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<header class="container mb-5">
+		<ul class="nav">
+			<li class="nav-item">
+			    <a class="nav-link" href="movielist">목록</a>
+  			</li>
+			<li class="nav-item me-auto">
+			    <c:if test="${loginUser.lv=='a'}">
+				    <a class="nav-link" href="admin">회원 관리</a>
+				</c:if>
+  			</li>
+			
+			<c:if test="${empty loginUser}">
+				<li class="nav-item">
+				    <a class="nav-link" href="join">회원가입</a>
+				</li>
+				<li class="nav-item">
+				    <a class="nav-link" href="login">로그인</a>
+				</li>
+			</c:if>
+			<c:if test="${!empty loginUser}">
+				<li class="nav-item">
+				    <a class="nav-link" href="logout">${loginUser.id}님 로그아웃</a>
+ 	 			</li>
+			</c:if>
+		</ul>	
+	</header>
+</body>
+</html>
+// ====================================================================================================
+login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+</head>
+<body>
+	<div class="container">
+		<form method="post">
+			<div class="mb-3 row">
+				<label for="id" class="col-sm-2 col-form-label">아이디</label>
+				<div class="col-sm-6">
+					<input class="form-control" id="id" name="id">
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="pw" class="col-sm-2 col-form-label">비밀번호</label>
+				<div class="col-sm-6">
+					<input type="password" class="form-control" id="pw" name="pw">
+				</div>
+				<div class="col-sm-2">
+					<button type="submit" class="btn btn-primary mb-3">로그인</button>
+				</div>
+			</div>
+		</form>
+		<a href="join">회원가입</a>
+		<c:if test="${!empty msg}">
+			<div class="alert alert-danger">${msg}</div>
+		</c:if>
+	</div>
+</body>
+</html>
+// ====================================================================================================
+join.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+</head>
+<body>
+	<div class="container">
+		<form method="post">
+			<div class="mb-3 row">
+				<label for="id" class="col-sm-2 col-form-label">아이디</label>
+				<div class="col-sm-6">
+					<input class="form-control id-input" id="id" name="id">
+				</div>
+ 				<div class="col-sm-2">
+					<button type="button" class="btn btn-primary mb-3 chk-id-btn">중복체크</button>
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<div class="col-sm-6">
+					<span class="chk-id-result"></span>
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="pw" class="col-sm-2 col-form-label">비밀번호</label>
+				<div class="col-sm-6">
+					<input type="password" class="form-control" id="pw" name="pw">
+				</div>
+				<div class="col-sm-2">
+					<button type="submit" class="btn btn-primary mb-3">회원가입</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+	<script>
+		// 제이쿼리
+		$('.chk-id-btn').on('click', ()=> {
+			const id = $('.id-input').val();
+			//alert(id);
+//			$.get('check'); // get 요청, 매개변수에는 요청주소
+//			$.get('check?id='+id); // 1. 쿼리스트링으로 보내는 방법
+//			$.get('check', {id:id}); // 2. object형태로 보내는 방법
+
+			$.get('check', {id:id})
+				.done(function(data){ //서버에서 응답한 값이 data로 들어감
+//					alert(data);
+					$('.chk-id-result').html(data);
+				})
+				.fail(function(error){
+					alert(error);
+				})
+		});
+	</script>
+</body>
+</html>
+// ====================================================================================================
 로그아웃이나 그런 거 누른 이벤트 발생했을 때
 전페이지로 가고 싶을 때는 servlet에서 request.getHeader("referer")? 이런 거 쓰면 볼 수 있는 거 같은데...
 전전 페이지로 가고 싶을 경우는?? 이건 뭔가 개인정보보안에 위배되는 거 같기도 하고... 이건 js navigate(-2)로 처리해줘야 하는 건가? 서블릿 갔다가 와서 전전페이지로 가는 건 순서가 좀 이상한 거 같은디...
@@ -36057,6 +36506,825 @@ PrintWriter out = response.getWriter();
 out.println("스크립트'window.history.go(-1)';스크립트");out.flush();
 
 https://ifuwanna.tistory.com/194
+강사님도 자바스크립트 처리 쪽으로 얘기하시넴 우우우우 배고파!
+// ====================================================================================================
+Day0918
+// ====================================================================================================
+일단 sql 평가
+1.
+create user testTBL identified by 1234;
+grant connect, resource to testTBL;
+
+2.
+가.
+create table member_tbl (
+    no NUMBER(6) NOT NULL PRIMARY KEY,
+    name NVARCHAR2(20) NOT NULL,
+    phone NUMBER(10),
+    address NVARCHAR2(50),
+    email NVARCHAR2(50),
+    grade CHAR(1)
+);
+
+나.
+alter table member_tbl add age NUMBER(3);
+alter table member_tbl modify phone VARCHAR2(15);
+alter table member_tbl drop column email;
+
+3.
+가.
+insert into member_tbl values(1, '이순신', '010-1111-1111', '대전 대덕구 연축동', 'A', 30);
+insert into member_tbl values(2, '강감찬', '010-1111-2222', '서울 은평구 불광동', 'B', 20);
+insert into member_tbl values(3, '성춘향', '010-1111-3333', '경기 덕양구 지축동', 'C', 10);
+
+나.
+insert into member_tbl values(4, '유재원', '010-1111-4444', '강원 횡성군 정암리', 'A', 15);
+update member_tbl set grade='B' where no=1;
+delete from member_tbl where no=3;
+
+다.
+select distinct grade from member_tbl order by grade;
+select name, phone, address from member_tbl where age between 20 and 29;
+select avg(age) from member_tbl;
+// ====================================================================================================
+602p 교재 진도 나가고 책에 없는 거 자잘한 몇 개하고 마무리 할 거라심 
+지금까지 작업했던 방식은 MVC1도 아니고 2도 아닌 1.5 정도라심
+
+604p 흐름이 spring 쓰면 자동으로 저렇게 된다심...
+우리가 여태껏 작업했던 거는 Business Service Object가 없었던 거라심
+서블릿에서 했던 짜잘짜잘했던 거는 다 비즈니스 계층에서 한다심 파라미터 받아오는 거라든지 등등...
+
+2는 만들어보면서 뭐가 다른지 보자심...
+지난 번에 만든 거랑 거의 유사한데 복습 겸 새로 만들어서 한다심 
+// ====================================================================================================
+create table newboard(
+    num number(5) primary key,
+    pass varchar2(30),
+    name varchar2(30),
+    email varchar2(30),
+    title varchar2(50),
+    content varchar2(1000),
+    readcount number(4) default 0,
+    writedate date default sysdate
+);
+create sequence newboard_seq start with 1 increment by 1;
+insert into newboard values(newboard_seq.nextval, '1234', '홍길동', 'abc@naver.com', 'test제목', 'test내용', 0, sysdate);
+insert into newboard values(newboard_seq.nextval, '1234', '고길동', 'ggg@naver.com', 'test제목2', 'test내용2', 0, sysdate);
+insert into newboard values(newboard_seq.nextval, '1234', '유재석', 'qwer@naver.com', 'test제목3', 'test내용3', 0, sysdate);
+select * from newboard;
+commit;
+// ====================================================================================================
+connection pool 설정
+BoardVO 생성
+BoardDAO singleton 생성
+DBManager 복사 헤헷
+필더는 서블릿에서 한 번만 처리해주면 되니까 따로 안 만든다심
+index.jsp
+목록 빼오는 BoardDAO의 List<BoardVO> listAll() 메서드 생성
+boardList.jsp 목록 페이지 생성
+630p의 BoardListServlet, BoardWriteServlet, BoardViewServlet 이건 사실 서블릿 파일로 만드는 게 아니라심
+각각 클래스 매서드 형태로 구현될 거라심...
+
+각 기능별 서블릿을 만들었다하면...
+회원에 관련된 모든 요청을 받는 서블릿 하나 게시판에 관련된 모든 요청을 받는 서블릿 하나 뭐 이런 식
+각각을 서블릿으로 따로 만드는 게 아니라 
+그러려면 클라이언트에서 좀더 상세하게 요청해야 함
+일단 우리는 게시판 관련된 거 할 거니까 게시판 서블릿이 하나 있을 예정
+게시판 서블릿 - 클라이언트가 어떤 걸 요구하는지 정리(정리만 함 해결은 액션 팩토리에서 함)
+공장처럼 한다고 해서 액션 팩토리라고 한다심(어떤 걸 요구하든 다 처리할 수 있어야 함, 모든 걸 처리하는 걸 다 가지고 있지는 아님)
+팩토리는 하나, if문으로 동작 처리
+관리하기 편하기 위해서 모듈화 - 목록작업 클래스, 상세페이지작업 클래스, 등록작업 클래스, 수정작업 클래스, 삭제작업 클래스
+각 클래스들은 인터페이스로해서 실행되도록 한다심...
+요청을 할 거는 /board?command=list /board?command=detail 등등...(쿼리나 아님 input hidden이나...) (스프링 가면 이건 빠진다심)
+서블릿에서 getParameter로 해서 Factory로 넘기기
+
+crud / 서블릿 1개 / 팩토리 1개 / 액션클래스 4개
+table별로 따로 만드는 거라고 생각하는 게 편하다심 그렇게 하는 걸 ett?? 라고 한다심???
+// ====================================================================================================
+package board.util;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class DBManager {
+	public static Connection getConnection() {
+		Connection conn = null;
+		try {
+			Context initContext = new InitialContext();
+			Context envContext  = (Context)initContext.lookup("java:/comp/env");
+			DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
+			conn = ds.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
+		try {
+			if(conn!=null) conn.close();
+			if(ps!=null) ps.close();
+			if(rs!=null) rs.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void close(Connection conn, PreparedStatement ps) {
+		close(conn, ps, null);
+	}
+}
+// ====================================================================================================
+package board.vo;
+
+import java.sql.Timestamp;
+
+public class BoardVO {
+	private int num;
+	private String pass;
+	private String name;
+	private String email;
+	private String title;
+	private String content;
+	private int readcount;
+	private Timestamp writedate; // msec 단위의 날짜
+	
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
+	}
+	public String getPass() {
+		return pass;
+	}
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public int getReadcount() {
+		return readcount;
+	}
+	public void setReadcount(int readcount) {
+		this.readcount = readcount;
+	}
+	public Timestamp getWritedate() {
+		return writedate;
+	}
+	public void setWritedate(Timestamp writedate) {
+		this.writedate = writedate;
+	}
+}
+// ====================================================================================================
+package board.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import board.util.DBManager;
+import board.vo.BoardVO;
+
+public class BoardDAO {
+	private BoardDAO() {}
+	private static BoardDAO instance = new BoardDAO();
+	public static BoardDAO getInstance() {
+		return instance;
+	}
+	
+	public List<BoardVO> listAll(){
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<BoardVO> list = new ArrayList<>();
+		try {
+			ps = conn.prepareStatement("select * from newboard order by num");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				BoardVO vo = new BoardVO();
+				vo.setNum(rs.getInt(1));
+				vo.setPass(rs.getString(2));
+				vo.setName(rs.getString(3));
+				vo.setEmail(rs.getString(4));
+				vo.setTitle(rs.getString(5));
+				vo.setContent(rs.getString(6));
+				vo.setReadcount(rs.getInt(7));
+				vo.setWritedate(rs.getTimestamp(8));
+				
+				list.add(vo);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return list;
+	}
+	
+	public void insert(BoardVO vo) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("insert into newboard values(newboard_seq.nextval, ?, ?, ?, ?, ?, 0, sysdate)");
+			ps.setString(1, vo.getPass());
+			ps.setString(2, vo.getName());
+			ps.setString(3, vo.getEmail());
+			ps.setString(4, vo.getTitle());
+			ps.setString(5, vo.getContent());
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+	public BoardVO findBoardByNum(int num){
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		BoardVO vo = null;
+		try {
+			ps = conn.prepareStatement("select * from newboard where num=?");
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				vo = new BoardVO();
+				vo.setNum(rs.getInt(1));
+				vo.setPass(rs.getString(2));
+				vo.setName(rs.getString(3));
+				vo.setEmail(rs.getString(4));
+				vo.setTitle(rs.getString(5));
+				vo.setContent(rs.getString(6));
+				vo.setReadcount(rs.getInt(7));
+				vo.setWritedate(rs.getTimestamp(8));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps, rs);
+		}
+		return vo;
+	}
+	
+	public void updateReadcount(int num) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("update newboard set readcount=readcount+1 where num=?");
+			ps.setInt(1, num);
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+	public void update(BoardVO vo) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("update newboard set pass=?, name=?, email=?, title=?, content=? where num=?");
+			ps.setString(1, vo.getPass());
+			ps.setString(2, vo.getName());
+			ps.setString(3, vo.getEmail());
+			ps.setString(4, vo.getTitle());
+			ps.setString(5, vo.getContent());
+			ps.setInt(6, vo.getNum());
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+	
+	public void delete(int num) {
+		Connection conn = DBManager.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("delete from newboard where num=?");
+			ps.setInt(1, num);
+			ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBManager.close(conn, ps);
+		}
+	}
+}
+// ====================================================================================================
+package board.controller;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.action.Action;
+
+@WebServlet("/board")
+public class BoardServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public BoardServlet() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String command = request.getParameter("command");
+		
+		// ActionFactory에 있는 command 매개변수로 가지는 getAction메서드를 호출
+		// 리턴 받은 action을 실행시킴 (action.execute() 메서드 이름 통일 강제하기 위해서 인터페이스를 만들어버림)
+		
+		ActionFactory af = ActionFactory.getInstance();
+		Action action = af.getAction(command);
+		if(action != null)
+			action.execute(request, response);
+		// 이렇게까지만 해두면 앞으로는 서블릿은 건드릴 필요업슴
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
+		doGet(request, response);
+	}
+
+}
+// ====================================================================================================
+package board.controller;
+
+import board.action.Action;
+import board.action.BoardDeleteAction;
+import board.action.BoardDetailAction;
+import board.action.BoardInsertAction;
+import board.action.BoardInsertFormAction;
+import board.action.BoardListAction;
+import board.action.BoardUpdateAction;
+import board.action.BoardUpdateFormAction;
+
+public class ActionFactory {
+	private ActionFactory() {}
+	private static ActionFactory instance = new ActionFactory();
+	public static ActionFactory getInstance() {
+		return instance;
+	}
+	
+	public Action getAction(String command) {
+		Action action = null;
+		
+		// 서블릿에서 받은 command를 가지고 해당 명령처리하는 클래스를 찾음
+		// 찾은 클래스를 객체 생성한 후 action에 담아서 리턴 (자바의 다형성을 활용한...)
+		if(command.equals("listAll"))
+			action = new BoardListAction();
+		else if(command.equals("insertForm"))
+			action = new BoardInsertFormAction();
+		else if(command.equals("insert"))
+			action = new BoardInsertAction();
+		else if(command.equals("detail"))
+			action = new BoardDetailAction();
+		else if(command.equals("updateForm"))
+			action = new BoardUpdateFormAction();
+		else if(command.equals("update"))
+			action = new BoardUpdateAction();
+		else if(command.equals("delete"))
+			action = new BoardDeleteAction();
+		return action;
+	}
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public interface Action {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.dao.BoardDAO;
+import board.vo.BoardVO;
+
+public class BoardListAction implements Action{
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//실재 구현해야 하는 내용이 들어갈 곳
+		// 기존에는 서블릿에서 했던 건데... 이제 클래스 메서드로...
+		List<BoardVO> list = new ArrayList<>();
+		BoardDAO dao = BoardDAO.getInstance();
+		list = dao.listAll();
+		request.setAttribute("boards", list);
+		RequestDispatcher rd = request.getRequestDispatcher("board/boardList.jsp");
+		rd.forward(request, response);
+	}
+
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class BoardInsertFormAction implements Action {
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("board/boardInsertForm.jsp");
+		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.dao.BoardDAO;
+import board.vo.BoardVO;
+
+public class BoardInsertAction implements Action{
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BoardVO vo = new BoardVO();
+		vo.setPass(request.getParameter("pass"));
+		vo.setName(request.getParameter("name"));
+		vo.setEmail(request.getParameter("email"));
+		vo.setTitle(request.getParameter("title"));
+		vo.setContent(request.getParameter("content"));
+		BoardDAO dao = BoardDAO.getInstance();
+		dao.insert(vo);
+		response.sendRedirect("board?command=listAll");
+	}
+
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.dao.BoardDAO;
+
+public class BoardDetailAction implements Action{
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BoardDAO dao = BoardDAO.getInstance();
+		int num = Integer.parseInt(request.getParameter("num"));
+		dao.updateReadcount(num);
+		request.setAttribute("board", dao.findBoardByNum(num));
+		RequestDispatcher rd = request.getRequestDispatcher("board/boardDetail.jsp");
+		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.dao.BoardDAO;
+
+public class BoardUpdateFormAction implements Action {
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BoardDAO dao = BoardDAO.getInstance();
+		int num = Integer.parseInt(request.getParameter("num"));
+		request.setAttribute("board", dao.findBoardByNum(num));
+		RequestDispatcher rd = request.getRequestDispatcher("board/boardUpdateForm.jsp");
+		rd.forward(request, response);
+	}
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.dao.BoardDAO;
+import board.vo.BoardVO;
+
+public class BoardUpdateAction implements Action{
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BoardVO vo = new BoardVO();
+		vo.setNum(Integer.parseInt(request.getParameter("num")));
+		vo.setPass(request.getParameter("pass"));
+		vo.setName(request.getParameter("name"));
+		vo.setEmail(request.getParameter("email"));
+		vo.setTitle(request.getParameter("title"));
+		vo.setContent(request.getParameter("content"));
+		BoardDAO dao = BoardDAO.getInstance();
+		dao.update(vo);
+		response.sendRedirect("board?command=listAll");
+	}
+}
+// ====================================================================================================
+package board.action;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import board.dao.BoardDAO;
+
+public class BoardDeleteAction implements Action {
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BoardDAO dao = BoardDAO.getInstance();
+		int num = Integer.parseInt(request.getParameter("num"));
+		dao.delete(num);
+		response.sendRedirect("board?command=listAll");
+	}
+}
+// ====================================================================================================
+index.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Index</title>
+</head>
+<body>
+	<a href="board?command=listAll">게시글 목록 페이지</a>
+</body>
+</html>
+// ====================================================================================================
+board > boardList.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>게시글 목록</title>
+</head>
+<body>
+	<a href="board?command=insertForm">게시물 등록</a>
+	<table border="1" style="width:500px; border-collapse: collapse; text-align: center;">
+		<tr>
+			<th>번호</th>
+			<th>제목</th>
+			<th>작성자</th>
+			<th>작성일</th>
+			<th>조회수</th>
+		</tr>
+		<c:forEach items="${boards}" var="board">
+			<tr>
+			 	<td>${board.num}</td>
+				<td><a href="board?command=detail&num=${board.num}">${board.title}</a></td>
+				<td>${board.name}</td>
+				<td><fmt:formatDate value="${board.writedate}"/> </td>
+				<td>${board.readcount}</td>
+			</tr>			
+		</c:forEach>
+	</table>
+</body>
+</html>
+// ====================================================================================================
+board > boardInsertForm.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>게시글 등록</title>
+</head>
+<body>
+	<form action="board?command=insert" method="post">
+		<table border="1" style="width:500px; border-collapse: collapse; text-align: center;">
+			<tr>
+				<td>이름 : </td>
+				<td><input name="name"></td>
+			</tr>
+			<tr>
+				<td>이메일 : </td>
+				<td><input name="email"></td>
+			</tr>
+			<tr>
+				<td>비밀번호 : </td>
+				<td><input type="password" name="pass"></td>
+			</tr>
+			<tr>
+				<td>제목 : </td>
+				<td><input name="title"></td>
+			</tr>
+			<tr>
+				<td>내용 : </td>
+				<td><textarea name="content"></textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="button" value="목록" onclick="location.href='board?command=listAll'">
+					<input type="submit" value="등록">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+// ====================================================================================================
+board > boardDetail.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>게시글 정보</title>
+</head>
+<body>
+	<table border="1" style="width:500px; border-collapse: collapse; text-align: center;">
+		<tr>
+			<td>이름 : </td>
+			<td>${board.name}</td>
+		</tr>
+		<tr>
+			<td>이메일 : </td>
+			<td>${board.email}</td>
+		</tr>
+		<tr>
+			<td>비밀번호 : </td>
+			<td>${board.pass}</td>
+		</tr>
+		<tr>
+			<td>제목 : </td>
+			<td>${board.title}</td>
+		</tr>
+		<tr>
+			<td>내용 : </td>
+			<td>${board.content}</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<input type="button" value="목록" onclick="location.href='board?command=listAll'">
+				<input type="button" value="수정" onclick="location.href='board?command=updateForm&num=${param.num}'">
+				<input type="button" value="삭제" onclick="location.href='board?command=delete&num=${param.num}'">
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
+// ====================================================================================================
+board > boardUpdateForm.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>게시글 수정</title>
+</head>
+<body>
+	<form action="board?command=update&num=${board.num}" method="post">
+		<table border="1" style="width:500px; border-collapse: collapse; text-align: center;">
+			<tr>
+				<td>이름 : </td>
+				<td><input name="name" value="${board.name}"></td>
+			</tr>
+			<tr>
+				<td>이메일 : </td>
+				<td><input name="email" value="${board.email}"></td>
+			</tr>
+			<tr>
+				<td>비밀번호 : </td>
+				<td><input type="password" name="pass" value="${board.pass}"></td>
+			</tr>
+			<tr>
+				<td>제목 : </td>
+				<td><input name="title" value="${board.title}"></td>
+			</tr>
+			<tr>
+				<td>내용 : </td>
+				<td><textarea name="content">${board.content}</textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="button" value="목록" onclick="location.href='board?command=listAll'">
+					<input type="submit" value="수정">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
 // ====================================================================================================
 
 // ====================================================================================================
