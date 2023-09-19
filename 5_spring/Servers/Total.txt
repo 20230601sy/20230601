@@ -37700,38 +37700,422 @@ pom.xml 파일 아까 바꿨던 거 똑같이 바꾸고 거기에 <plugins> 태�
         	</plugin>
         	
 RootConfig 클래스 생성
+// ====================================================================================================
+package com.test.config;
+
+import org.springframework.context.annotation.Configuration;
+
+@Configuration // 설정 관련된 class 구나 알려주는 어노테이션 추가
+public class RootConfig {
+	
+}
+// ====================================================================================================
+package com.test.config;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer { // 이름 제일 긴거 선택 ㄷㄷㄷ
+
+	@Override
+	protected Class<?>[] getRootConfigClasses() {
+		return new Class[] {RootConfig.class};
+	}
+
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String[] getServletMappings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+와하하하 뭐가 뭔지 정신이 하나도 없네
+그와중에 실행시켜보라는데 다같이 tomcat error 뜸
+https://ohmyfun.tistory.com/104
+톰캣 에러 'Publishing to Tomcat v9.0 Server at localhost..' has encountered a problem.
+spring framework 2020. 4. 24. 16:45
+원인 다른 서버에서 이미 톰캣이 돌아가고있어서 포트 충돌이 일어나기 때문!
+첫번째 방법 : 작업관리자에서 톰캣 실행 프로세스인 javaw.exe 를 지워주고 다시 실행시키면 된다. → 안됨
+두번째 방법 : server 프로젝트의 server.xml파일에 들어간다 / ctrl+f 를 눌러 CONTEXT를 탐색 / 다음과 같이 MiniProjectXML와 SpringMVCXml 프로젝트 2개가 돌아가고있다 둘중 자신이 실행시킬 프로젝트를 제외하고 삭제하면 된다 → 됨!
+그런데 controller 설정이 안되어 있어서 뭐 창이 예쁘게 뜨지는 않음 /controller/ 가용할 수 없다고 나옴
+// ====================================================================================================
+의존성 주입(Dependency Injection, DI)
+스프링에서 제공하는 기술중에 하나라고 보면 된다심
+객체 클래스를 만들고 사용하려면 객체 생성을 하거나 참조를 해야 사용할 수 있는데, 직접적으로 해당하는 클래스의 객체를 생성하지 않고 그냥 불러다가 쓸 수 있는...
+약간 싱글톤 패턴과 비슷한 느낌...으로 바로바로 불러다 쓸 수 있는 거라심
+
+의존성 주입을 할 수 있는 여러 가지 방식이 있다심
+- 생성자 이용 방법
+- setter 이용 방법
+- 필드 주입(@AutoWired 어노테이션) 일반적으로 이방법으로 많이 쓴다심
+
+작업은 0919_01_xml 다시 여기서 한다심
+
+pom.xml <dependencies> 태그 내에
+		<!-- 추가! -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.28</version>
+		    <scope>provided</scope>
+		</dependency>
+https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.28 에서 복사한 내용 추가해서 라이브러리 설치
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>
+			1.2.15 → 1.2.17
+
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			4.7 → 4.12
+alt+F5 잊지말자 쒸익쒸익!
+// ====================================================================================================
+package com.test.sample;
+
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Component // 스프링이 알아서 관리해주는...
+@Data // 기본적인 게터 세터 다 자동으로 만들어줌 ㄷㄷㄷ Package Explorer에서 Chef.java - Chef 클릭해서 봐보삼. 세터만 만들고 싶으면 @setter 게터만 만들고 싶으면 @getter
+public class Chef {
+	int a; // 이거 하면 자동으로 세터 게터 추가되는 거 볼 수 있음
+}
+// ====================================================================================================
+package com.test.sample;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+import lombok.Setter;
+
+@Component
+@Data
+public class Restaurant {
+	@Setter(onMethod_ = @Autowired)
+	private Chef chef; // import가 필요없다 ㄷㄷㄷ 기본적으론 null인데,, 어노테이션으로 의존성 주입 시전... → root-context.xml java bean 등록합시다
+}
+// ====================================================================================================
+root-context.xml 파일 하단 Namespaces에서 context 클릭후 add한다음에 
+source로 이동해서 <context:component-scan base-package="com.test.sample"></context:component-scan> 내용 추가
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<context:component-scan base-package="com.test.sample"></context:component-scan>
+</beans>
+// ====================================================================================================
+src/test/java에서 class 생성 해서 테스트 코드 돌려볼 거라심
+
+package com.test.sample;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import lombok.extern.log4j.Log4j;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")
+@Log4j
+public class TestSample {
+	@Autowired
+	private Restaurant restaurant;
+	
+	@Test // 테스트 실행 시켰을 때 작동할 메서드라는 것을 알려주는 어노테이션
+	public void test() {
+		assertNotNull(restaurant); // junit 안에 있는 null인지 아닌지 판별하는 메서드
+		log.info(restaurant);
+		log.info("====================");
+		log.info(restaurant.getChef());
+	}
+}
+// ====================================================================================================
+의존성 주입 (DI 재개)
+스프링컨테이너에서 클래스를 관리
+
+클래스를 구현 → 다른 클래서 사용
+- new를 이용해서 객체를 생성
+- 해당 객체를 생성하는 메서드를 호출해서 만드는 방법
+( 싱글톤, A 클래스에서 B 객체를 생성하는 메서드 )
+
+객체는 1개를 돌려쓰는 거기 때문에 VO 같은 거는 의존성 주입 안함 
+실질적인 값을 가진 클래스들은 나중에 문제가 생길 수 있음
+
+@Component 는 개발자에게 명시하기 위한 주석 개념... 따지고 따지고 가면 java bean으로 들어간다심
+root-context에서 등록 시키고 test코드에서 받아 오는 거에서 위에 @autowired 어노테이션
+// ====================================================================================================
+이제 자바 프로젝트에서 해보기... 거의 비슷한데 root 어쩌구 xml 파일이 없잖슴 그런 게 조금 다름
+package com.test.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration // 설정 관련된 class 구나 알려주는 어노테이션 추가
+@ComponentScan(basePackages = {"com.test.sample"}) // 의존성 주입을 위한 준비...<context:component-scan base-package="com.test.sample"></context:component-scan>랑 유사하지?...
+public class RootConfig {
+	
+}
 
 // ====================================================================================================
+src/test/java에서 클래스 생성 후 재테스트
+package com.test.controller;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.test.config.RootConfig;
+import com.test.sample.Restaurant;
+
+import lombok.extern.log4j.Log4j;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {RootConfig.class})
+@Log4j
+public class SampleTest {
+	@Autowired
+	private Restaurant restaurant;
+	
+	@Test
+	public void test() {
+		assertNotNull(restaurant);
+		log.info(restaurant);
+		log.info("====================");
+		log.info(restaurant.getChef());
+	}
+}
+Run As Junit test 해보면 아까랑 똑같음
+junit test 실행할 때는 서버 중지시켜야 한다심...
+Spring은 xml 위주로 할 거고 Spring boot 넘어가서는 java로 할 거라심...
+// ====================================================================================================
+생성자를 이용한 의존성 주입
+package com.test.sample;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+// import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Component
+@Data
+// @AllArgsConstructor // 모든 멤버변수를 매개변수로 받는 생성자를 생성해줌. public Hotel(Chef chef) 생성... 생성자로 하든가 lombok 어노테이션 사용하든가...
+// @NoArgsConstructor // 기본생성자를 생성해줌
+// @RequiredArgsConstructor // final이 붙은 멤버변수를 매개변수로 받는 생성자를 생성해줌, final 붙이기 싫으면 해당 변수 위에 @NonNull 어노테이션 붙여주면 됨...
+public class Hotel {
+	private Chef chef;
+	public Hotel(Chef chef) { // 묵시적 의존성
+//	public Hotel(@Autowired Chef chef) { // 명시적 의존성
+//	public Hotel(@Autowired(required = false) Chef chef) { // 의존성 주입 안 하고 싶을 경우 근데 이건 지금 확인은 안되는...
+		this.chef = chef;
+	}
+}
+
+/*
+ * public class Hotel {
+ * 	@autowired
+ * 	private Chef chef;
+ * 	@autowired
+ * 	private Restaurant restaurant;
+ *  대신에
+ *  
+ * 	@RequiredArgsConstructor 
+ *  public class Hotel {
+ * 	private final Chef chef;
+ * 	private final Restaurant restaurant;
+ *  해도 의존성 주입됨
+ */
+// ====================================================================================================
+package com.test.controller;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.test.config.RootConfig;
+import com.test.sample.Hotel;
+import com.test.sample.Restaurant;
+
+import lombok.extern.log4j.Log4j;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {RootConfig.class})
+@Log4j
+public class SampleTest {
+	@Autowired
+	private Restaurant restaurant;
+	@Autowired
+	private Hotel hotel;
+	@Test
+	public void test() {
+		assertNotNull(restaurant);
+		log.info(restaurant);
+		log.info("====================");
+		log.info(restaurant.getChef());
+		
+		log.info("========================================");
+		assertNotNull(hotel);
+		log.info(hotel);
+		log.info("====================");
+		log.info(hotel.getChef());
+	}
+}
 
 // ====================================================================================================
+이제 db 연동하기 
+이건 0919_01_xml 폴더에서 작업
+연동을 위한 새로운 계정 생성
+create user spring identified by 1234;
+grant connect, resource, dba to spring;
+// ====================================================================================================
+https://mvnrepository.com/search?q=ojdbc8
+
+<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8 -->
+<dependency>
+    <groupId>com.oracle.database.jdbc</groupId>
+    <artifactId>ojdbc8</artifactId>
+    <version>23.2.0.0</version>
+</dependency>
 
 // ====================================================================================================
+src/test/java
+package com.test.sample;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+import org.junit.Test;
+
+import lombok.extern.log4j.Log4j;
+
+@Log4j
+public class JDBCTest {
+	static {
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testConnect() {
+		try {
+			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "spring", "1234");
+			log.info(conn);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
 
 // ====================================================================================================
+hikariCP 라이브러리 쓸거라심
+다른 커넥션풀보다 가볍고 편하다 구글에서 검색해보면 깃헙 설명 나와 있으니 함 봐보라심~ https://github.com/brettwooldridge/HikariCP
+스프링 버전이 낮아서 4.0.3 버전 쓸거라심
+https://mvnrepository.com/artifact/com.zaxxer/HikariCP/4.0.3
 
-// ====================================================================================================
+https://github.com/brettwooldridge/HikariCP/wiki/Spring-Hibernate
+Spring Hibernate
 
-// ====================================================================================================
+root-context.xml에 추가한 후 수정
+<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+    <property name="poolName" value="springHikariCP" />
+    <property name="connectionTestQuery" value="SELECT 1" /> ====== 삭제함
+    <property name="dataSourceClassName"       value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
+    <property name="dataSourceProperties">
+        <props>
+            <prop key="url">${jdbc.url}</prop>
+            <prop key="user">${jdbc.username}</prop>
+            <prop key="password">${jdbc.password}</prop>
+        </props>
+    </property>
+</bean>
 
-// ====================================================================================================
+<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+    <constructor-arg ref="hikariConfig" />
+</bean>
 
+!!!! 수정하자고 하시더니 걍 다 지우고 추가하심 ㅠㅠ
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>	    
+	    <property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:xe"/>	    
+	    <property name="username" value="spring"/>
+	    <property name="password" value="1234"/>	    
+	    
+	</bean>
+	
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+	    <constructor-arg ref="hikariConfig" />
 // ====================================================================================================
+src/test/java
+package com.test.sample;
 
-// ====================================================================================================
+import java.sql.Connection;
 
-// ====================================================================================================
+import javax.sql.DataSource;
 
-// ====================================================================================================
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-// ====================================================================================================
+import lombok.extern.log4j.Log4j;
 
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
-
-// ====================================================================================================
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")
+@Log4j
+public class ConnectionPoolTest {
+	@Autowired
+	private DataSource dataSource;
+	
+	@Test
+	public void testConnect() {
+		try {
+			Connection conn = dataSource.getConnection();
+			log.info(conn);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
 
 // ====================================================================================================
 
