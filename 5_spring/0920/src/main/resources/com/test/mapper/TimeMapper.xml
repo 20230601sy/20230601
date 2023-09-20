@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+<mapper namespace="org.mybatis.example.BlogMapper"> 인터페이스 경로
+	<select id="selectBlog" resultType="Blog"> id는 인터페이스 안의 메서드 이름, resultType : 리턴타입(해당 메서드랑 리턴타입 동일해야 함)
+		select * from Blog where id = #{id} 태그 사이에 sql문
+	</select>
+</mapper>
+ -->
+<mapper namespace="com.test.mapper.TimeMapper">
+	<select id="getTime2" resultType="String">
+		select sysdate from dual
+	</select>
+</mapper>

@@ -38028,7 +38028,7 @@ import lombok.extern.log4j.Log4j;
 public class JDBCTest {
 	static {
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Class.forName("oracle.jdbc.driver.OracleDriver"); // db driver load
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -38116,6 +38116,345 @@ public class ConnectionPoolTest {
 		}
 	}
 }
+// ====================================================================================================
+Day0920
+// ====================================================================================================
+#####pom.xml 정리해두면...
+		<!-- test 추가! -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.28</version>
+		    <scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8 -->
+		<dependency>
+		    <groupId>com.oracle.database.jdbc</groupId>
+		    <artifactId>ojdbc8</artifactId>
+		    <version>23.2.0.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
+		<dependency>
+		    <groupId>com.zaxxer</groupId>
+		    <artifactId>HikariCP</artifactId>
+		    <version>4.0.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis</artifactId>
+		    <version>3.4.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis-spring</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-jdbc</artifactId>
+		    <version>${org.springframework-version}{</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-tx</artifactId>
+		    <version>${org.springframework-version}{</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.9.10.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.3.3</version>
+		</dependency>
+		
+수정!!!
+		<java-version>11</java-version>
+		<org.springframework-version>5.0.7.RELEASE</org.springframework-version>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>			1.2.15 → 1.2.17
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>				4.7 → 4.12
+
+
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId> servlet-api → javax.servlet-api
+			<version>3.1.0</version>				2.5 → 3.1.0
+			<scope>provided</scope>
+		</dependency>
+
+Alt + F5 Maven Update!!!
+java로 설정하는 거면...이거까지!
+pom.xml 파일 아까 바꿨던 거 똑같이 바꾸고 거기에 <plugins> 태그 아래, 아래 <plugin> 태그 내용 추가
+        	<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-war-plugin</artifactId>
+        		<version>3.2.0</version>
+        		<configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+        	</plugin>
+        	
+RootConfig 클래스 생성
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+src > main > webapp > WEB-INF > spring > root-context.xml
+
+	<!-- Connection Pool HikariCP https://github.com/brettwooldridge/HikariCP/wiki/Spring-Hibernate -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	    <property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+	    <property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:xe"/>
+	    <property name="username" value="spring"/>
+	    <property name="password" value="1234"/>	    
+	</bean>
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig" />
+	</bean>
+	<!-- My Batis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+root-context.xml 파일 하단 Namespaces에서 mybatis-spring 클릭후 add한 다음에 
+source로 이동해서 아래 내용 한줄 더 추가
+	<mybatis-spring:scan base-package="com.test.mapper"/>
+	
+root-context.xml 파일 하단 Namespaces에서 context 클릭후 add한다음에 
+source로 이동해서 아래 내용 한줄 더 추가
+	<context:component-scan base-package="com.test.sample"></context:component-scan>
+
+// ====================================================================================================
+마이바티스 - MyBatis / 역사와 전통이 있는... 복잡한 쿼리문 쓰는 거는 아직도 이거 쓴다심 / 요즘에는 제이케이? 제이퀘이도 많이 쓴다심
+자바 기반 ORM (관계형 데이터베이스를 객체화 시킨 거 object relational mapping model??)
+JDBC 직접 사용하지 않고 SQL 매핑 파일(이 따로 있음) 쿼리문을 실행 (쿼리문을 작성하는 파일이 따로 있음)
+DB 접속, 연결, 끊기, PreparedStatement 준비 뭐 이런 게 싹 사라진다심
+기존에는... Servlet → Connection DB 연결 → PreparedStatement SQL 심어줌 → ResultSet 결과 담기 → Close 연결 끊기...
+마이바티스 쓰면 SQL문 작성...바인딩만 하면 된다심... 
+mybatis 검색...MyBatis, MyBatis Spring 2개 다 필요하다심
+
+https://mvnrepository.com/artifact/org.mybatis/mybatis/3.4.6
+		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis</artifactId>
+		    <version>3.4.6</version>
+		</dependency>
+		
+		https://mvnrepository.com/artifact/org.mybatis/mybatis-spring/1.3.2
+		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis-spring</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+
+		Spring JDBC spring에서 db 처리해주는 라이브러리
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-jdbc</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+		
+		트랜젝션 라이브러리
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-tx</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1 -->
+		<dependency>
+		    <groupId>org.bgee.log4jdbc-log4j2</groupId>
+		    <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
+		    <version>1.16</version>
+		</dependency>
+마이바티스 스프링 빈으로 등록하는 거 필요...
+sqlSessionFactory 객체(sqlSession 객체를 생성할 수 있는 객체), sqlSession 객체(db연결해주거나 결과를 리턴 받아주는 객체)
+마이바티스 설치하면 딸려오는 객체들임...
+
+이제 직접 자바로 코딩하지 않고 맵퍼라는 거를 만들 거라심
+Mapper
+자바코드와 sql문을 분리
+인터페이스 1개 구현, XML 1개 필요
+-. 인터페이스 → 추상메서드(해당 sql문을 실행하는 메서드)를 생성(리턴타입, 매개변수, 메서드 이름 정도만 들어감)
+-. XML → 실제 실행할 SQL문만 들어감
+-. 두개가 서로 관계가 있다 작업은 해줘야 함...
+
+
+package com.test.mapper;
+public interface TimeMapper {
+
+root-context...
+root-context.xml 파일 하단 Namespaces에서 mybatis-spring 클릭후 add한 다음에 
+source로 이동해서 아래 내용 한줄 더 추가
+	<mybatis-spring:scan base-package="com.test.mapper"/>
+// ====================================================================================================
+package com.test.dbtest;
+public class MapperTest {
+// ====================================================================================================
+xml로 하는 거...
+src/main/resources 아래에...경로를 맞춰줌...
+src/main/resources > com > test > mapper 폴더 생성 > TimeMapper.xml (java랑 파일명도 동일)
+Source 탭에서 작업
+구글 my batis 검색 - 한글사이트 https://mybatis.org/mybatis-3/ko/getting-started.html - 시작하기 클릭
+
+매핑된 SQL 구문 살펴보기 이거가 기본 형식...
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mybatis.example.BlogMapper">
+  <select id="selectBlog" resultType="Blog">
+    select * from Blog where id = #{id}
+  </select>
+</mapper>
+// ====================================================================================================
+db 작업 내부 로그 찍기
+log4jdbc 검색 후 4번째꺼 pom.xml
+https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1/1.16
+<!-- https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1 -->
+<dependency>
+    <groupId>org.bgee.log4jdbc-log4j2</groupId>
+    <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
+    <version>1.16</version>
+</dependency>
+
+설정파일 파일로 생성! src/main/resources > log4jdbc.log4j2.properties
+log4jdbc.spylogdelegator.name=net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator
+넣고 저장
+Hikari 세팅 수정 필요함...roote-context.xml
+	    <property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+	    <property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:xe"/>
+// ====================================================================================================
+Spring MVC
+MVC도 따지고보면 Spring에 포함된 라이브러리임...
+
+// ====================================================================================================
+하나의 워크스페이스에 여러개의 프로젝트가 있음
+프로젝트들을 실행시키려면 서버에 등록해야 함
+추가해둔 서버도 1개
+여기까지가 우리의 상황
+여러개의 프로젝트들의 컨텍스트루트가 전부 동일하면 충돌
+1. 서버 Tomcat 더블클릭 - modules 탭 - Path가 겹치면 안됨...안 겹치게 지정하기... - 해당프로젝트 선택 후 Edit버튼.. 
+2. 서버 Tomcat 우클릭 - Add and Remove에서 해당 프로젝트 외에 다 제거해버리기...
+3. 프로젝트 우클릭 - properties - 좌측 거의 맨 아래쪽... Web Project Settings - Context root:를 수정해도 바뀜 (controller → ) // 근데 다 연동이나 동기화는 안되나봄.. modules에서 바꿔놨는데 아직 여긴 controller로 되어 있넹...
+	homeController.java, home.jsp
+// ====================================================================================================
+이제 컨트롤러 만들어볼 건데
+Servlet에서는 HttpServletRequest request, HttpServletResponse response 를 써서 doGet이나 doPost 에서 썼는데.
+스프링에서는 이런 건 알아서 해주고...
+매개변수, 리턴타입을 다양하게 설정해줄 수 있음
+get, post 매서드 push나 delete 같은 거도 있는데 이런 건 스프링에서는 어노테이션으로 처리함 
+0920_02로 작업
+// ====================================================================================================
+public class SampleController
+// ====================================================================================================
+post요청 날리는 거 편하게 테스트 해보기 위해서 프로그램 설치하자심
+postman 검색
+https://www.postman.com/downloads/
+https://dl.pstmn.io/download/latest/win64 다운로드
+회원가입 gmail / naver... 둘다 해놨고 stay 체크 해제
+프로그램으로 열어야 함(웹으로 열면 브라우저 보안정첵으로 차단당한다심)
+My Workspace에서 + 눌러서 새탭 만들어서
+요청 방식 post 선택하고 url http://localhost:8181/sample/test4 같은 거 입력해보고 Spring 콘솔창에 test4 같은 거 출력되는지 확인해보기~
+
+ 
+// ====================================================================================================
+파일 업로드
+fileupload 첫번째꺼
+<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.3.3</version>
+</dependency>
+D:\Y\20230601ezen\5_spring\upload 파일업로드를 위한 폴더 생성해둠
+servlet-context.xml
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="defaultEncoding" value="utf-8"/>
+		<!-- 10 * 1024 * 1024 -->
+		<beans:property name="maxUploadSize" value="104857560"/>
+		<!-- 2 * 1024 * 1024 -->
+		<beans:property name="maxUploadSizePerFile" value="2097152"/>
+		<beans:property name="uploadTempDir" value="file:/d:/Y/20230601ezen/5_spring/upload/tmp"/>
+		<beans:property name="maxInMemorySize" value="104857560" />
+	</beans:bean>
+// ====================================================================================================
+남은 시간 동안 예외처리
+예외처리를 일괄적으로 묶어서 처리하게끔 한다심
+다시 xml 설정 폴더 0920_02
+
+해당 페이지가 없을 경우 에러 처리하는 거는
+web.xml에 <servlet> 태그 안에 내용 추가한다음...
+		<init-param>
+			<param-name>throwExceptionIfNoHandlerFound</param-name>
+			<param-value>true</param-value>
+		</init-param>
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
 
 // ====================================================================================================
 
