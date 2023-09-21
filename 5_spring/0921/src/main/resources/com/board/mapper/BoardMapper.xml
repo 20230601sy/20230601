@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mapper.BoardMapper">
+	<select id="getList" resultType="com.board.domain.BoardVO"> <!-- 하나하나 담기 때문에 BoardVO로 담아주면 되는 데 경로 설정해야 함. -->
+		<![CDATA[
+			select * from tbl_board where bno > 0
+		]]> <!-- xml 파일에서는 부등호 같은 게 안 되서 CDATA 형태로 넣어줘야 함. -->
+	</select>
+	
+	<!-- insert만 처리하고 생성된 시퀀스(pk)는 몰라도 되는 경우 -->
+	<insert id="insert">
+		insert into tbl_board(bno, title, content, writer) values(seq_board.nextval, #{title}, #{content}, #{writer}) <!-- ? 바인딩 하던 거는 #{}로! -->
+	</insert>
+	
+	<!-- 게시글 작성을 완료한 후 클라이언트에게 xx번 게시글 등록 완료 알려주고 싶을 때 vo bno에 들어가 있게 하려면 selectKey 사용해야 함. -->
+	<!-- insert를 처리하고 생성된 시퀀스(pk)를 알고 싶은 경우 -->
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="bno" order="BEFORE" resultType="Long">
+			select seq_board.nextval from dual
+		</selectKey>
+		
+		insert into tbl_board(bno, title, content, writer) values(#{bno}, #{title}, #{content}, #{writer}) <!-- ? 바인딩 하던 거는 #{}로! -->
+	</insert>
+	
+	<select id="read" resultType="com.board.domain.BoardVO"> <!-- 하나하나 담기 때문에 BoardVO로 담아주면 되는 데 경로 설정해야 함. -->
+		select * from tbl_board where bno = #{bno}
+	</select>
+	
+	<delete id="delete"> <!-- resultType 생략 가능 -->
+		delete from tbl_board where bno = #{bno}
+	</delete>
+	
+	<update id="update">
+		update tbl_board set title = #{title}, content = #{content}, writer = #{writer}, updatedate=sysdate where bno = #{bno}
+	</update>
+</mapper>
