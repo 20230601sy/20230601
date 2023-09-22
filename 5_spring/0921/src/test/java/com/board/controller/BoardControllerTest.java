@@ -30,14 +30,79 @@ public class BoardControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
 	}
 	
+//	@Test
+//	public void testList() throws Exception{
+//		log.info(
+//			mockMvc.perform(MockMvcRequestBuilders.get("/board/list"))
+//				.andReturn()
+//				.getModelAndView()
+//				.getModelMap()
+//		);
+//	}
+
+//	@Test
+//	public void testAdd() throws Exception{
+//		log.info(
+//		mockMvc.perform(MockMvcRequestBuilders.post("/board/add")
+//					.param("title", "컨트롤러 제목")
+//					.param("content", "컨트롤러 내용")
+//					.param("writer", "컨트롤러")
+//				)
+//			.andReturn()
+//			.getModelAndView()
+//			.getModelMap()
+//		);
+//	}
+	
+//	@Test
+//	public void testAdd() throws Exception{
+//		log.info(
+//		mockMvc.perform(MockMvcRequestBuilders.get("/board/get")
+//					.param("bno", "21")
+//				)
+//			.andReturn()
+//			.getModelAndView()
+//			.getModelMap()
+//		);
+//	}
+	
+//	@Test
+//	public void testModify() throws Exception{
+//		log.info(
+//		mockMvc.perform(MockMvcRequestBuilders.post("/board/modify")
+//					.param("bno", "3")
+//					.param("title", "컨트롤러 수정 제목")
+//					.param("content", "컨트롤러 수정 내용")
+//					.param("writer", "컨트롤러 수정")
+//				)
+//			.andReturn()
+//			.getModelAndView()
+//			.getModelMap()
+//		);
+//	}
+	
+//	@Test
+//	public void testRemove() throws Exception{
+//		log.info(
+//		mockMvc.perform(MockMvcRequestBuilders.get("/board/remove")
+//					.param("bno", "2")
+//				)
+//			.andReturn()
+//			.getModelAndView()
+//			.getModelMap()
+//		);
+//	}
+	
 	@Test
 	public void testList() throws Exception{
 		log.info(
-			mockMvc.perform(MockMvcRequestBuilders.get("/board/list"))
+			mockMvc.perform(MockMvcRequestBuilders.get("/board/list")
+						.param("pageNum", "3")
+						.param("amount", "20")
+					)
 				.andReturn()
 				.getModelAndView()
 				.getModelMap()
 		);
 	}
-	
 }

@@ -38306,25 +38306,61 @@ https://mvnrepository.com/artifact/org.mybatis/mybatis/3.4.6
 sqlSessionFactory 객체(sqlSession 객체를 생성할 수 있는 객체), sqlSession 객체(db연결해주거나 결과를 리턴 받아주는 객체)
 마이바티스 설치하면 딸려오는 객체들임...
 
+root-context...
+root-context.xml 파일 하단 Namespaces에서 mybatis-spring 클릭후 add한 다음에 
+source로 이동해서 아래 내용 한줄 더 추가
+	<mybatis-spring:scan base-package="com.test.mapper"/>
 이제 직접 자바로 코딩하지 않고 맵퍼라는 거를 만들 거라심
+
 Mapper
 자바코드와 sql문을 분리
 인터페이스 1개 구현, XML 1개 필요
 -. 인터페이스 → 추상메서드(해당 sql문을 실행하는 메서드)를 생성(리턴타입, 매개변수, 메서드 이름 정도만 들어감)
 -. XML → 실제 실행할 SQL문만 들어감
 -. 두개가 서로 관계가 있다 작업은 해줘야 함...
-
-
+// ====================================================================================================
 package com.test.mapper;
-public interface TimeMapper {
 
-root-context...
-root-context.xml 파일 하단 Namespaces에서 mybatis-spring 클릭후 add한 다음에 
-source로 이동해서 아래 내용 한줄 더 추가
-	<mybatis-spring:scan base-package="com.test.mapper"/>
+import org.apache.ibatis.annotations.Select;
+
+public interface TimeMapper {
+	// xml 안 만들고 sql 여기에 때려 넣는 것도 할 수 있다심... 이방법은 비주류지만 지금 당장 간단히 보는 거부터 해보겠다심
+	// 어노테이션으로 처리...
+	@Select("select sysdate from dual")
+	public String getTime();
+
+	public String getTime2();
+}
 // ====================================================================================================
 package com.test.dbtest;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.test.mapper.TimeMapper;
+
+import lombok.extern.log4j.Log4j;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")
+@Log4j
 public class MapperTest {
+	@Autowired
+	private TimeMapper timeMapper;
+	
+	@Test
+	public void mapperTest() {
+		try {
+			log.info(timeMapper.getTime());
+			System.out.println("xml로 만든 거: " + timeMapper.getTime2());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
 // ====================================================================================================
 xml로 하는 거...
 src/main/resources 아래에...경로를 맞춰줌...

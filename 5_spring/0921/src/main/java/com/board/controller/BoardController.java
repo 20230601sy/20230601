@@ -4,11 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.board.domain.BoardVO;
+import com.board.domain.PageDTO;
+import com.board.domain.Paging;
 import com.board.service.BoardService;
 
 import lombok.extern.log4j.Log4j;
+import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @Log4j
@@ -19,9 +26,52 @@ public class BoardController {
 	private BoardService boardService;
 	
 	@GetMapping("/list")
-	public void list(Model model) {
-		log.info("전체 레코드 조회");
-		model.addAttribute("list", boardService.getList());
+	public void list(Model model, Paging paging) {
+//		log.info("전체 레코드 조회");
+		model.addAttribute("list", boardService.getList(paging));
+		model.addAttribute("pageInfo", new PageDTO(paging, boardService.getTotal(paging)));
 	}
-
+	
+//	레코드 추가(게시글 작성)
+//	서버는 클라이언트가 입력한 게시글 정보를 받아옴
+//	받아온 데이터를 이용해 DB에 저장(insert)
+//	등록된 게시글 번호를 가져와서
+//	목록 페이지로 이동
+//	(추가적인 기능) xx 번 게시글 작성 완료...
+	@PostMapping("/add")
+	public String add(BoardVO board, RedirectAttributes attr) {
+		boardService.add(board);
+		attr.addFlashAttribute("result", board.getBno());
+//		return "list"; // 단순 list.jsp 파일 이동은 안됨... list.do servlet 같은 거 통과해야 했던 거랑 같은 개념...
+		return "redirect:/board/list"; // 여기서도 센드리다이렉트와 포워드 가 있는데.. 포워드는 return list(.jsp)와 model 사용, 센드리다이렉트는 redirect: 요런 식. 근데 여기서 리다이렉트는 정보를 담아서 보낼 수 있는데 attr에 담아야 함... 
+	}
+	@GetMapping("/add")
+	public void addPage() {}
+	
+//	게시물 목록에서 제목을 클릭하면 해당 게시물 상세페이지로 이동
+//	클라이언트한테 게시물 번호를 받아와야 함
+//	DB에서 해당 게시물 번호의 레코드를 가져옴
+//	가져온 레코드를 상세페이지로 보냄
+	@GetMapping({"/get", "/modify"})
+	public void get(@RequestParam("bno")Long bno, Model model) { // @RequestParam("bno") 생략 가능... 이름이 같으니까~
+		model.addAttribute("board", boardService.get(bno));
+	}
+	
+	@PostMapping("/modify")
+	public String modify(BoardVO board, RedirectAttributes attr) {
+		if(boardService.modify(board))
+			attr.addFlashAttribute("result", "수정 완료");
+		else
+			attr.addFlashAttribute("result", "수정 실패");
+		return "redirect:/board/list"; 
+	}
+	
+	@GetMapping("/remove")
+	public String remove(Long bno, RedirectAttributes attr) {
+		if(boardService.remove(bno))
+			attr.addFlashAttribute("result", "삭제 완료");
+		else
+			attr.addFlashAttribute("result", "삭제 실패");
+		return "redirect:/board/list"; 
+	}
 }

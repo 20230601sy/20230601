@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.board.domain.BoardVO;
+import com.board.domain.Paging;
 
 import lombok.extern.log4j.Log4j;
 
@@ -54,14 +55,20 @@ public class MapperTest {
 //		log.info(result);
 //	}
 	
+//	@Test
+//	public void testUpdate() {
+//		BoardVO vo = new BoardVO();
+//		vo.setBno((long) 7);
+//		vo.setTitle("mapper테스트 new제목");
+//		vo.setContent("mapper테스트 new내용");
+//		vo.setWriter("mapper new테스트");
+//		log.info(mapper.update(vo));
+//		log.info(vo);
+//	}
+	
 	@Test
-	public void testUpdate() {
-		BoardVO vo = new BoardVO();
-		vo.setBno((long) 7);
-		vo.setTitle("mapper테스트 new제목");
-		vo.setContent("mapper테스트 new내용");
-		vo.setWriter("mapper new테스트");
-		log.info(mapper.update(vo));
-		log.info(vo);
+	public void testPaging() {
+		Paging paging = new Paging(5, 50);
+		mapper.getListWithPaging(paging).forEach(b->log.info(b));;
 	}
 }

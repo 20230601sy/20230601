@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.board.domain.BoardVO;
+import com.board.domain.Paging;
 import com.board.mapper.BoardMapper;
 
 import lombok.extern.log4j.Log4j;
@@ -23,8 +24,8 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public List<BoardVO> getList() {
-		return boardMapper.getList();
+	public List<BoardVO> getList(Paging paging) {
+		return boardMapper.getListWithPaging(paging);
 	}
 
 	@Override
@@ -42,6 +43,11 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public boolean modify(BoardVO vo) {
 		return boardMapper.update(vo)==1;
+	}
+
+	@Override
+	public int getTotal(Paging paging) {
+		return boardMapper.getTotal(paging);
 	}
 
 }
