@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,25 +54,27 @@ public class BoardController {
 //	DB에서 해당 게시물 번호의 레코드를 가져옴
 //	가져온 레코드를 상세페이지로 보냄
 	@GetMapping({"/get", "/modify"})
-	public void get(@RequestParam("bno")Long bno, Model model) { // @RequestParam("bno") 생략 가능... 이름이 같으니까~
+	public void get(@RequestParam("bno")Long bno, Model model, @ModelAttribute("paging") Paging paging) { // @RequestParam("bno") 생략 가능... 이름이 같으니까~ // "paging"이라는 key로 매개변수로 받은 paging을 model에 담음...
 		model.addAttribute("board", boardService.get(bno));
 	}
 	
 	@PostMapping("/modify")
-	public String modify(BoardVO board, RedirectAttributes attr) {
+	public String modify(BoardVO board, RedirectAttributes attr, Paging paging) {
 		if(boardService.modify(board))
 			attr.addFlashAttribute("result", "수정 완료");
 		else
 			attr.addFlashAttribute("result", "수정 실패");
+		attr.addFlashAttribute("paging", paging);
 		return "redirect:/board/list"; 
 	}
 	
 	@GetMapping("/remove")
-	public String remove(Long bno, RedirectAttributes attr) {
+	public String remove(Long bno, RedirectAttributes attr, Paging paging) {
 		if(boardService.remove(bno))
 			attr.addFlashAttribute("result", "삭제 완료");
 		else
 			attr.addFlashAttribute("result", "삭제 실패");
+		attr.addFlashAttribute("paging", paging);
 		return "redirect:/board/list"; 
 	}
 }

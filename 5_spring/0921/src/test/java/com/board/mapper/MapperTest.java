@@ -1,5 +1,7 @@
 package com.board.mapper;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +68,25 @@ public class MapperTest {
 //		log.info(vo);
 //	}
 	
+//	@Test
+//	public void testPaging() {
+//		Paging paging = new Paging(5, 50);
+//		mapper.getListWithPaging(paging).forEach(b->log.info(b));;
+//	}
+	
+//	@Test
+//	public void searchTest() {
+//		Paging paging = new Paging();
+//		paging.setKeyword("d");
+//		paging.setType("TCW");
+//		mapper.getListWithPaging(paging).forEach(b -> log.info(b));
+//	}
+
 	@Test
-	public void testPaging() {
-		Paging paging = new Paging(5, 50);
-		mapper.getListWithPaging(paging).forEach(b->log.info(b));;
+	public void getTotalTest() {
+		Paging paging = new Paging();
+		paging.setKeyword("d");
+		paging.setType("TCW");
+		log.info(mapper.getTotal(paging));
 	}
 }

@@ -9,9 +9,6 @@ import com.board.domain.BoardVO;
 import com.board.domain.Paging;
 import com.board.mapper.BoardMapper;
 
-import lombok.extern.log4j.Log4j;
-
-@Log4j
 @Service // 이 클래스는 비즈니스 계층을 담당하는 클래스임을 명시
 public class BoardServiceImpl implements BoardService{
 	

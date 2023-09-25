@@ -34,12 +34,27 @@
 					<label>Writer</label> <input class="form-control" name="writer" readonly value="${board.writer}">
 				</div>
 				
-				<button type="button" class="btn btn-default" onclick='location.href="/board/modify?bno=${board.bno}"'>게시글 수정</button>
-				<button type="button" class="btn btn-default" onclick='location.href="/board/list"'>게시글 목록</button>
-
+				<button type="button" class="btn btn-default" data-oper="modify">게시글 수정</button>
+				<button type="button" class="btn btn-default" data-oper="list">게시글 목록</button>
+				
+				<form id="actionForm" action="/board/modify">
+					<input name="bno" value="${board.bno}" type="hidden">
+					<input name="pageNum" value="${paging.pageNum}" type="hidden">
+					<input name="amount" value="${paging.amount}" type="hidden">
+					<input name="type" value="${paging.type}" type="hidden">
+					<input name="keyword" value="${paging.keyword}" type="hidden">
+				</form>
 			</div>
 		</div>
 	</div>
 </div>
-
+<script>
+	const actionForm = $('#actionForm');
+	$('button[data-oper="modify"]').on('click', function() {
+		actionForm.attr('action', '/board/modify').submit();
+	});
+	$('button[data-oper="list"]').on('click', function() {
+		actionForm.attr('action', '/board/list').submit();
+	});
+</script>
 <%@ include file="../includes/footer.jsp"%>

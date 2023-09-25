@@ -38489,11 +38489,66 @@ commit;
 // ====================================================================================================
 클린코드...
 // ====================================================================================================
+insert into tbl_board(bno, title, content, writer)
+    (select seq_board.nextval, title, content, writer from tbl_board);
+select * from tbl_board;
+commit;
 
 // ====================================================================================================
-
+Day0925
 // ====================================================================================================
+댓글 기능 구현 이제까지 한 방식으로 해도 되지만...
+REST API
+XML, JSON 형태의 응답 (대세는 JSON)
+get, post, delete, put
+API명세서
+비동기...
+차이점은 서버사이드렌더링이 아닌...통신상으로는 순수하게 JSON 형태의 데이터만 오고감
+결국 JS로 클라이언트 쪽에서 화면이 구현됨
 
+필요한 library
+jackson
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.14.2</version>
+		</dependency>
+		
+jackson xml
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+		    <artifactId>jackson-dataformat-xml</artifactId>
+		    <version>2.14.2</version>
+		</dependency>
+
+gson
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		    <version>2.8.5</version>
+		</dependency>
+// ====================================================================================================
+create table tbl_reply(
+    rno number(10,0),
+    bno number(10,0) not null,
+    reply varchar2(1000) not null,
+    replyer varchar2(50) not null,
+    replyDate date default sysdate,
+    updateDate date default sysdate
+);
+create SEQUENCE seq_reply;
+alter table tbl_reply add CONSTRAINT pk_reply primary key(rno);
+alter table tbl_reply add CONSTRAINT fk_reply_board FOREIGN key(bno) REFERENCES tbl_board(bno);
+commit;
+
+select * from tbl_reply;
+// ====================================================================================================
+댓글기능, 파일업로드, 시큐리티(로그인) 정도 하고 스프링 마무리하고 부트에서 다시 정리하신다심
+깃헙 알아서 공부하시고 ??? ㄷㄷㄷ
+협업툴 노션 피그마 정도만 하면 ㄷㄷㄷ 그때가서 보자심
 // ====================================================================================================
 
 // ====================================================================================================

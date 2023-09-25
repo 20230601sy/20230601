@@ -39,7 +39,13 @@
 					<button type="button" class="btn btn-danger" onclick='location.href="/board/remove?bno=${board.bno}"'>삭제</button> --%>
  					<button data-oper="modify" class="btn btn-primary">수정</button>
 					<button data-oper="remove" class="btn btn-danger">삭제</button>
-					<button type="button" class="btn btn-default" onclick='location.href="/board/list"'>목록</button>
+					<!-- <button type="button" class="btn btn-default" onclick='location.href="/board/list"'>목록</button> -->
+					<button data-oper="list" type="button" class="btn btn-default">목록</button>
+					
+					<input name="pageNum" value="${paging.pageNum}" type="hidden">
+					<input name="amount" value="${paging.amount}" type="hidden">
+					<input name="type" value="${paging.type}" type="hidden">
+					<input name="keyword" value="${paging.keyword}" type="hidden">
 				</form>
 			</div>
 		</div>
@@ -62,7 +68,7 @@
 		const formTag = $('form');
 		
 		formTag.attr('action', '/board/' + op);
-		if(op =="remove")
+		if(op =="remove" || op =="list")
 			formTag.attr('method', 'get');
 		else if(op =="modify")
 			formTag.attr('method', 'post');

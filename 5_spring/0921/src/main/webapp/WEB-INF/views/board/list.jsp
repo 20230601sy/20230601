@@ -36,7 +36,8 @@
 						<tr>
 							<td>${board.bno}</td>
 							<td>
-								<a href="/board/get?bno=${board.bno}">
+								<%-- <a href="/board/get?bno=${board.bno}"> --%>
+								<a class="move" href="${board.bno}">
 									${board.title}
 								</a>
 							</td>
@@ -65,6 +66,27 @@
 					</div>
 				</div>
 			</div>
+			
+			<div class="row">
+				<div class="col-lg-12">
+					<form id="searchForm" action="/board/list">
+						<select name="type">
+							<option value="T" ${pageInfo.paging.type=='T' ? 'selected' : ''}>제목</option>
+							<option value="C" ${pageInfo.paging.type=='C' ? 'selected' : ''}>내용</option>
+							<option value="W" ${pageInfo.paging.type=='W' ? 'selected' : ''}>작성자</option>
+							<option value="TC" ${pageInfo.paging.type=='TC' ? 'selected' : ''}>제목, 내용</option>
+							<option value="TW" ${pageInfo.paging.type=='TW' ? 'selected' : ''}>제목, 작성자</option>
+							<option value="CW" ${pageInfo.paging.type=='CW' ? 'selected' : ''}>내용, 작성자</option>
+							<option value="TCW" ${pageInfo.paging.type=='TCW' ? 'selected' : ''}>제목, 내용, 작성자</option>
+						</select>
+						<input name="keyword" value="${pageInfo.paging.keyword}">
+						<input type="hidden" name="pageNum" value="${pageInfo.paging.pageNum}">
+						<input type="hidden" name="amount" value="${pageInfo.paging.amount}">
+						<button>검색</button>
+					</form>
+				</div>
+			</div>
+			
 			<div class="pull-right">
 				<ul class="pagination">
 					<c:if test="${pageInfo.prev }">
@@ -90,6 +112,8 @@
 <form id="actionForm" action="/board/list">
 	<input name="pageNum" value="${pageInfo.paging.pageNum}" type="hidden">
 	<input name="amount" value="${pageInfo.paging.amount}" type="hidden">
+	<input name="type" value="${pageInfo.paging.type}" type="hidden">
+	<input name="keyword" value="${pageInfo.paging.keyword}" type="hidden">
 </form>
 <script>
 //	$(document).ready() // 문서가 읽혀지면 실행되는 함수
@@ -111,7 +135,26 @@
 		e.preventDefault();
 		// console.log($(this).attr("href"));
 		actionForm.find('input[name="pageNum"]').val($(this).attr("href"));
+		actionForm.attr('action', '/board/list');
 		actionForm.submit();	
+	});
+	
+	$('.move').on('click', function(e){
+		e.preventDefault();
+		actionForm.append("<input type='hidden' name='bno' value='" + $(this).attr('href') + "'>");
+		actionForm.attr('action', '/board/get');
+		actionForm.submit();
+	});
+	
+	const searchForm = $('#searchForm');
+	$('#searchForm button').on('click', function(e){
+		e.preventDefault();
+		if(searchForm.find('input[name="keyword"]').val()=='') {
+			alert('검색어를 입력하세요.');
+			return;
+		}
+		searchForm.find('input[name="pageNum"]').val('1');
+		searchForm.submit();
 	});
 </script>
 <%@ include file="../includes/footer.jsp"%>
