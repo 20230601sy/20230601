@@ -38,7 +38,7 @@
 							<td>
 								<%-- <a href="/board/get?bno=${board.bno}"> --%>
 								<a class="move" href="${board.bno}">
-									${board.title}
+									${board.title} [${board.replyCnt}]
 								</a>
 							</td>
 							<td>${board.writer}</td>

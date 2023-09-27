@@ -1,6 +1,6 @@
 package com.board.domain;
 
-import lombok.AllArgsConstructor;
+//import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

@@ -52,8 +52,30 @@ public class ReplyMapperTest {
 //		vo.setReply("댓글 수정 내용 테스트");
 //		replyMapper.update(vo);
 //	}
+	
+//	@Test
+//	public void getListWithPaging() {
+//		replyMapper.getListWithPaging(new Paging(), bnoArr[0]).forEach(b->log.info(b));
+//	}
+	
 	@Test
-	public void getListWithPaging() {
-		replyMapper.getListWithPaging(new Paging(), bnoArr[0]).forEach(b->log.info(b));
+	public void insertTemp() {
+		for(int i=1; i<=500; i++) {
+			ReplyVO vo = new ReplyVO();
+			vo.setBno(bnoArr[0]);
+			vo.setReply("임시 댓글 내용" + i);
+			vo.setReplyer("임시 작성자" + i);
+			replyMapper.insert(vo);
+		}
 	}
+	
+//	@Test
+//	public void testPaging() {
+//		replyMapper.getListWithPaging(new Paging(2, 5), bnoArr[0]).forEach(r->log.info(r));
+//	}
+	
+//	@Test
+//	public void countTest() {
+//		log.info(replyMapper.getCountByBno(bnoArr[0]));
+//	}
 }

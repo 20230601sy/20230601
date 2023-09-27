@@ -28,7 +28,7 @@ let replyService = (function(){
 		$.getJSON('/replies/pages/' + bno + '/' + page + '.json', 
 			function(result){
 				if(callback) {
-					callback(result);
+					callback(result.replyCnt, result.list);
 				}
 			}
 		);

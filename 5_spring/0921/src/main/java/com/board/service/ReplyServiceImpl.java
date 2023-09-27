@@ -4,19 +4,27 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.board.domain.PageReplyDTO;
 import com.board.domain.Paging;
 import com.board.domain.ReplyVO;
+import com.board.mapper.BoardMapper;
 import com.board.mapper.ReplyMapper;
 
 @Service
 public class ReplyServiceImpl implements ReplyService {
 	
 	@Autowired
-	private ReplyMapper replyMapper; 
+	private ReplyMapper replyMapper;
 
+	@Autowired
+	private BoardMapper boardMapper;
+	
+	@Transactional
 	@Override
 	public int insert(ReplyVO vo) {
+		boardMapper.updateReplyCnt(vo.getBno(), 1);
 		return replyMapper.insert(vo);
 	}
 
@@ -25,8 +33,10 @@ public class ReplyServiceImpl implements ReplyService {
 		return replyMapper.read(rno);
 	}
 
+	@Transactional
 	@Override
 	public int remove(Long rno) {
+		boardMapper.updateReplyCnt(replyMapper.read(rno).getBno(), -1);
 		return replyMapper.delete(rno);
 	}
 
@@ -38,6 +48,11 @@ public class ReplyServiceImpl implements ReplyService {
 	@Override
 	public List<ReplyVO> getList(Paging paging, Long bno) {
 		return replyMapper.getListWithPaging(paging, bno);
+	}
+
+	@Override
+	public PageReplyDTO getListPage(Paging paging, Long bno) {
+		return new PageReplyDTO(replyMapper.getCountByBno(bno), replyMapper.getListWithPaging(paging, bno)); 
 	}
 
 }

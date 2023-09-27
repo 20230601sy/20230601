@@ -38186,6 +38186,17 @@ Day0920
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.3.3</version>
 		</dependency>
+		
+버전 수정
+<org.aspectj-version>1.9.0</org.aspectj-version>
+
+AspectJ Weaver 추가 
+		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+		<dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>${org.aspectj-version}</version>
+		</dependency>
 여기 commons 빠졌을 걸~~~
 수정!!!
 		<java-version>11</java-version>
@@ -38227,7 +38238,8 @@ pom.xml 파일 아까 바꿨던 거 똑같이 바꾸고 거기에 <plugins> 태�
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
         	</plugin>
-        	
+
+<scope>runtime</scope> log4j 관련 모두 주석처리 3곳함
 RootConfig 클래스 생성
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 src > main > webapp > WEB-INF > spring > root-context.xml
@@ -38246,9 +38258,22 @@ src > main > webapp > WEB-INF > spring > root-context.xml
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
+트랜젝션
+	<tx:annotation-driven />
+	<mybatis-spring:scan base-package="com.test.mapper" />
 root-context.xml 파일 하단 Namespaces에서 mybatis-spring 클릭후 add한 다음에 
 source로 이동해서 아래 내용 한줄 더 추가
 	<mybatis-spring:scan base-package="com.test.mapper"/>
+
+1. namespace aop, context 체크
+2. source 내용 추가
+	<context:annotation-config></context:annotation-config>
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<context:component-scan base-package="com.test.service"></context:component-scan>
+	<context:component-scan base-package="com.test.aspect"></context:component-scan>
+
+
+
 	
 root-context.xml 파일 하단 Namespaces에서 context 클릭후 add한다음에 
 source로 이동해서 아래 내용 한줄 더 추가
@@ -38550,17 +38575,121 @@ select * from tbl_reply;
 깃헙 알아서 공부하시고 ??? ㄷㄷㄷ
 협업툴 노션 피그마 정도만 하면 ㄷㄷㄷ 그때가서 보자심
 // ====================================================================================================
-
+Day0927
 // ====================================================================================================
+paging : 사용자가 보고 싶은 페이지 번호 저장 (pageNum) / 페이지당 몇 개씩 표시할 건지 저장 (amount)
+bno : 사용자가 보려고 하는 게시물 번호
+사용자가 x번 게시물을 볼건데, x번 게시물에 해당하는 댓글도 가져와주세요. 모든 댓글이 아니라 y번 페이지에 있는 댓글만 페이지당 z개씩만 볼겁니다.
 
+replyMapper.getCountByBno(bno) = x번 게시물에 해당하는 전체 댓글 수 (cnt)
+replyMapper.getListWithPaging(paging, bno) = y번 페이지에 해당하는 댓글 목록(z개 있음) (list)
+
+PageReplyDTO → cnt, list를 한번에 다 담는 저장공간
+
+수정한 JS, CSS 파일이 적용이 안될 때 ( https://imnotabear.tistory.com/430 )
+브라우저 캐시 때문일 경우 크롬 브라우저 Ctrl + F5 강력 새로고침 ㄷㄷㄷ
 // ====================================================================================================
+댓글 페이징
 
+기본적으로 처음 게시글 페이지에 들어가면 댓글이 1페이지에 대한 것만 나오면 됨
+
+showList()
+댓글 목록을 화면에 찍어내주는 작업 필요함
+(서버에서 댓글 목록을 받아와야 가능)
+페이징을 위해 전체 댓글 개수
+사용자가 요청한 페이지에 해당하는 댓글 목록
+
+페이지 번호들(이전, 다음, 1, 2, 3, ... 버튼들) 찍어내야 함
+
+전체 댓글 수가 필요함 → 찐막 페이지 번호를 구해야 함
+showReplyPage(전체 댓글수) 
+올림(전체 댓글 수 / 페이지당 표시할 댓글 개수) 
+사용자가 요청한 페이지 번호가 필요함 → pageNum변수 (전역변수)
+→ 페이지 번호 목록들이 보고 있는 페이지에 따라 달라지기 때문
+ex. 5페이지를 보고 있으면 페이지 번호 목록은 1~10이 보여야 함
+    12페이지를 보고 있으면 페이지 번호 목록은 11~20이 보여야 함
+    
+번호 목록의 시작, 끝번호를 구해줘야 함
+끝번호 = 올림(보고 있는 페이지/10) * 10
+시작번호 = 끝번호 - (10 - 1)
+여기서 10은 표시할 페이지 번호 개수
+이전 boolean
+다음
+
+화면에 페이지번호를 찍어냄
 // ====================================================================================================
+Spring 특징
+의존성 주입...다뤘고... 그다음...
+AOP - 관점 지향 프로그래밍 (Aspect Oriented Programming)
+내가 특정 뭔가를 실행시키려고 할 때(서버에서 요청 받은 것 같은 거) 내가 요청한 거 시작하려고 할 때나 전이나 후에 특정한 기능들을 추가로 실행 시킬 수 있는 거
+기존에 했던 거에선 필터 같은 기능...
+이런 기능의 종류는 크게 세 가지
+필터: 서블릿이 실행되기 전/후에 작동
+인터셉터 : 컨트롤러가 실행되기 전/후 작동 (중간에 가로채서 먼저 해주는 거...)
+AOP : 컨트롤러/서비스 모두 실행되기 전/후 작동
+스프링에서 기본적으로 제공해주는 기능이라 생각하면 된다심. 기본적인 세팅은 해줘야 하지만...이라심...
+로그 같은 거 찍어낸다던가...(로그도 파일 입출력을 이용해서 파일로 남길 수도 있다심)
+종류는 결국 관리하는 영역이 달라서 구분되는 거...
+이거는 test만 할 거...새프로젝트로 하자심 0927 
 
+<org.aspectj-version>1.9.0</org.aspectj-version>
+
+AspectJ Weaver
+		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+		<dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>${org.aspectj-version}</version>
+		</dependency>
+		
+pointcut, advice 필요함...
+
+root-context.xml 설정
+1. namespace aop, context 체크
+2. source 내용 추가
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.test.service"></context:component-scan>
+	<context:component-scan base-package="com.test.aspect"></context:component-scan>
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 // ====================================================================================================
+트랜잭션
+하나의 작업단위... 커밋, 롤백 내부...
+메서드 → DB 조회, (A)변경, (B)삭제
+A테이블의 내용을 변경하고 B테이블의 내용을 삭제해야 하는 걸 구현했다고 치면
+...트랜잭션은 메서드 단위...
+A테이블 내용을 변경했지만 B 삭제처리할 때 예외가 발생했다면 A내용을 되돌려야 함
 
+@Transactional
+public int xxx() {
+	A계좌에서 100만원 인출
+	B계좌에 100만원 입금 예외발생
+}
+
+내부적으로는 aop를 활용하는 거임
 // ====================================================================================================
+// 강사님 tbl_sample이라고 하심
+create table tbl_sample1( 
+    col1 VARCHAR2(500)
+);
 
+create table tbl_sample2(
+    col2 VARCHAR2(20)
+);
+select * from tbl_sample1;
+select * from tbl_sample2;
+// ====================================================================================================
+트랜잭션을 아까 구현한 거에 접목시킬만한거...지금은 딱히 없음
+게시글, 댓글
+게시글을 삭제 → 딸려있는 댓글들도 삭제(안지워도 되긴함...보통은 지움)
+게시글 삭제 → 게시글에 대한 댓글들도 삭제
+게시글번호(기본키) 댓글-게시글번호(외래키)
+
+게시글에 해당 댓글 개수 표시해주기로 함...
+// ====================================================================================================
+alter table tbl_board add replycnt number default 0;
+update tbl_board set replycnt = (select count(*) from tbl_reply where tbl_board.bno = tbl_reply.bno);
+select * from tbl_board order by bno desc;
+commit;
 // ====================================================================================================
 
 // ====================================================================================================

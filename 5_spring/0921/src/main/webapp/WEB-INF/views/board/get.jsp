@@ -72,17 +72,16 @@
 -->
 				</ul>
 			</div>
+			<div class='panel-footer'><!-- page번호 넣는 공간 --></div>			
 		</div>
 	</div>
 </div>
 
-<div class='modal fade' id='myModal' tabindex='-1' role='dialog'
-	aria-labelledby='myModalLabel' aria-hidden='true'>
+<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
 	<div class='modal-dialog'>
 		<div class='modal-content'>
 			<div class='modal-header'>
-				<button type='button' class='close' data-dismiss='modal'
-					aria-hidden='true'>&times;</button>
+				<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
 				<h4 class='modal-title' id='myModalLabel'>댓글 작성창</h4>
 			</div>
 
@@ -119,7 +118,14 @@
 							bno : bnoValue,
 							page : page || 1
 						},
-						function(list) {
+						function(replyCnt, list) {
+/* 							console.log("replyCnt : ", replyCnt);
+							console.log(list); */
+							if(page == -1) {
+								pageNum = Math.ceil(replyCnt/10.0);
+								showList(pageNum); // 목록을 다시 받아오기 위해서...재귀...
+								return;
+							}
 							let str = '';
 							if (list == null || list.length == 0) {
 								replyUL.html('');
@@ -139,6 +145,7 @@
 										+ list[i].reply + "</p>" + "</li>";
 							}
 							replyUL.html(str);
+							showReplyPage(replyCnt);
 						});
 	}
 	showList(1);
@@ -226,7 +233,7 @@
 		replyService.add(reply, function(result) {
 				 									alert('결과 : ' + result);
 				 									modal.find('input').val('');
-				 									showList(1);
+				 									showList(-1);
 				 				}, null);
 	})
 	
@@ -252,7 +259,7 @@
 		replyService.remove(modal.data('rno'), function(result) {
 																	alert('결과 : ' + result);
 																	modal.modal('hide');
-																	showList(1);
+																	showList(pageNum);
 							}, null);
 	})
 	
@@ -264,8 +271,46 @@
 				 			function(result) {
 				 				alert('결과 : ' + result);
 				 				modal.modal('hide');
-								showList(1);
+								showList(pageNum);
 				 			}, null);
+	})
+	
+	let pageNum = 1;
+	const replyPageFooter = $('.panel-footer');
+	function showReplyPage(replyCnt) {
+		let endNum = Math.ceil(pageNum / 10.0) * 10;
+		let startNum = endNum - 9;
+		let prev = startNum != 1;
+		let next = false;
+		if(endNum * 10 >= replyCnt)
+			endNum = Math.ceil(replyCnt / 10.0);
+		if(endNum * 10 < replyCnt)
+			next = true;
+		
+		let str = "<ul class='pagination pull-right'>";
+		if(prev)
+			str += "<li class='page-item'>" 
+					+ "	<a class='page-link' href='" + (startNum-1) + "'>Previous</a>"
+					+ "</li>";
+		for(let num=startNum; num<=endNum; num++){
+			let active = pageNum == num ? 'active' : '';
+			str += "<li class='page-item " + active + "'>" 
+					+ "	<a class='page-link' href='" + num + "'>" + num + "</a>"
+					+ "</li>";
+		}
+		if(next)
+			str += "<li class='page-item'>" 
+					+ "	<a class='page-link' href='" + (endNum+1) + "'>Next</a>"
+					+ "</li>";
+		str += "</ul>";
+		replyPageFooter.html(str);
+	}
+	replyPageFooter.on('click', 'li a', function(e){
+		e.preventDefault();
+		const targetPageNum = $(this).attr('href');
+		// console.log(targetPageNum);
+		pageNum = targetPageNum;
+		showList(targetPageNum);
 	})
 </script>
 <%@ include file="../includes/footer.jsp"%>
