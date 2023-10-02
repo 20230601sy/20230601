@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input>
+  <button class="btn">버튼</button>
+  <button class="listBtn">목록</button>
+  <div class="name"></div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script>
+    $('.btn').on('click', ()=>{
+      $.get('http://localhost:8181/rest')
+      .done(result => {
+        console.log(result);
+        $('.name').html(result.name);
+      })
+    })
+    $('.listBtn').on('click', ()=>{
+      $.get('http://localhost:8181/list')
+          .done(result => {
+            console.log(result);
+          })
+    })
+  </script>
+</body>
+</html>
