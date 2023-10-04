@@ -49,6 +49,22 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">첨부 파일</div>
+			<div class="panel-body">
+				<div class="form-group uploadDiv">
+					<!-- <input type="file" name="uploadFile" multiple> -->
+				</div>
+				<div class="uploadResult">
+					<ul></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class='row'>
 	<div class='col-lg-12'>
 		<div class='panel panel-default'>
@@ -105,7 +121,9 @@
 		</div>
 	</div>
 </div>
-
+<div class="bigPictureWrapper">
+	<div class="bigPicture"></div>
+</div>
 <script src="/resources/js/reply.js"></script>
 <script>
 	const bnoValue = '<c:out value="${board.bno}"/>';
@@ -311,6 +329,57 @@
 		// console.log(targetPageNum);
 		pageNum = targetPageNum;
 		showList(targetPageNum);
+	})
+</script>
+<script>
+	const bno = '<c:out value="${board.bno}"/>';
+	$.getJSON('/board/getAttachList', {bno:bno}, function(attachList){
+//		console.log(attachList);
+		let str = '';
+		
+		$(attachList).each(function(i, obj){
+			let filePath = obj.uploadPath + '/' + obj.uuid + '_' + obj.fileName;
+			filePath = encodeURIComponent(filePath);
+			if(!obj.fileType){
+				str += '<li data-path="' + obj.uploadPath + '" data-uuid="' + obj.uuid + '" data-fileName="' + obj.fileName + '" data-type="' + obj.fileType + '" >';
+				str += '	<span>' + obj.fileName + '</span><br>';
+				str += '		<img src="/resources/img/attach.png">';
+				str += '</li>';
+			}
+			else {
+				let path = obj.uploadPath + '/s_' + obj.uuid + '_' + obj.fileName;
+				path = encodeURIComponent(path);
+				str += '<li data-path="' + obj.uploadPath + '" data-uuid="' + obj.uuid + '" data-fileName="' + obj.fileName + '" data-type="' + obj.fileType + '" >';
+				str += '	<span>' + obj.fileName + '</span><br>';
+				/* str += '	<a href=\'javascript:showImage(\"'+ filePath + '\")\'>'; */
+				str += '		<img src="/display?fileName=' + path + '">';
+				str += '</li>';
+			}
+		})
+		$('.uploadResult ul').append(str);
+	})
+	
+	$('.uploadResult ul').on('click', 'li', function(){
+		let path = $(this).data('path') + '/' + $(this).data('uuid') + '_' + $(this).data('filename');
+		//path = encodeURIComponent(path);
+		if($(this).data('type')) {
+			showImage(path);
+		} else {
+			location = '/download?fileName=' + path;
+		}
+	})
+		
+	function showImage(filePath) {
+		$('.bigPictureWrapper').css('display', 'flex').show();
+		$('.bigPicture').html('<img src="/display?fileName=' + encodeURI(filePath) + '">')
+						.animate({width:'100%', height:'100%'}, 1000);
+	}
+	
+	$('.bigPictureWrapper').on('click', function(){
+		$('.bigPicture').animate({width:'0%', height:'0%'}, 1000);
+		setTimeout(()=>{
+			$(this).hide();
+		}, 1000)
 	})
 </script>
 <%@ include file="../includes/footer.jsp"%>

@@ -2,6 +2,7 @@ package com.board.service;
 
 import java.util.List;
 
+import com.board.domain.BoardAttachVO;
 import com.board.domain.BoardVO;
 import com.board.domain.Paging;
 
@@ -19,4 +20,6 @@ public interface BoardService {
 	public boolean modify(BoardVO vo);
 	// 전체 레코드 수
 	public int getTotal(Paging paging);
+	
+	public List<BoardAttachVO> getAttachList(Long bno);
 }
