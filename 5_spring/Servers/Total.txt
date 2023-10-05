@@ -38203,6 +38203,43 @@ AspectJ Weaver 추가
 		    <artifactId>aspectjweaver</artifactId>
 		    <version>${org.aspectj-version}</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+		<dependency>
+		    <groupId>org.quartz-scheduler</groupId>
+		    <artifactId>quartz</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz-jobs -->
+		<dependency>
+		    <groupId>org.quartz-scheduler</groupId>
+		    <artifactId>quartz-jobs</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-taglibs</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
 여기 commons 빠졌을 걸~~~
 수정!!!
 		<java-version>11</java-version>
@@ -38277,13 +38314,14 @@ source로 이동해서 아래 내용 한줄 더 추가
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	<context:component-scan base-package="com.test.service"></context:component-scan>
 	<context:component-scan base-package="com.test.aspect"></context:component-scan>
-
-
-
 	
 root-context.xml 파일 하단 Namespaces에서 context 클릭후 add한다음에 
 source로 이동해서 아래 내용 한줄 더 추가
 	<context:component-scan base-package="com.test.sample"></context:component-scan>
+
+root-context.xml 파일 하단 Namespaces에서 task 클릭후 add한다음에 
+source로 이동해서 아래 내용 한줄 더 추가 (어노테이션으로 동작하게...)
+	<task:annotation-driven/>
 
 src/main/resources > 파일 생성 > log4jdbc.log4j2.properties
 log4jdbc.spylogdelegator.name=net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator
@@ -38883,13 +38921,241 @@ ajax 요청
 전자가 db에 요청을 1번만 하는 거라 효율적인데,,,
 지금은 이미 만들어놓은 거 활용을 위해 ajax 요청, 서버에 요청이 2번 이루어짐...
 
-글작성할 때 서버에 올라간 거 뒤로가기 하면 지워주는 거...같은 거도 해야 함...내일 이런 거 하고 시큐리티 한다심 
+글작성할 때 서버에 올라간 거 뒤로가기 하면 지워주는 거...같은 거도 해야 함...내일 이런 거 하고 시큐리티 한다심
 // ====================================================================================================
-
+Day1005
 // ====================================================================================================
+게시글 삭제 ( 첨부파일 포함 )
+기존 삭제는 게시글만 삭제되도록 구현되어 있음
+그냥 실행시키면 첨부파일이 안지워져서 에러가 생김
 
+게시글 번호에 해당하는 첨부파일(테이블)을 삭제해주는 mapper 생성
+
+게시글 삭제 요청할 경우 첨부파일 레코드들도 같이 지워지도록
+서비스 클래스 수정
+- 첨부파일 레코드가 먼저 삭제되고
+- 그 다음에 게시글 레코드가 삭제되어야 함
+
+이렇게만 해두면 서버에 저장된 파일들은 남아있게 됨
+서버에 저장된 파일들도 삭제되도록 해줘야 함
+
+게시글 번호에 해당하는 첨부파일 목록을 가져오고 
+그 목록들 정보를 이용해서 실제 서버에 있는 파일 삭제를 구현
 // ====================================================================================================
+사용자가 수정 요청
+기존 이미지 중 하나를 x버튼 눌러서 지웠음
+→ 서버에 저장된 파일, DB에 저장된 레코드가 진짜 삭제되어야 함
+서버에 수정 요청할 경우 삭제할 데이터의 정보가 필요함
 
+기본적으로 li 태그에 해당 데이터들의 정보가 포함
+x버튼을 눌러서 해당 li 태그를 지울 때 li 태그에 있는 정보를 빼옴
+
+새로운 파일을 추가
+해당 파일의 정보를 서버로 보내서 db에 저장시켜야 함
+
+위 두가지를 따로따로 처리하면 매번 삭제/추가가 각각 실행되어야 함
+
+삭제를 하던 추가를 하던 최종적으로 남은 파일들의 정보만 서버로 보냄
+기존 첨부파일목록을 싹다 날려버린 후 다시 등록
+
+문제점
+새글 작성 → 이미지를 첨부파일에 등록을 했는데 글작성 완료를 안함
+글 수정 → 파일 삭제처리를 했음
+실제로는 DB에만 지워지고 서버에 파일은 남아있음
+→ 사용하지 않는 파일들이 누적
+
+tbl_attach에 저장된 걸 보고 사용하는 건지 아닌 건지 구별이 가능
+Quartz 작업스케쥴링 해주는 라이브러리
+세팅을 해준 일정 시간이 되면 특정 코드를 자동으로 실행해주는 라이브러리
+Quartz 첫번째 꺼!
+<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+<dependency>
+    <groupId>org.quartz-scheduler</groupId>
+    <artifactId>quartz</artifactId>
+    <version>2.3.2</version>
+</dependency>
+Quartz Jobs 버전 똑같은 거, 작업단위를 ??? 해주는
+<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz-jobs -->
+<dependency>
+    <groupId>org.quartz-scheduler</groupId>
+    <artifactId>quartz-jobs</artifactId>
+    <version>2.3.2</version>
+</dependency>
+
+root-context.xml 파일 하단 Namespaces에서 task 클릭후 add한다음에 
+source로 이동해서 아래 내용 한줄 더 추가 (어노테이션으로 동작하게...)
+	<task:annotation-driven/>
+	<context:component-scan base-package="com.board.task"/>
+일단 매퍼 수정 좀... 안해도 될 듯!
+추가한다음 다시 삭제하면...???
+// ====================================================================================================
+10월 5일에 불필요한 파일들 제거함
+10월 6일에 불필요한 파일들 제거처리
+5일에 지워진 파일들도 ?? 해야 할까 ???
+select * from tbl_attach where uploadpath = to_char(sysdate-1, 'yyyy\mm\dd')
+
+이제 업로드된 파일 목록을 db에서 가져옴
+
+서버에 저장된 파일과 db목록과 비교
+
+db에 없는 파일들은 삭제
+// ====================================================================================================
+스프링 시큐리티
+스프링에서 제공하는 프레임워크...라이브러리...
+보안 강화, 인증, 권한부여
+db 비밀번호 암호화
+로그인 시도 세션 관리
+spring Security Authentication Architecture 기본 아키텍쳐...
+https://dev-coco.tistory.com/174 이미지, 인터셉션....
+기본제공하는 user가 있어서 그냥 user로는 명명해서 사용 안한다고 하심
+일단은 1005 프로젝트 새로 만들어서...
+
+spring security 검색, 버전은 5.0.7 맞춰서... Core Web Config
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+spring security taglibs 도 검색해서...
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-taglibs</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+
+src ... spring 폴더 우클릭 new - Spring Bean Configuration File 클릭 security-context.xml 생성
+해당 파일에 Namespaces 에 security 추가  
+source에서	xsischemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.0.xsd
+가장 끝에 버전 지워줌 /spring-security-5.0.xsd → /spring-security.xsd
++ 껍데기 내용 추가 (수정 좀 할 거라심 여기에 로그인 페이지, 로그아웃 페이지, 로그인 어떻게 할 건지 등등, 로그인 창 따로 만들지 않아도 된다심 ㄷㄷ)
+암호화, 권한설정 등등도 할 거라심
+	<security:http>
+		<security:form-login/>
+	</security:http>
+	<security:authentication-manager/>
+
+web.xml
+/WEB-INF/spring/security-context.xml 경로 추가
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/spring/root-context.xml
+			/WEB-INF/spring/security-context.xml
+		</param-value>
+	</context-param>
+모든 페이지에서 filter 작동하도록 내용
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+
+http://localhost:8181/member로 갔을 때, http://localhost:8181/login 로 자동 이동됨
+	<security:http>
+		<security:intercept-url pattern="/all" access="permitAll"/>
+		<security:intercept-url pattern="/member" access="hasRole('ROLE_MEMBER')"/>
+		<security:intercept-url pattern="/admin" access="hasRole('ROLE_ADMIN')"/>
+		<security:form-login login-page="/customLogin"/>
+		<security:access-denied-handler error-page="/accessError"/>
+	</security:http>
+{noop} 암호화 안 한 비밀번호 member로 member 계정 설정, 권한은 여러개 부여 가능
+	<security:authentication-manager>
+		<security:authentication-provider>
+			<security:user-service>
+				<security:user name="member" password="member" authorities="ROLE_MEMBER"/>
+				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+member로 로그인하면 세션이 유지가 됨
+http://localhost:8181/logout 페이지 이동이 지원되지만... 로그아웃이 그냥 되는 건 아니고 페이지도 없어서 아직 안됨
+일단은 F12 application cookie에서 JSESSION 날리면 로그아웃됨
+
+접근 거부됨 페이지 생성
+<security:access-denied-handler error-page="/accessError"/>
+SampleController.java
+accessError.jsp
+member로 로그인한 다음 admin 페이지 들어가면 member 접근 권한 없음 출력됨
+
+all, member, admin
+
+사용자로 등록된 사람들의 권한 종류 : ROLE_MEMBER, ROLE_ADMIN (ROLE_ 이건 붙이거나 안 붙이는 건 취향으로 갈린다심, 대신 열거형 상수처리 할 거라 대문자 유지는 관행!)
+member 사람 : 
+
+admin → all, member, admin 어느 페이지든 접근 가능
+member → all, member만 접근가능함
+
+admin → admin 페이지로 접근하려고 하면 접근 거부함 (권한이 없어서)
+403접근 차단 에러 페이지가 나타났음
+단순 기본 에러페이지가 나타나면 사용자는 자기잘못인지 모름
+
+권한 페이지가 없는 페이지를 접근하려고 할 경우 그걸 안내할 수 있는
+페이지로 넘어가도록 만들어주는게 좋음
+그래서 
+<security:access-denied-handler error-page="/accessError"/>
+이걸 추가한거임
+저 태그가 접근 권한이 없는 사람이 접근하려고 할 경우 /accessError 라는 요청으로 넘어가도록 해주고 있음
+
+컨트롤러에 /accessError 요청을 받는 메서드가 있음
+그게 작동되면서 accessError.jsp로 넘어가지게 됨
+
+태그 사용했을 때 단점은 단순화...되어 있다는...
+xml보다는 자바로 하면.... 
+AccessDeniedHandler interface를 직접 구현
+직접 커스텀 가능
+유연성이 높아짐
+의존성 주입
+재사용
+테스트 코드 돌리기에도 좋음...
+이것도 직접 구현도 해볼 거라심 헤헷... 지금 바로 할 거라심... 으어 5:56 집중력이 떨어지고 있음 ㄷㄷㄷ 
+package com.study.security;
+public class CustomAccessDeniedHandler implements AccessDeniedHandler{
+
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response,
+			AccessDeniedException accessDeniedException) throws IOException, ServletException {
+이렇게 보면 서블릿에서처럼 처리해줄 수 있음...
+<security:access-denied-handler error-page="/accessError"/> 태그 대신에 CustomAccessDeniedHandler가 동작하도록
+bean 등록 필요
+<bean id="customAccessDeniedHandler" class="com.study.security.CustomAccessDeniedHandler"/>
+이제 <security:access-denied-handler error-page="/accessError"/> 대신
+<security:access-denied-handler ref="customAccessDeniedHandler"/>
+
+커스텀 로그인 페이지 만들기
+<security:form-login login-page="/customLogin"/>
+customLogin.jsp
+
+Cross Site Request Forgery
+/cash 파라미터로 사용자 아이디와 금액
+<a href="/cash?id=나쁜사람아이디&money=100000000">
+<img>개발자님 이거 버그있어요 클릭해서 들어가보세요
+</a>
+링크를 탔을 때
+일반사용자가 링크 눌렀을 때는 아무 일도 안 일어나는데,
+관리자나 매니저가 클릭하면 매커니즘이 실행되는...
+포트번호 등 일치하지 않으면 
+토큰이 일치하지 않으면 애초에 동작이 되지 않게 막아버림 으으으으으 흐으으으음 흐음...
+그래서 token을 같이 보내줘야 하고 그걸 (당연히) 히든... 
 // ====================================================================================================
 
 // ====================================================================================================

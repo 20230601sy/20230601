@@ -15,4 +15,12 @@
 		select * from tbl_attach where bno = #{bno} 
 	</select>
 
+	<delete id="deleteAll">
+		delete from tbl_attach where bno = #{bno}
+	</delete>
+	
+	<select id="getList" resultType="com.board.domain.BoardAttachVO">
+		select * from tbl_attach where uploadpath = to_char(sysdate-1, 'yyyy\mm\dd')
+		<!-- select * from tbl_attach where uploadpath = to_char(sysdate, 'yyyy\mm\dd') -->
+	</select>
 </mapper>

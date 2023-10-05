@@ -72,7 +72,7 @@
 	      width: 100%;
 	      height: 100%;
 	      background-color: gray;
-	      z-index: 100;
+	      z-index: 10000;
 	      background: rgba(255, 255, 255, 0.5);
 	   }
 	   
@@ -84,15 +84,16 @@
 	   }
 	   
 	   .bigPicture img {
-	      width: 400px;
+	      width: 600px;
 	   }
 	</style>
 </head>
 
 <body>
-
     <div id="wrapper">
-
+		<div class="bigPictureWrapper">
+			<div class="bigPicture"></div>
+		</div>
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">

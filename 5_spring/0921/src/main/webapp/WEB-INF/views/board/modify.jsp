@@ -51,6 +51,23 @@
 		</div>
 	</div>
 </div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">첨부 파일</div>
+			<div class="panel-body">
+				<div class="form-group uploadDiv">
+					<input type="file" name="uploadFile" multiple>
+				</div>
+				<div class="uploadResult">
+					<ul></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
 	$('button').on('click', function(e) { // legacy 는 버전이 낮아서 화살표 함수, 백틱...안된다심ㅋㅋㅋ
 //	$('button').on('click', (e) => {
@@ -70,9 +87,120 @@
 		formTag.attr('action', '/board/' + op);
 		if(op =="remove" || op =="list")
 			formTag.attr('method', 'get');
-		else if(op =="modify")
+		else if(op =="modify") {
 			formTag.attr('method', 'post');
+			let str = '';
+			$('.uploadResult ul li').each(function(i, obj){
+				let jobj = $(obj);
+				str += '<input type="hidden" name="attachList[' + i + '].fileName" value="' + jobj.data('filename') + '">'; // fileName → filename데이터셋 이름에 대문자가 있는 건 다 소문자로 변하나봄... 
+				str += '<input type="hidden" name="attachList[' + i + '].uuid" value="' + jobj.data('uuid') + '">'; 
+				str += '<input type="hidden" name="attachList[' + i + '].uploadPath" value="' + jobj.data('path') + '">'; 
+				str += '<input type="hidden" name="attachList[' + i + '].fileType" value="' + jobj.data('type') + '">'; 
+			})
+			formTag.append(str);
+		}
 		formTag.submit();
 	});
+</script>
+
+<script>
+	const bno = '<c:out value="${board.bno}"/>';
+	$.getJSON('/board/getAttachList', {bno:bno}, function(attachList){
+		let str = '';
+		
+		$(attachList).each(function(i, obj){
+			let filePath = obj.uploadPath + '/' + obj.uuid + '_' + obj.fileName;
+			filePath = encodeURIComponent(filePath);
+			if(!obj.fileType){
+				str += '<li data-path="' + obj.uploadPath + '" data-uuid="' + obj.uuid + '" data-fileName="' + obj.fileName + '" data-type="' + obj.fileType + '" >';
+				str += '	<span>' + obj.fileName + '</span>';
+				str += '	<button class="deleteBtn" data-file=\"' + filePath + '\" data-type="file">x</button><br>';
+				str += '	<img src="/resources/img/attach.png">';
+				str += '</li>';
+			}
+			else {
+				let path = obj.uploadPath + '/s_' + obj.uuid + '_' + obj.fileName;
+				path = encodeURIComponent(path);
+				str += '<li data-path="' + obj.uploadPath + '" data-uuid="' + obj.uuid + '" data-fileName="' + obj.fileName + '" data-type="' + obj.fileType + '" >';
+				str += '	<span>' + obj.fileName + '</span>';
+				str += '	<button class="deleteBtn" data-file=\"' + path + '\" data-type="image">x</button><br>';
+				str += '	<img src="/display?fileName=' + path + '">';
+				str += '</li>';
+			}
+		})
+		$('.uploadResult ul').append(str);
+	})
+
+	const regex = new RegExp('(.*?)\.(exe|zip|alz)$');
+	const maxSize = 5242880;
+	function checkFile(fileName, fileSize){
+		if(fileSize > maxSize) {
+			alert('파일 크기 초과');
+			return false;
+		}
+		if(regex.test(fileName)) {
+			alert('해당 확장자는 업로드 불가');
+			return false;
+		}
+		return true;
+	}
+	function showUploadResult(uploadResultArr) {
+		if(!uploadResultArr || uploadResultArr.length ==0)
+			return;
+		
+		let uploadResult = $('.uploadResult ul');
+		let str = '';
+		
+		$(uploadResultArr).each(function(i, obj){
+			let filePath = obj.uploadPath + '/' + obj.uuid + '_' + obj.fileName;
+			filePath = encodeURIComponent(filePath);
+			if(!obj.image){
+				str += '<li data-path="' + obj.uploadPath + '" data-uuid="' + obj.uuid + '" data-fileName="' + obj.fileName + '" data-type="' + obj.image + '" >';
+				str += '	<span>' + obj.fileName + '</span>';
+				str += '	<button class="deleteBtn" data-file=\"' + filePath + '\" data-type="file">x</button><br>';
+				str += '	<img src="/resources/img/attach.png">';
+				str += '</li>';
+			}
+			else {
+				let path = obj.uploadPath + '/s_' + obj.uuid + '_' + obj.fileName;
+				path = encodeURIComponent(path);
+				str += '<li data-path="' + obj.uploadPath + '" data-uuid="' + obj.uuid + '" data-fileName="' + obj.fileName + '" data-type="' + obj.image + '" >';
+				str += '	<span>' + obj.fileName + '</span>';
+				str += '	<button class="deleteBtn" data-file=\"' + path + '\" data-type="image">x</button><br>';
+				str += '	<img src="/display?fileName=' + path + '">';
+				str += '</li>';
+			}
+		})
+		uploadResult.append(str);
+	}
+	
+	$('input[type="file"]').change(function(){
+		let formData = new FormData();
+		let inputFile = $('input[type="file"]');
+		let files = inputFile[0].files;
+		for(let i=0; i<files.length; i++){
+			if(!checkFile(files[i].name, files[i].size))
+				return false;
+			formData.append('uploadFile', files[i]);
+		}
+		$.ajax({
+			url: '/uploadAjax',
+			processData: false,
+			contentType: false,
+			data: formData,
+			type: 'post',
+			
+			success: function(result){
+				showUploadResult(result);
+			}
+		})
+	})
+
+	$('.uploadResult').on('click', 'button', function(){
+		if(confirm('정말로 삭제하시겠습니까?'))
+			$(this).closest('li').remove();
+		// 기존 add의 x는 서버에서 진짜 지워버리기 때문에...수정페이지에 들어갔다가 수정하지 않고 목록으로 갔다가 다시 해당 게시물을 조회할 경우 이미지가 없어서 깨지게 됨
+		// 화면에서만 지워버림...
+	})
 </script>
 <%@ include file="../includes/footer.jsp"%>

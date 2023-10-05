@@ -136,8 +136,6 @@
 		})
 	})
 
-	const cloneDiv = $('.uploadDiv').clone();
-
 	$('.uploadResult').on('click', 'button', function(){
 		let path = $(this).data('file');
 		let type = $(this).data('type');

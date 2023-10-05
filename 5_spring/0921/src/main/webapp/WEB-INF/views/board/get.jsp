@@ -121,9 +121,7 @@
 		</div>
 	</div>
 </div>
-<div class="bigPictureWrapper">
-	<div class="bigPicture"></div>
-</div>
+
 <script src="/resources/js/reply.js"></script>
 <script>
 	const bnoValue = '<c:out value="${board.bno}"/>';
@@ -361,7 +359,7 @@
 	
 	$('.uploadResult ul').on('click', 'li', function(){
 		let path = $(this).data('path') + '/' + $(this).data('uuid') + '_' + $(this).data('filename');
-		//path = encodeURIComponent(path);
+		path = encodeURIComponent(path)
 		if($(this).data('type')) {
 			showImage(path);
 		} else {
@@ -371,7 +369,7 @@
 		
 	function showImage(filePath) {
 		$('.bigPictureWrapper').css('display', 'flex').show();
-		$('.bigPicture').html('<img src="/display?fileName=' + encodeURI(filePath) + '">')
+		$('.bigPicture').html('<img src="/display?fileName=' + filePath + '">')
 						.animate({width:'100%', height:'100%'}, 1000);
 	}
 	

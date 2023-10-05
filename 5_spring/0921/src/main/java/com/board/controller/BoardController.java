@@ -1,5 +1,9 @@
 package com.board.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,10 +79,29 @@ public class BoardController {
 		return "redirect:/board/list"; 
 	}
 	
+	public void deleteFile(List<BoardAttachVO> attachList) {
+		if(attachList == null || attachList.size() == 0)
+			return;
+		attachList.forEach(attach -> {
+			try {
+				Path file = Paths.get("D:\\Y\\20230601ezen\\5_spring\\upload\\" + attach.getUploadPath() + "\\" + attach.getUuid() + "_" + attach.getFileName());
+				Files.delete(file); // 예외처리를 강요하는 메서드 아니면 Files.deleteIfExists(file) 사용하면 됨.
+				if(Files.probeContentType(file).startsWith("image")) {
+					file = Paths.get("D:\\Y\\20230601ezen\\5_spring\\upload\\" + attach.getUploadPath() + "\\s_" + attach.getUuid() + "_" + attach.getFileName());
+					Files.delete(file);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+	}
 	@GetMapping("/remove")
 	public String remove(Long bno, RedirectAttributes attr, Paging paging) {
-		if(boardService.remove(bno))
+		List<BoardAttachVO> list = boardService.getAttachList(bno); // DB에서 삭제하기 전에 가져오기
+		if(boardService.remove(bno)) {
+			deleteFile(list);
 			attr.addFlashAttribute("result", "삭제 완료");
+		}
 		else
 			attr.addFlashAttribute("result", "삭제 실패");
 		attr.addFlashAttribute("paging", paging);
