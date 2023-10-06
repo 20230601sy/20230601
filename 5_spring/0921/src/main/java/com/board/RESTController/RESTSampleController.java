@@ -21,7 +21,7 @@ import lombok.extern.log4j.Log4j;
 // RestController 쓰면 jsp 형태로 리턴타입 안됨. 따로 관리하려면 @Controller 클래스  public @ResponseBody 메서드타입 메서드명(){} 요런 식...
 @RequestMapping("/sample/*")
 @Log4j
-public class SampleController {
+public class RESTSampleController {
 //	@GetMapping("/text")
 	@GetMapping(value="/text", produces ="text/plain; charset=utf-8") 
 	public String text() {

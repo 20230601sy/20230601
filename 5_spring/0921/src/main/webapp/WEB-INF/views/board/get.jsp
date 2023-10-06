@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ include file="../includes/header.jsp"%>
 
 <div class="row">
@@ -33,8 +34,12 @@
 				<div class="form-group">
 					<label>Writer</label> <input class="form-control" name="writer" readonly value="${board.writer}">
 				</div>
-				
-				<button type="button" class="btn btn-default" data-oper="modify">게시글 수정</button>
+				<sec:authentication property="principal" var="pinfo"/>
+				<sec:authorize access="isAuthenticated()">
+					<c:if test="${pinfo.username eq board.writer}">
+						<button type="button" class="btn btn-default" data-oper="modify">게시글 수정</button>
+					</c:if>
+				</sec:authorize>
 				<button type="button" class="btn btn-default" data-oper="list">게시글 목록</button>
 				
 				<form id="actionForm" action="/board/modify">

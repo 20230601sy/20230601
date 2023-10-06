@@ -39157,6 +39157,192 @@ Cross Site Request Forgery
 토큰이 일치하지 않으면 애초에 동작이 되지 않게 막아버림 으으으으으 흐으으으음 흐음...
 그래서 token을 같이 보내줘야 하고 그걸 (당연히) 히든... 
 // ====================================================================================================
+Day1006
+// ====================================================================================================
+CustomLoginSuccessHandler implements AuthenticationSuccessHandler 생성
+security-context.xml에서 빈등록
+	<bean id="customLoginSuccess" class="com.study.security.CustomLoginSuccessHandler"/>
+
+로그인 실패 error
+
+로그아웃
+		<security:logout logout-url="/customLogout" invalidate-session="true"/>
+SampleController에서 작업
+로그아웃도 로그인처럼 CustomLogoutHandler로 커스텀도 동일하게 할 수 있음, 보통은 로그아웃하면 끝이니까 그렇게 많이는 안 하나봄
+
+DB연동
+시큐리티에서 원하는 테이블, 컬럼명 등...
+잠깐 구경 
+스프링시큐리티 깃 검색
+https://github.com/spring-projects/spring-security
+우상단에서 jdbcuserdetailsmanager 검색
+테이블 관련 다큐멘테이션 지금 잘 안 보인다심...
+https://docs.spring.io/spring-security/site/docs/5.0.x/reference/html/appendix-schema.html
+이건 거 같기도 한데 모르겠심...
+
+기본 테이블로 하는 거랑 커스텀 테이블로 설정하는 거 둘다 해볼 거라심
+
+아래 기본 테이블 2개 만든 이유는...username 기본키 설정해야 하는데 롤은 여러개 해야 해서 따로 만든 거임...  
+create table users(
+    username varchar2(50) not null primary key,
+    password varchar2(50) not null,
+    enabled char(1) default '1'
+);
+
+create table authorities(
+    username varchar2(50) not null,
+    authority varchar2(50) not null,
+    CONSTRAINT fk_authorities_users FOREIGN key(username) REFERENCES users(username)
+);
+
+create unique index ix_auth_username on authorities(username, authority);
+
+insert into users(username, password) values('user00', 'pw00');
+insert into users(username, password) values('member00', 'pw00');
+insert into users(username, password) values('admin00', 'pw00');
+
+insert into authorities(username, authority)
+    values('user00', 'ROLE_USER');
+insert into authorities(username, authority)
+    values('member00', 'ROLE_MEMBER');
+insert into authorities(username, authority)
+    values('admin00', 'ROLE_MEMBER');
+insert into authorities(username, authority)
+    values('admin00', 'ROLE_ADMIN');
+    
+commit;
+
+security-context.xml에서 
+<security:jdbc-user-service data-source-ref="dataSource"/> <!-- dataSource는 hikariCP에서 설정한 거 -->
+
+log4j.xml
+<priority value="warn" /> 을 <priority value="info" /> 로 바꿈!
+
+이제 'admin00', 'pw00' 같은 걸로 로그인 해보면 
+비밀번호인코딩설정이 안되어 있어서 로그인은 안되지만 일단 로그에서 검색되는 거 확인은 가능함...
+쿼리문 내장되어 있는 거도 보이고...
+
+인코딩 문제 해결 일단은 모두 raw로 암호화 없이 하는 custom 만들기
+CustomNoopPasswordEncoder implements PasswordEncoder
+일반적으로 암호화해서 만들기 때문에 이거 할 필요는 없고 PasswordEncoder 자체를 빈등록한다음 의존성 주입해서 encode함수뢍 matches함수 호출해서 사용할 거라심
+빈등록 & security:password-encoder
+	<bean id="customNoopPasswordEncoder" class="com.study.security.CustomNoopPasswordEncoder"/>
+			<security:password-encoder ref="customNoopPasswordEncoder"/>
+
+이제 커스텀 테이블, 암호화해서 비밀번호 들어가야 하니까...테이블에 값 넣으면 안됨...
+
+create table tbl_member(
+    userid varchar2(50) not null primary key,
+    userpw varchar2(100) not null,
+    username varchar2(100) not null,
+    regdate date default sysdate,
+    updatedate date default sysdate,
+    enabled char(1) default '1'
+);
+
+create table tbl_member_auth(
+    userid varchar2(50) not null,
+    auth varchar2(50) not null,
+    CONSTRAINT fk_member_auth FOREIGN key(userid) REFERENCES tbl_member(userid)
+);
+
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+
+test 먼저...
+
+컬럼명이 다르니까 직접 지정해줘야 함
+			<security:jdbc-user-service data-source-ref="dataSource" users-by-username-query="select userid, userpw, enabled from tbl_member where userid=?" authorities-by-username-query="select usedid, auth from tbl_member_auth where userid=?"/>
+
+여기서 좀 더 해야 할 게...시큐리티 같은 경우는 아이디 비밀번호 enable 정도 있고 사용자에 관한 정보가 없음... 이메일이나 주소나...
+시큐리티에서 유저 정보 저장은 UserDetailsService가 함 (어제 그 아키 그림에서 최우측)
+
+MemberVO
+MemberMapper.java
+root-context aop, context, task, tx namespace 추가 후...
+	<tx:annotation-driven/>
+	<task:annotation-driven/>
+	<context:annotation-config/>
+	<aop:aspectj-autoproxy/>
+	<mybatis-spring:scan base-package="com.study.mapper"/>
+	
+Custom User...
+
+api vs 라이브러리 vs 프레임워크
+api나 라이브러리는 만들어진 사용법 그대로만 이용 가능(규격이 고정)
+api는 서버랑 통신해서 데이터를 가져오는 형태, 요청 날리는 것도 정해진 형태로 날리고, 받아보는 것도 정해진 데이터...
+라이브러리는 프로젝트에 설치해서 있는 거를 사용법대로 사용하는 거
+프레임워크 만들어진 거 가져다 쓰는 거 동일한데, 어느정도 범위에 한해서는 변형이 가능, 좀더 확장해서 쓸 수 있는 거...
+custom해서...하는 거...
+security spring은 프레임워크... 흐음...
+
+CustomUserDetailsService
+세션에 들어가 있는 정보가 더 늘어남... MemberVO 멤버변수...
+진짜 정보가 들어가 있나 확인을 위해 admin.jsp 수정
+	<p>principal : <sec:authentication property="principal"/></p>
+	<p>memberVO : <sec:authentication property="principal.member"/></p>
+	<p>username : <sec:authentication property="principal.member.username"/></p>
+	<p>아이디 : <sec:authentication property="principal.username"/></p>
+	<p>아이디 : <sec:authentication property="principal.member.userid"/></p>
+	<p>권한 : <sec:authentication property="principal.member.authList"/></p>
+hasRole('권한이름') : 해당 사용자가 그 권한을 가지고 있는지 리턴
+hasAnyRole('권한이름','권한이름') : 권한이름 중 하나를 가지고 있는지 리턴
+isAuthenticated() : 로그인한 사용자인지 리턴
+isAnonymous() : 로그인한 안한 사람인지 리턴
+이외에도 표현식 종류가 많다심...
+
+all.jsp에서 확인해봅시다
+	<sec:authorize access="isAnonymous()">
+		<a href="/customLogin">로그인</a>
+	</sec:authorize>
+	<sec:authorize access="isAuthenticated()">
+		<a href="/customLogout">로그아웃</a>
+	</sec:authorize>
+	
+자동로그인
+사용자의 쿠키에 담는 거
+db에 저장해두는 거
+이번엔 db에 저장하는 거 할 거라심
+
+create table persistent_logins (
+    username varchar(64) not null,
+    series varchar(64) primary key,
+    token varchar(64) not null,
+    last_used timestamp not null
+);
+처음 로그인했을 때부터 자동로그인 유효기간 1주일
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
+		처음부터 자동로그인하도록 설정해주는 속성값을 넣을 수도 있고....always-remember="true" 지금은 버전이 낮아서 안되는 건가 하심
+customLogin.jsp
+		<input type="checkbox" name="remember-me">자동 로그인<br>
+이때 자동로그인 체크한다음 쿠키보면 remember-me 유효기간이랑 해서 볼 수 있음
+<security:logout logout-url="/customLogout" invalidate-session="true" delete-cookies="remember-me, JSESSIONID"/> <!-- delete 쿠키 안해주면 remember-me가 여전히 남아있어서 지워주는 거라는데 이거 없어도 로그아웃하면 지워짐... -->
+
+이제 0921에 넣을 거라심...
+복사할 거 최대한 복사하고
+customLogin.jsp 생성
+
+security-context.xml에서 권한별로 페이지 설정하던 것을 controller에서 어노테이션 방식으로 해보려는 거...
+servlet-context.xml Namespaces에 Security 추가
+source에서 -5.0제거
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+	<security:global-method-security pre-post-annotations="enabled" secured-annotations="enabled"/>
+	권한 검사 어노테이션 활성화, 권한 체크 활성화
+
+일단 CustomLoginSuccessHandler 사용 안하는 걸로 재설정
+<!-- 	<bean id="customLoginSuccess" class="com.study.security.CustomLoginSuccessHandler"/> -->
+	<!-- 		<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/> -->
+		<security:form-login login-page="/customLogin"/>
+글작성할 때 로그인한 사용자만 들어가지게 하기 위해서
+BoardController에서...
+@PreAuthorize("isAuthenticated()")
+public void addPage() {}
+	
+add.jsp
+<input class="form-control" name="writer" value='<sec:authentication property="principal.username"/>' readonly>
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+
+// ====================================================================================================
 
 // ====================================================================================================
 

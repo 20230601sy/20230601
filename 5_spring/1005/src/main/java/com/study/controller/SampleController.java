@@ -33,6 +33,15 @@ public class SampleController {
 		// auth에서 빼올 수 있는 건 2개인가 밖에 없어서 필요할 경우 나중에 custom하게 만들어야 한다
 	}
 	@GetMapping("/customLogin")
-	public void loginPage() {
+	public void loginPage(Model model, String error, String logout) {
+		// error는 자동으로 보내줌
+		if(error != null)
+			model.addAttribute("error", "로그인 실패");
+		else if(logout != null)
+			model.addAttribute("logout", "로그아웃 성공");
+	}
+	@GetMapping("/customLogout")
+	public void logout() {
+		
 	}
 }

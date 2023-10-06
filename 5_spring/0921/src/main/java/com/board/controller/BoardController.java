@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,13 +52,16 @@ public class BoardController {
 //	목록 페이지로 이동
 //	(추가적인 기능) xx 번 게시글 작성 완료...
 	@PostMapping("/add")
+	@PreAuthorize("isAuthenticated()")
 	public String add(BoardVO board, RedirectAttributes attr) {
 		boardService.add(board);
 		attr.addFlashAttribute("result", board.getBno());
 //		return "list"; // 단순 list.jsp 파일 이동은 안됨... list.do servlet 같은 거 통과해야 했던 거랑 같은 개념...
 		return "redirect:/board/list"; // 여기서도 센드리다이렉트와 포워드 가 있는데.. 포워드는 return list(.jsp)와 model 사용, 센드리다이렉트는 redirect: 요런 식. 근데 여기서 리다이렉트는 정보를 담아서 보낼 수 있는데 attr에 담아야 함... 
 	}
+	
 	@GetMapping("/add")
+	@PreAuthorize("isAuthenticated()")
 	public void addPage() {}
 	
 //	게시물 목록에서 제목을 클릭하면 해당 게시물 상세페이지로 이동
