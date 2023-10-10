@@ -74,6 +74,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/modify")
+	@PreAuthorize("principal.username == #board.writer")
 	public String modify(BoardVO board, RedirectAttributes attr, Paging paging) {
 		if(boardService.modify(board))
 			attr.addFlashAttribute("result", "수정 완료");
@@ -100,7 +101,8 @@ public class BoardController {
 		});
 	}
 	@GetMapping("/remove")
-	public String remove(Long bno, RedirectAttributes attr, Paging paging) {
+	@PreAuthorize("principal.username == #writer")
+	public String remove(Long bno, RedirectAttributes attr, Paging paging, String writer) {
 		List<BoardAttachVO> list = boardService.getAttachList(bno); // DB에서 삭제하기 전에 가져오기
 		if(boardService.remove(bno)) {
 			deleteFile(list);

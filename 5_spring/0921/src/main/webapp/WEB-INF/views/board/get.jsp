@@ -75,7 +75,9 @@
 		<div class='panel panel-default'>
 			<div class='panel-heading'>
 				<i class='fa fa-comments fa-fw'></i> 댓글
-				<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>댓글달기</button>
+				<sec:authorize access="isAuthenticated()">
+					<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>댓글달기</button>
+				</sec:authorize>
 			</div>
 
 			<div class='panel-body'>
@@ -111,7 +113,7 @@
 					<label>댓글</label> <input class='form-control' name='reply' value=''>
 				</div>
 				<div class='form-group'>
-					<label>댓글 작성자</label> <input class='form-control' name='replyer' value=''>
+					<label>댓글 작성자</label> <input class='form-control' name='replyer' value='' readonly>
 				</div>
 				<div class='form-group'>
 					<label>작성일자</label> <input class='form-control' name='replyDate' value=''>
@@ -129,6 +131,17 @@
 
 <script src="/resources/js/reply.js"></script>
 <script>
+	const csrfHeaderName = "${_csrf.headerName}";
+	const csrfToken = "${_csrf.token}";
+	let replyer = null;
+	<sec:authorize access="isAuthenticated()">
+		replyer = '<sec:authentication property="principal.username"/>';
+	</sec:authorize>
+	
+	$(document).ajaxSend(function(e, xhr, option) {
+		xhr.setRequestHeader(csrfHeaderName, csrfToken);
+	})
+	
 	const bnoValue = '<c:out value="${board.bno}"/>';
 	const replyUL = $('.chat');
 
@@ -238,6 +251,7 @@
 	
 	$('#addReplyBtn').on('click', function() {
 		modal.find('input').val('');
+		modal.find('input[name="replyer"]').val(replyer);
 		modalInputReplyDate.closest('div').hide();
 		modal.find('button[id!="modalCloseBtn"]').hide();
 		modalRegisterBtn.show();
@@ -277,6 +291,17 @@
 		});
 	})
 	modalRemoveBtn.on('click', function(){
+		if(!replyer) { // 로그인하지 않은 사용자가 삭제 시도할 경우
+			alert('로그인 후 사용 가능');
+			modal.modal('hide');
+			return;
+		}
+		// 로그인했지만 작성자와 일치하지 않을 경우 처리
+		if(replyer != modalInputReplyer.val()) {
+			alert('작성자만 삭제 가능합니다.');
+			modal.modal('hide');
+			return;
+		} 
 		replyService.remove(modal.data('rno'), function(result) {
 																	alert('결과 : ' + result);
 																	modal.modal('hide');
@@ -285,6 +310,16 @@
 	})
 	
 	modalModBtn.on('click', function(){
+		if(!replyer) {
+			alert('로그인 후 사용 가능');
+			modal.modal('hide');
+			return;
+		}
+		if(replyer != modalInputReplyer.val()) {
+			alert('작성자만 수정 가능합니다.');
+			modal.modal('hide');
+			return;
+		} 
 		replyService.modify({
 								reply : modalInputReply.val(),
 				 				rno : modal.data('rno')

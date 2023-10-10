@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ include file="../includes/header.jsp"%>
 
 <div class="row">
@@ -37,11 +38,15 @@
 					
 					<%-- <button type="submit" class="btn btn-primary">수정</button>
 					<button type="button" class="btn btn-danger" onclick='location.href="/board/remove?bno=${board.bno}"'>삭제</button> --%>
- 					<button data-oper="modify" class="btn btn-primary">수정</button>
-					<button data-oper="remove" class="btn btn-danger">삭제</button>
+ 					<sec:authentication property="principal" var="pinfo"/>
+ 					<c:if test="${pinfo.username eq board.writer}">
+	 					<button data-oper="modify" class="btn btn-primary">수정</button>
+						<button data-oper="remove" class="btn btn-danger">삭제</button>
+ 					</c:if>
 					<!-- <button type="button" class="btn btn-default" onclick='location.href="/board/list"'>목록</button> -->
 					<button data-oper="list" type="button" class="btn btn-default">목록</button>
 					
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 					<input name="pageNum" value="${paging.pageNum}" type="hidden">
 					<input name="amount" value="${paging.amount}" type="hidden">
 					<input name="type" value="${paging.type}" type="hidden">

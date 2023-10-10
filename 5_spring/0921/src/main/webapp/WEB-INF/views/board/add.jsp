@@ -58,6 +58,10 @@
 
 <script>
 	let formObj = $('form');
+	const csrfHeaderName = "${_csrf.headerName}";
+	const csrfToken = "${_csrf.token}";
+// 	console.log(csrfHeaderName);
+// 	console.log(csrfToken);
 	$('button[type="submit"]').on('click', function(e){
 		e.preventDefault();
 //		alert('submit');
@@ -130,7 +134,9 @@
 			contentType: false,
 			data: formData,
 			type: 'post',
-			
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(csrfHeaderName, csrfToken);
+			},
 			success: function(result){
 				showUploadResult(result);
 			}
@@ -147,6 +153,9 @@
 			data: {
 				fileName: path,
 				type: type
+			},
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(csrfHeaderName, csrfToken);
 			},
 			success: function(result) {
 				li.remove();
