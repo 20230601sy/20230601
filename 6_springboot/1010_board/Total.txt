@@ -39356,18 +39356,11 @@ Day1010
 부트할 때는 소셜로그인도 할 거라심
 // ====================================================================================================
 부트 설치
-sts 검색
-https://spring.io/tools
-Spring Tools 4 for Eclipse
-4.20.0 - Windows x86_64 다운로드
-https://download.springsource.com/release/STS4/4.20.0.RELEASE/dist/e4.29/spring-tool-suite-4-4.20.0.RELEASE-e4.29.0-win32.win32.x86_64.self-extracting.jar
+sts 구글 검색 https://spring.io/tools
+Spring Tools 4 for Eclipse 쪽으로 내려서 4.20.0 - Windows x86_64 다운로드 https://download.springsource.com/release/STS4/4.20.0.RELEASE/dist/e4.29/spring-tool-suite-4-4.20.0.RELEASE-e4.29.0-win32.win32.x86_64.self-extracting.jar
 
-엔진이 기본 화면단 타임리프로 되어 있음
-그래서 jsp로 사용하려면 추가적인 설정이 필요함
+부트 엔진이 기본 화면단 타임리프로 구현되게 설정되어 있음 그래서 jsp로 사용하려면 추가적인 설정이 필요함
 툴은 이클립스 베이스라 스프링했을 때와 별 차이 없음
-
-롬복 설치 어떻게 했는지 기억나는지 ㄷㄷㄷ
-.jar 파일 다운...
 
 스프링 부트 프로젝트 만들기 구경
 홈페이지 메뉴 project 아래 spring initializr 여기서 설정할 수 있다심...
@@ -39378,6 +39371,7 @@ https://download.springsource.com/release/STS4/4.20.0.RELEASE/dist/e4.29/spring-
 
 다운 받은 거 더블클릭하면 압축파일...풀림 한글경로 있으면 귀찮아짐
 폴더 통으로 D드라이브로 이동.. 나는 D:\Y 로 옮김
+롬복 설치 어떻게 했는지 기억나는지 ㄷㄷㄷ .jar 파일 다운...
 lombok.jar도 D:\Y\sts-4.20.0.RELEASE에 복사
 lombok.jar 더블 클릭
 D:\Y\sts-4.20.0.RELEASE\SpringToolSuite4.exe 경로 잡아주고 install/update 한다음 끔
@@ -39388,8 +39382,7 @@ sts 설치는 이게 다...
 
 window - preferences - enc 검색 - css, html, jsp 모두 encoding utf-8로 변경
 
-구글 h2 database 검색
-https://www.h2database.com/html/main.html
+h2 database 구글 검색 https://www.h2database.com/html/main.html
 Windows Installer (6.7 MB) https://github.com/h2database/h2database/releases/download/version-2.2.224/h2-setup-2023-09-17.exe
 Windows의 PC보호 창 누르면 추가정보 눌러서 실행 다음다음 마지막에 리드미파일읽는 거 체크해제 후 마침
 window 시작 - H2 Console (CommandLine 붙은 거 아님!) 클릭하면 브라우저에서 열림
@@ -39437,6 +39430,8 @@ implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:11.0.0-M11'
 버전정보 지움
 // https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper
 implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+
+해당 내용을 build.gradle의 dependencies { } 안에 넣기
 // ====================================================================================================
 1010_board/build.gradle
 plugins {
@@ -39493,7 +39488,7 @@ jsp 사용해야 하는 거랑... 포트 변경 추가 환경설정 필요 (포�
 // ====================================================================================================
 1010_board/src/main/resources/application.properties
 # 서버 설정
-server.port = 8888
+server.port=8888
 server.servlet.context-path=/
 server.servlet.encoding.charset=UTF-8
 
@@ -39501,11 +39496,31 @@ server.servlet.encoding.charset=UTF-8
 spring.mvc.view.prefix=/WEB-INF/board/
 spring.mvc.view.suffix=.jsp
 
-# DB관련해서도 해야 할 거 생기면 이따가 여기에 할 거라심
+# H2 DataBase
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+spring.datasource.url=jdbc:h2:~/db/test
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# JPA
+# 연결, db 종류에 따라 조금씩 달라진다심, oracle 쓸 때 조금 바꿀 거라심
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+# 초기화 전략??
+# Create라고 해두면 매번 서버가 실행될 때마다 테이블을 새로 생성. 
+# none은 처음 만들어진 상태로 유지. update는 변경된 부분만 적용. validate는 변경된 내용이 있는지만 검사하고 적용을 시키는 게 아님. create-drop은 서버 종료할 때 테이블 날리는 거까지 해줌 create와 차이는  
+# 보통은 업데이트로 해두고 서비스 단계에서는 none이나 validate으로 해둔다심 지금은 어떻게 되나 보려고 create로 해둔다심 
+spring.jpa.hibernate.ddl-auto=update
+# 로그로 찍어내려고 하는 거, 예쁘게 보이게 하려고 하는 거 
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.properties.hibernate.format_sql=true
 // ====================================================================================================
 정적파일관리
 1010_board/src/main/resources/static에 몽땅 넣을 거라심
 이미지 같은 거...img 폴더 생성 후 image apeach.jpeg 붙여넣기
+1010_board/src/main/resources/static/img/apeach.jpeg
+
 static 폴더 우클릭 New - other - html 파일 생성
 1010_board/src/main/resources/static/hello.html 
 <!DOCTYPE html>
@@ -39518,7 +39533,7 @@ static 폴더 우클릭 New - other - html 파일 생성
 	<h1>Hello</h1>
 </body>
 </html>
-// ====================================================================================================
+
 서버 실행(local 아래 1010_board 클릭 - 재생 아이콘 클릭) 후 브라우저는 자동으로 실행되지 않음(옆에 지구본 아이콘 클릭하면 http://localhost:8888 창 뜸 (기본 프로그램이 크롬으로 설정되었어야 함)
 컨트롤러 없으니 지금은 파일 주소 직접 입력해야 함 
 http://localhost:8888/hello.html
@@ -39528,40 +39543,6 @@ http://localhost:8888/img/apeach.jpeg
 컨트롤러 만들기
 1010_board/src/main/java/com.example.board/HelloController.java (class 파일 생성)
 
-package com.example.board;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-
-@Controller
-public class HelloController {
-	@GetMapping("/html")
-	public String html() {
-		System.out.println("html 요청받음");
-//		return "hello"; // 이렇게 하면 views 폴더 안에 hello.jsp 요청으로 가기 때문에 하면 안됨 
-		return "redirect:hello.html";
-	}
-}
-
-http://localhost:8888/html 로 확인해보기~
-// ====================================================================================================
-폴더구조 아까 설정해놓은 것처럼 만들어야함
-1010_board/src/main/webapp/WEB-INF/board webapp, WEB-INF, board 세 폴더 생성 후
-1010_board/src/main/webapp/WEB-INF/board/hello.jsp
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-	<h1>hello ${name}</h1>
-</body>
-</html>
-// ====================================================================================================
-1010_board/src/main/java/com.example.board/HelloController.java ...again
 package com.example.board;
 
 import org.springframework.stereotype.Controller;
@@ -39587,39 +39568,137 @@ public class HelloController {
 		model.addAttribute("name", "고길동");
 		return "hello";
 	}
+	
 }
-// ====================================================================================================
-1010_board/src/main/java/com.example.board/RESTController.java
-package com.example.board;
 
+http://localhost:8888/html 로 확인해보기~
+// ====================================================================================================
+폴더구조 아까 설정해놓은 것처럼 만들어야함
+1010_board/src/main/webapp/WEB-INF/board webapp, WEB-INF, board 세 폴더 생성 후
+1010_board/src/main/webapp/WEB-INF/board/hello.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>hello ${name}</h1>
+</body>
+</html>
+
+http://localhost:8888/jsp ${name} 잘 나오는 거 확인~
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.controller/RESTController.java
+package com.example.board.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.board.UserDAO;
+import com.example.board.domain.User;
 
 @RestController
 public class RESTController {
-	@GetMapping("/rest")
-	public String getRest() {
+	
+	@GetMapping("/rest0")
+	public String getRest0() {
 		return "get요청";
 	}
-	@PostMapping("/rest")
-	public String postRest() {
+	@PostMapping("/rest0")
+	public String postRest0() {
 		return "post요청";
 	}
-	@PutMapping("/rest")
-	public String putRest() {
+	@PutMapping("/rest0")
+	public String putRest0() {
 		return "put요청";
 	}
-	@DeleteMapping("/rest")
-	public String deleteRest() {
+	@DeleteMapping("/rest0")
+	public String deleteRest0() {
 		return "delete요청";
 	}
+	
+	@GetMapping("/rest1")
+	public User getRest1() {
+		// 기존 방법
+		// User user = new User(1, "고길동", "abc", "aaa@naver.com");
+		User user2 = User.builder()
+						.id(2)
+						.username("홍길동")
+						.password("1234")
+						.email("qwer@gmail.com")
+						.build();
+		return user2;
+	}
+	
+	@PostMapping("/rest1")
+	public String postRest1(User user) {
+//	public String postRest1(@RequestBody User user) {
+		return user.toString();
+	}
+	
+	@PutMapping("/rest1")
+	public String putRest1(@RequestBody User user, @RequestParam int id) {
+		return user.toString() + " → " + id;
+	}
+
+	@DeleteMapping("/rest1")
+	public String deleteRest1(@RequestParam int id) {
+		return id+"delete요청";
+	}
+	
+	@Autowired
+	private UserDAO userDAO;
+
+	@PatchMapping("/rest1")
+	public String patchRest1() {
+		User user = new User();
+		user.setUsername("홍길동");
+		user.setPassword("1234");
+		user.setEmail("abc@naver.com");
+		userDAO.insertUser(user);
+		return user.toString();
+	}
+	
+	@PostMapping("/rest2")
+	public String insert(User user) {
+		userDAO.insertUser(user);
+		return user.toString();
+	}
+	@DeleteMapping("/rest2")
+	public void delete(int id) {
+		userDAO.deleteUser(id);
+	}
+	@PutMapping("/rest2")
+	public void update(User user) {
+		userDAO.updateUser(user);
+	}
+	@PostMapping("/rest3")
+	public User select(String username) {
+//		System.out.println(username + "요청 받음");
+		return userDAO.getUser(username);
+	}
+	@GetMapping("/rest4")
+	public List<User> selectAll() {
+//		System.out.println("요청 받음");
+		return userDAO.getUserList();
+	}
 }
-POSTMAN으로 http://localhost:8888/rest get, post, put, delete 요청 확인
+
+POSTMAN으로 http://localhost:8888/rest0 get, post, put, delete 요청 확인
 // ====================================================================================================
-1010_board/src/main/java/com.example.board/User.java
+1010_board/src/main/java/com.example.board/User.java 없어짐 ㅡ_ㅡ
 package com.example.board;
 
 import lombok.AllArgsConstructor;
@@ -39638,52 +39717,9 @@ public class User {
 	private String email;
 }
 // ====================================================================================================
-1010_board/src/main/java/com.example.board/RESTController.java
-package com.example.board;
+1010_board/src/main/java/com.example.board.controller/RESTController.java
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class RESTController {
-
-	@GetMapping("/rest")
-	public User getRest() {
-		// 기존 방법
-		// User user = new User(1, "고길동", "abc", "aaa@naver.com");
-		User user2 = User.builder()
-						.id(2)
-						.username("홍길동")
-						.password("1234")
-						.email("qwer@gmail.com")
-						.build();
-		return user2;
-	}
-	
-	@PostMapping("/rest")
-//	public String postRest(User user) {
-	public String postRest(@RequestBody User user) {
-		return user.toString();
-	}
-	
-	@PutMapping("/rest")
-	public String putRest(@RequestBody User user, @RequestParam int id) {
-		return user.toString() + " → " + id;
-	}
-
-	@DeleteMapping("/rest")
-	public String deleteRest(@RequestParam int id) {
-		return id+"delete요청";
-	}
-}
-
-
-POSTMAN http://localhost:8888/rest get 요청으로 확인
+POSTMAN http://localhost:8888/rest1 get 요청으로 확인
 → {
     "id": 1,
     "username": "홍길동",
@@ -39693,38 +39729,22 @@ POSTMAN http://localhost:8888/rest get 요청으로 확인
 별다른 작업없이 json형태로 수신됨 확인 가능 (스프링 부트 기본은 json... xml은 이제 쓰는 곳도 없구...
 Spring에서는 ResponseEntity<User>... return new ResponseEntity<>(user2, HttpStatus.OK); 뭐 이런 식으로 했다는 거...
 
-POSTMAN http://localhost:8888/rest post, body에 x-www-form-urlencoded 선택 클릭 후 id, username, password, email 입력한 후 요청해서 확인 (form 태그로 넣어서 하는 거랑 똑같음)
+POSTMAN http://localhost:8888/rest1 post, body에 x-www-form-urlencoded 선택 클릭 후 id, username, password, email 입력한 후 요청해서 확인 (form 태그로 넣어서 하는 거랑 똑같음)
 → User(id=3, username=aaa, password=aaa, email=aaa)
 
-POSTMAN http://localhost:8888/rest post, body에 raw 선택 클릭 후 {"id": 4, "username": "박명수", "password": "1234",  "email": "1234@gmail.com"} 해보면
+POSTMAN http://localhost:8888/rest1 post, body에 raw 선택 클릭 후 {"id": 4, "username": "박명수", "password": "1234",  "email": "1234@gmail.com"} 해보면
 → User(id=0, username=null, password=null, email=null) ... 서버에서 못 받는 거 확인 → @RequestBody 어노테이션 추가해야 함...
 같은 방식으로 재확인해보면 
 → User(id=4, username=박명수, password=1234, email=1234@gmail.com) 이제 재대로 받아짐
 
-http://localhost:8888/rest?id=10 delete요청
+http://localhost:8888/rest1?id=10 delete요청
 → 10delete요청
 
-http://localhost:8888/rest?id=10 put, body에 raw 선택 클릭 후 {"id": 4, "username": "박명수", "password": "1234",  "email": "1234@gmail.com"} 해보면
+http://localhost:8888/rest1?id=10 put, body에 raw 선택 클릭 후 {"id": 4, "username": "박명수", "password": "1234",  "email": "1234@gmail.com"} 해보면
 → User(id=4, username=박명수, password=1234, email=1234@gmail.com) → 10
 // ====================================================================================================
 DB연동하는 거 일단 mybatis로 하는 거 해봅시다
 1010_board/src/main/resources/application.properties
-# 서버 설정
-server.port=8888
-server.servlet.context-path=/
-server.servlet.encoding.charset=UTF-8
-
-# JSP관련 설정 - 뷰리졸버 세팅
-spring.mvc.view.prefix=/WEB-INF/board/
-spring.mvc.view.suffix=.jsp
-
-# H2 DataBase
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
-spring.datasource.url=jdbc:h2:~/db/test
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
 // ====================================================================================================
 C:\Users\508-06\db db 폴더 생성
 서버 실행 확인 후 http://localhost:8888/h2-console 입력 후 생성되는 창에서 jdbc:h2:~/db/test 경로에 db 추가
@@ -39826,76 +39846,21 @@ public class UserDAOTest {
 }
 // ====================================================================================================
 일단은 postman으로 확인하도록 RESTController에서 하게 코드 이동
-1010_board/src/main/java/com.example.board/RESTController.java
-package com.example.board;
+1010_board/src/main/java/com.example.board.controller/RESTController.java
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class RESTController {
-
-	@GetMapping("/rest")
-	public User getRest() {
-		// 기존 방법
-		// User user = new User(1, "고길동", "abc", "aaa@naver.com");
-		User user2 = User.builder()
-						.id(2)
-						.username("홍길동")
-						.password("1234")
-						.email("qwer@gmail.com")
-						.build();
-		return user2;
-	}
-	
-	@PostMapping("/rest")
-//	public String postRest(User user) {
-	public String postRest(@RequestBody User user) {
-		return user.toString();
-	}
-	
-	@PutMapping("/rest")
-	public String putRest(@RequestBody User user, @RequestParam int id) {
-		return user.toString() + " → " + id;
-	}
-
-	@DeleteMapping("/rest")
-	public String deleteRest(@RequestParam int id) {
-		return id+"delete요청";
-	}
-	
-	@Autowired
-	private UserDAO userDAO;
-	@PatchMapping("/rest")
-	public String patchRest() {
-		User user = new User();
-		user.setUsername("홍길동");
-		user.setPassword("1234");
-		user.setEmail("abc@naver.com");
-		userDAO.insertUser(user);
-		return user.toString();
-	}
-}
-
-http://localhost:8888/rest Patch 요청 날림
+http://localhost:8888/rest1 Patch 요청 날림
 → User(id=0, username=홍길동, password=1234, email=abc@naver.com)
 H2 console에서 table에 insert 됐는지도 확인
-// ====================================================================================================
+
 하아... RESTController 또 수정 postman 확인...
-	@PostMapping("/rest")
+	@PostMapping("/rest2")
 	public String postRest(User user) {
 //	public String postRest(@RequestBody User user) {
 		userDAO.insertUser(user);
 		return user.toString();
 	}
 아까랑은 달리 @RequestBody 없어도 작동됨 ㅡ_ㅡ 나 왜 아까 안된 거지?? 아무튼 이거 get요청은 안되고 post 요청은 됨...
+나머지도 다 확인
 // ====================================================================================================
 회원가입 처리
 
@@ -39911,6 +39876,706 @@ database 접속이 필요해서 DAO 생성
 db 접근 권한 획득해서 접속하는 거는 SqlSessionTemplate임... 이거는 mybatis에 있음 그래서 의존성주입해둠 여기 안에는 connection 객체도 있고, preparedStatement ... 다 있는 거...
 얘는 접속할 줄만 알지 sql문이 심어져 있지는 않음... 어떤 sql문을 실행할지는 UserMapper에 심어둔 걸 가져오게 하기 위해서 매개변수에 함수명과 매개변수를 넣어줌
 // ====================================================================================================
+Day1011
+// ====================================================================================================
+JPA
+쿼리문을 다 작성 (x)
+기본적인 쿼리문들은 전부 메서드로 만들어져 있음
+// 정확하게는 인터페이스...구현체가 하이버네이트...구현체를 이용하게 될 거임
+
+마이바티스 	인터페이스 → xml에 쿼리문 작성
+		인터페이스 → 어노테이션으로 쿼리문
+
+JPA 인터페이스 생성 	→ 끝
+				→ 필요하면 추상메서드를 생성
+				→ 쿼리문을 작성
+클래스(Entity) - 테이블
+// 테이블을 미리 만들어두는 게 아니라 클래스 어노테이션으로 생성...
+복잡한 쿼리문을 작성하는 게 아니라 객체지향문법을 사용하는 객체관계모델(ORM)
+// ====================================================================================================
+1010_board/src/main/resources/application.properties
+JPA 설정 추가
+# JPA
+# 연결, db 종류에 따라 조금씩 달라진다심, oracle 쓸 때 조금 바꿀 거라심
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+# 초기화 전략??
+# Create라고 해두면 매번 서버가 실행될 때마다 테이블을 새로 생성. 
+# none은 처음 만들어진 상태로 유지. update는 변경된 부분만 적용. validate는 변경된 내용이 있는지만 검사하고 적용을 시키는 게 아님. create-drop은 서버 종료할 때 테이블 날리는 거까지 해줌 create와 차이는  
+# 보통은 업데이트로 해두고 서비스 단계에서는 none이나 validate으로 해둔다심 지금은 어떻게 되나 보려고 create로 해둔다심 
+spring.jpa.hibernate.ddl-auto=create
+# 로그로 찍어내려고 하는 거, 예쁘게 보이게 하려고 하는 거 
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+Enum 생성
+1010_board/src/main/java/com.example.board.domain/RoleType.java
+package com.example.board.domain;
+
+public enum RoleType {
+	USER, ADNIN
+}
+// ====================================================================================================
+User클래스, users 테이블 갈아 엎음 ㅡ_ㅡ
+1010_board/src/main/java/com.example.board.domain/User.java
+package com.example.board.domain;
+
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name="users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder // builder 나중에 객체를 만들어줄 때 생성자 호출해서 만드는... 객체 생성을 좀더 직관적으로 할 수 있게 도와주는 거라심... 코드는 좀더 길어진다심. 쓰기 싫으면 안 써도 된다심
+public class User {
+	
+	@Id // 기본키 컬럼으로 설정
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // 자동으로 일련번호 매겨주는 거. DB마다 달라서 GenerationType.AUTO로 하면 자동으로 잡아주는데, H2는 GenerationType.IDENTITY, oracle은 GenerationType.SEQUENCE
+	private int id;
+	
+	@Column(nullable = false, length = 50, unique = true) // null 불가, 길이 설정, 중복 불가
+	private String username;
+
+	@Column(length = 100)
+	private String password;
+	
+	@Column(length = 100, nullable = false)
+	private String email;
+	
+	@Enumerated(EnumType.STRING)// 열거형 관계 매핑...
+	private RoleType role;
+	
+	@CreationTimestamp // sysdate 같은 거라고 보면 된다심
+	private Timestamp createDate;
+}
+
+
+클래스명이 테이블명
+멤버변수명이 필드명
+카멜케이스로 입력하게 되면 BoardUser 이런 거는 Board_User 이런 식으로 바뀌어짐
+테이블명을 클래스명말고 정하고 싶으면 @Table(name="users")
+
+이제 서버 실행해보면 로그에 테이블 생성되어 있는 거 확인 가능
+Hibernate: 
+    
+    drop table if exists users CASCADE 
+Hibernate: 
+    
+    create table users (
+       id integer generated by default as identity,
+        create_date timestamp,
+        email varchar(100) not null,
+        password varchar(100),
+        role varchar(255),
+        username varchar(50) not null,
+        primary key (id)
+    )
+Hibernate: 
+    
+    alter table users 
+       add constraint UK_r43af9ap4edm43mmtq01oddj6 unique (username)
+// ====================================================================================================
+쿼리문을 저장할 공간... interface 생성
+1010_board/src/main/java/com.example.board.repository/UserRepository.java
+##UserRepository############################################################################################################################################################################################################
+package com.example.board.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.board.domain.User;
+
+@Repository // 빈으로 등록하기 위한 어노테이션
+public interface UserRepository extends JpaRepository<User, Integer>{ // 쿼리문을 가지고 있는 애를 상속 받음, 제네릭 T : 테이블 정확하게는 Entity 클래스명, ID : 기본키 컬럼의 자료형, 원시데이터형 안 들어가짐 클래스형으로 들어감 
+	public Optional<User> findByUsername(String username); // JpaRepository에는 이런 메서드는 없지만 이렇게 메서드이름을 jpa에서 정해준 틀대로 잘 지정해주면 쿼리문은 자동으로 해줌
+}
+// ====================================================================================================
+save(Entity) : 해당 객체를 테이블에 저장(insert) insert into users values(x,x,x,x,x,x)
+findById(기본키에 해당하는 데이터) : 기본키를 조회(select) select * from users where id=?
+findAll() : 전체 레코드 조회 select * from users
+findByUsername(username) : select * from users where username=?
+→ findByXxx
+findByXxxOrderByYyyDesc 정렬까지 해줌 Xxx, Yyy는 컬럼명 쓰면 되겠지...
+delete(Entity) : delete from users where ?=?
+deleteById(기본키)
+count()
+조건 여러개이면 AND, OR 넣으면 됨...
+JPA 공식 문서 JPA docs subject keywords 가서 보라심 ㄷㄷㄷ
+https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference
+
+findById 메서드는 엔티티(테이블)에 설정된 기본키 컬럼의 레코드를 검색해서 조회하는 메서드
+findById(기본키의 데이터) → Repository에서 다 설정을 해둠
+리턴타입 Optional<T> 객체임
+왜? null일 경우 때문
+user = 검색문 처리 결과가 없음
+T의 wrapper 클래스, null이어도 예외발생을 안함, null이면 관련된 처리를 할 수 있음...
+진짜 user를 빼오는 거는 get()
+userRepository.findById(id) → Optional로 리턴
+하지만 내가 필요한 건 user 객체가 필요함
+.get() → Optional에 들어간 객체를 리턴
+
+JPA는 update문이 없음 ㄷㄷㄷ save로 함...
+다 바꿔주세요로 처리됨
+클라이언트에서 다 받아오거나 DB에서 클라이언트가 안준 값을 빼오거나 둘 중 하나임
+
+회원정보 수정
+기본적인 회원 정보 : id, username, password, email, role, createDate
+정보수정 페이지 : username, password, email → input 생성
+사용자가 저거 3개를 수정하고 싶으면 입력해서 서버로 전송
+프론트단에서는 username, password, email + id까지 서버로 전송
+서버에서는 전달받은 데이터를 user객체에 저장
+실제 user객체는 저거 4개만 맴버변수로 가지고 있음? 아님. 수정하지 않을 role, createDate까지 멤버변수로 가지고 있음
+결국 최종적으로 서버에 있는 user객체에는
+id : 변경할 사람의 id / username, password, email : 사용자가 입력한 변경할 데이터 / role, createDate : null
+기존에는 내가 update를 직접 작업해서 상관이 없었는데
+JPA : 모든 컬럼(기본키 제외)를 전부 업데이트 시켜버림
+변경하지 않을 데이터도 같이 보내주야 정상처리가 됨
+1. 사용자가 요청할 때 다 포함시켜서 보내는 방법
+2. 서버에서 id를 받긴 했으니까 id를 이용해서 DB에서 먼저 빼오는 방법
+아직 indext 페이지 같은 게 하나도 없으니 2번으로 할거임
+// ====================================================================================================
+확인용...(나중에는 서비스를 중간에 껴넣을 거라심)
+1010_board/src/main/java/com.example.board/UserController.java 갈아엎으면서 없어짐 ㅡ_ㅡㅋㅋ
+package com.example.board.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.board.domain.RoleType;
+import com.example.board.domain.User;
+import com.example.board.exception.BoardException;
+import com.example.board.repository.UserRepository;
+
+@RestController
+public class UserController {
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@PostMapping("/user")
+	public String insertUser(@RequestBody User user) {
+		user.setRole(RoleType.USER);
+		userRepository.save(user);
+		return user.getUsername() + " 회원 가입 성공";
+	}
+
+	// 전달받은 id에 해당하는 레코드를 조회
+	@GetMapping("/user0/get/{id}")
+	public User getUser0(@PathVariable int id) {
+//		Optional<User> op = userRepository.findById(id);
+//		System.out.println(op.isPresent());
+//		return op.get();
+
+		return userRepository.findById(id).get(); // 없는 거 조회하면 문제가 생기기 때문에...실제로 구현할 때는 위의 방식 대로 없는 거 검사하고...할 거라심,
+													// op.orElseGet 이런 것도 할 수도 있고...
+	}
+
+	@GetMapping("/user/get/{id}")
+	public User getUser(@PathVariable int id) {
+		User user = userRepository.findById(id).orElseThrow(() -> {
+			return new BoardException(id + "번 회원은 없음");
+		});
+		return user;
+	}
+	
+	@PutMapping("/user")
+	public String updateUser(@RequestBody User user) {
+		User findUser = userRepository.findById(user.getId()).orElseThrow(() -> {
+			return new BoardException(user.getId() + "번 회원은 없음");
+		});
+		findUser.setUsername(user.getUsername());
+		findUser.setPassword(user.getPassword());
+		findUser.setEmail(user.getEmail());
+		userRepository.save(findUser);
+		return "수정 완료";
+	}
+	@DeleteMapping("/user/{id}")
+	public String deleteUser(@PathVariable int id) {
+		userRepository.deleteById(id);
+		return "삭제 완료";
+	}
+	@GetMapping("/user/list")
+	public List<User> getUserList() {
+		return userRepository.findAll();
+	}
+}
+// ====================================================================================================
+postman http://localhost:8888/user post raw { "username" : "aaa", "password" : "bbb", "email" : "abc@naver.com" } 요청
+→ aaa 회원 가입 성공
+
+http://localhost:8888/user0/get/1 get 요청
+→ {
+    "id": 1,
+    "username": "aaa",
+    "password": "bbb",
+    "email": "abc@naver.com",
+    "role": "USER",
+    "createDate": "2023-10-11T02:05:26.608+00:00"
+  }
+http://localhost:8888/user0/get/2
+→ No value present 관련 whitepaper ??? 에러페이지 출력
+
+postman http://localhost:8888/user put raw { "id" : 1, "username" : "ddd", "password" : "eee", "email" : "def@naver.com" } 요청
+→ 수정 완료
+
+postman http://localhost:8888/user/1 delete 요청
+→ 삭제 완료
+
+레코드 몇개 추가
+http://localhost:8888/user/list get 요청
+// ====================================================================================================
+공통적으로 사용할 수 있는 에러페이지 생성
+
+예외 문구를 받아서 처리할 수 있게 함
+1010_board/src/main/java/com.example.board.exception/BoardException.java
+package com.example.board.exception;
+
+public class BoardException extends RuntimeException {
+	public BoardException(String msg) {
+		super(msg);
+	}
+}
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.exception/BoardExceptionHandler.java
+package com.example.board.exception;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+
+@ControllerAdvice // 공통적인 예외를 처리해주는 것임 다른 클래스에서 발생되는 예외를 여기서 처리하게 하라는 어노테이션
+@RestController
+public class BoardExceptionHandler {
+	
+	@ExceptionHandler(value = Exception.class)
+	public String exceptionHandler(Exception e) {
+		return "<h1>" + e.getMessage() + "</h1>";
+	}
+}
+
+http://localhost:8888/user/get/2
+→ 2번 회원은 없음 출력됨
+// ====================================================================================================
+1010_board/src/main/webapp/WEB-INF/board/index.jsp
+##index############################################################################################################################################################################################################
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="./layout/header.jsp" %>
+
+<h1>index페이지</h1>
+
+<%@ include file="./layout/footer.jsp" %>
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.controller/BoardController.java
+package com.example.board.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class BoardController {
+	@GetMapping("/")
+	public String getPostList() {
+		return "index";
+	}
+}
+// ====================================================================================================
+1010_board/src/main/webapp/WEB-INF/board/layout/header.jsp
+##header.jsp############################################################################################################################################################################################################
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">Navbar</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<c:if test="${principal == null}">
+						<li class="nav-item"><a class="nav-link active" aria-current="page" href="/auth/login">로그인</a></li>
+						<li class="nav-item"><a class="nav-link active" href="/auth/insertUser">회원가입</a></li>
+					</c:if>
+					<c:if test="${principal != null}">
+						<li class="nav-item"><a class="nav-link active" aria-current="page" href="/auth/logout">${principal.username}님 로그아웃</a></li>
+						<li class="nav-item"><a class="nav-link active" href="">회원 정보</a></li>
+						<li class="nav-item"><a class="nav-link active" href="">게시물 등록</a></li>
+					</c:if>
+				</ul>
+				<form class="d-flex" role="search">
+					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				</form>
+			</div>
+		</div>
+	</nav>
+// ====================================================================================================
+1010_board/src/main/webapp/WEB-INF/board/layout/footer.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+	<br>
+	<div class="mt-5 p-4 text-center">
+		<hr>
+		<p>스프링 부트 연습중</p>
+		<p>전화번호 : 010-1234-5678, 주소 : 서울시 강서구 화곡동</p>
+	</div>
+</body>
+</html>
+// ====================================================================================================
+1010_board/src/main/webapp/WEB-INF/board/user/insertUser.jsp
+##insertUser############################################################################################################################################################################################################
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="../layout/header.jsp" %>
+
+<div class="container mt-3">
+	<form>
+		<div class="mb-3 mt-3">
+			<label for="username" class="form-label">userName:</label>
+			<input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+		</div>
+		<div class="mb-3">
+			<label for="password" class="form-label">Password:</label>
+			<input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+		</div>
+		<div class="mb-3">
+			<label for="email" class="form-label">Email:</label>
+			<input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+		</div>
+		<button id="btn-save" type="submit" class="btn btn-primary">회원가입</button>
+	</form>
+</div>
+<script src="/js/user.js"></script>
+<%@ include file="../layout/footer.jsp" %>
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.controller/UserController.java 기존에 있던 거 싹 갈아엎음 ㅡ_ㅡ
+##UserController############################################################################################################################################################################################################
+package com.example.board.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.example.board.domain.User;
+import com.example.board.dto.ResponseDTO;
+import com.example.board.service.UserService;
+
+@Controller
+public class UserController {
+	
+	@Autowired
+	private UserService userService;
+	
+	@GetMapping("/auth/insertUser")
+	public String insertUser() {
+		return "/user/insertUser";
+	}
+	
+	@PostMapping("/auth/insertUser")
+	@ResponseBody
+	public ResponseDTO<?> insertUser(@RequestBody User user) {
+//		User findUser = userService.getUser(user.getUsername());
+		if(userService.getUser(user.getUsername()) == null) {
+			userService.insertUser(user);
+			return new ResponseDTO<>(HttpStatus.OK.value(), user.getUsername() + " 회원 가입 완료");
+		} 
+		else
+			return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), user.getUsername() + " 은 이미 가입된 회원임");
+	}
+	
+	@GetMapping("/auth/login")
+	public String login() {
+		return "/user/login";
+	}
+	@PostMapping("/auth/login")
+	@ResponseBody
+	public ResponseDTO<?> login(@RequestBody User user, HttpSession session) {
+		User findUser = userService.getUser(user.getUsername());
+		if(findUser == null)
+			return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), "잘못된 아이디");
+		
+		if (findUser.getPassword().equals(user.getPassword())) {
+			session.setAttribute("principal", findUser); // user를 담으면 안돼~
+			return new ResponseDTO<>(HttpStatus.OK.value(), user.getUsername() + "님 환영합니다.");
+		}
+		
+		return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), user.getUsername() + " 비번 틀림");
+	}
+	
+	@GetMapping("/auth/logout")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/";
+	}
+}
+// ====================================================================================================
+1010_board/src/main/resources/static/js/user.js ... js폴더 만들고 js 파일 생성
+##user.js############################################################################################################################################################################################################
+const userObject = {
+	init: function() {
+		$('#btn-save').on('click', (e)=>{
+			e.preventDefault();
+			this.insertUser();
+		})
+	},
+	insertUser: function() {
+//		alert('회원가입요청');
+		let user = {
+			username: $('#username').val(), 
+			password: $('#password').val(), 
+			email: $('#email').val() 
+		}
+		$.ajax({
+			url: '/auth/insertUser',
+			type: 'post',
+			contentType: 'application/json; charset=utf-8',
+			data: JSON.stringify(user)
+		}).done(function(response){
+//			console.log(response);
+			// 위 코드 동작 확인 후 완료 후 다른 페이지로 이동하는 코드 필요
+			alert(response.data);
+			if(response.status == 200)
+				location = "/";
+		}).fail(function(error){
+			console.log(error);
+		})
+	}
+}
+
+userObject.init();
+// ====================================================================================================
+서비스 클래스 구현
+원래는 인터페이스로 만들고 클래스로 구현하는 거했는데
+지금은 귀찮아서 그냥 클래스로 만든다심 ...
+
+클라이언트에서 요청을 받는 컨트롤러
+세부적인 처리를 해주는 서비스 (비지니스로직 처리)
+DB 관련된 처리를 하는 레퍼지토리
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.service/UserService.java
+##UserService############################################################################################################################################################################################################
+package com.example.board.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.board.domain.RoleType;
+import com.example.board.domain.User;
+import com.example.board.repository.UserRepository;
+
+@Service
+public class UserService {
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	public void insertUser(User user) {
+		user.setRole(RoleType.USER);
+		userRepository.save(user);
+	}
+	
+	public User getUser(String username) {
+		// 강사님은 orElseGet 쓰시고 Controller에서 username이 null인지 확인하여 처리하게 구현하심...어차피 null 보낼 거면 걍...싶어서 orElse씀
+//		orElse vs orElseGet
+//		https://ysjune.github.io/posts/java/orelsenorelseget/
+//		public T orElse(T other) {
+//			return value != null ? value : other;
+//		}
+//		public T orElseGet(Supplier<? extends T> other) {
+//			return value != null ? value : other.get();
+//		}
+		return userRepository.findByUsername(username).orElse(null);
+	}
+}
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.dto/ResponseDTO.java
+package com.example.board.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResponseDTO<T> {
+	private int status; // 상태코드
+	private T data; // 응답 데이터
+}
+// ====================================================================================================
+회원가입 시 이미 가입된 회원인지 아닌지 체크
+username : 로그인할 때 필요한 아이디
+userRepository 수정
+userService 수정
+user.js 수정
+http://localhost:8888/auth/insertUser 동작 확인, 이미 가입된 회원 아이디 넣어서도 확인해봄
+// ====================================================================================================
+UserController에 /auth/login get요청을 받으면 login.jsp 페이지로 이동되도록 login 메서드 구현
+header에 있는 네비바 로그인 버튼을 클릭하면 위에거 실행되도록
+
+1010_board/src/main/webapp/WEB-INF/board/user/login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="../layout/header.jsp" %>
+
+<div class="container mt-3">
+	<form>
+		<div class="mb-3 mt-3">
+			<label for="username" class="form-label">userName:</label>
+			<input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+		</div>
+		<div class="mb-3">
+			<label for="password" class="form-label">Password:</label>
+			<input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+		</div>
+		<button id="btn-login" type="submit" class="btn btn-primary">로그인</button>
+	</form>
+</div>
+<script src="/js/login.js"></script>
+<%@ include file="../layout/footer.jsp" %>
+// ====================================================================================================
+1010_board/src/main/resources/static/js/login.js
+##login.js############################################################################################################################################################################################################
+const loginObject = {
+	init: function() {
+		$('#btn-login').on('click', ()=>{
+			this.login();
+		})
+	},
+	login: function() {
+//		alert('로그인 요청');
+		let user = {
+			username: $('#username').val(), 
+			password: $('#password').val()
+		}
+		$.ajax({
+			url: '/auth/login',
+			type: 'post',
+			contentType: 'application/json; charset=utf-8',
+			data: JSON.stringify(user)
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = "/";
+		}).fail(function(error){
+			console.log(error);
+		})
+	}
+}
+
+loginObject.init();
+// ====================================================================================================
+사용자가 입력한 아이디를 DB에서 꺼내오게 시킴
+꺼내오게 했더니 없음 → 없는 아이디
+꺼내온 데이터가 있음 → 꺼내온 데이터와 사용자가 입력한 비밀번호를 비교 → 다름 (비번 틀림)
+												   → 같음 (로그인 성공)
+UserController 수정
+login.js 수정
+header.jsp 수정(예정ㅋㅋㅋ)
+
+http://localhost:8888/auth/login 로그인 아이디오류, 비밀번호오류, 로그인성공 모든 케이스 확인
+// ====================================================================================================
+로그아웃
+UserController 수정
+
+로그아웃 기능 동작 확인
+// ====================================================================================================
+회원 전용 게시판 같은 걸 만들 거라심
+로그인한 사람인지 검사하는 거 필요
+1010_board/src/main/java/com.example.board.config/AuthInterceptor.java
+package com.example.board.config;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import com.example.board.domain.User;
+
+public class AuthInterceptor implements HandlerInterceptor{
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception { // 작동되는 시점을 controller 동작 전으로 하기 위해서 preHandle override, post는 controller 동작 후, afterxxx는 화면까지 다 구현하고 나서 
+		
+		HttpSession session = request.getSession();
+		User principal = (User) session.getAttribute("principal");
+		
+		if(principal == null)
+			response.sendRedirect("/auth/login");
+		
+		return true;
+	}
+}
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.config/BoardWebMvcConfig.java
+root-context 같은 거...
+package com.example.board.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class BoardWebMvcConfig implements WebMvcConfigurer{
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new AuthInterceptor())
+				.addPathPatterns("/"); 
+		// 일단은 적용되는 페이지를 / 로 해둔 거... 변경 예정, 추가하려면 .addPathPatterns("/xxx") 메서드 체이닝 추가해주면 됨
+	}
+}
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
 
 // ====================================================================================================
 
@@ -39918,6 +40583,24 @@ db 접근 권한 획득해서 접속하는 거는 SqlSessionTemplate임... 이�
 
 // ====================================================================================================
 
+// ====================================================================================================
 
+// ====================================================================================================
 
+// ====================================================================================================
 
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
