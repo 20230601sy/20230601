@@ -16,7 +16,7 @@ const loginObject = {
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify(user)
 		}).done(function(response){
-			alert(response.data);
+//			alert(response.data);
 			if(response.status == 200)
 				location = "/";
 		}).fail(function(error){

@@ -39434,6 +39434,7 @@ implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 해당 내용을 build.gradle의 dependencies { } 안에 넣기
 // ====================================================================================================
 1010_board/build.gradle
+##build.gradle############################################################################################################################################################################################################
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.16'
@@ -39471,7 +39472,8 @@ dependencies {
 	implementation 'javax.servlet:jstl'
 	// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-	
+	// https://mvnrepository.com/artifact/org.webjars.bower/summernote
+	implementation 'org.webjars.bower:summernote:0.8.16'
 }
 
 tasks.named('test') {
@@ -40189,20 +40191,74 @@ http://localhost:8888/user/get/2
     pageEncoding="UTF-8"%>
 <%@ include file="./layout/header.jsp" %>
 
-<h1>index페이지</h1>
+<div class="container mt-3">
+	<div class="card">
+		<c:if test="${!empty postList}">
+<%-- 			<c:forEach items="${postList}" var="post"> --%>
+<!-- 			페이징 후 postList 출력해보기~ -->
+<%-- 			<h1>${postList}</h1> --%>
+<!-- 			Page 1 of 2 containing com.example.board.domain.Post instances 로 출력됨... -->
+			<c:forEach items="${postList.content}" var="post">
+				<div class="card-body">
+					<h4 class="card-title">${post.title}</h4>
+					<a href="/post/${post.id}" class="btn btn-secondary">상세보기</a>
+				</div>
+			</c:forEach>
+			<br>
+			<ul class="pagination justify-content-around">
+				<li class="page-item ${postList.first? 'disabled' : ''}">
+					<a class="page-link" href="?page=${postList.number-1}">이전</a>
+				</li>
+				<li class="page-item ${postList.last? 'disabled' : ''}">
+					<a class="page-link" href="?page=${postList.number+1}">다음</a>
+				</li>
+			</ul>
+		</c:if>
+	</div>
+</div>
 
 <%@ include file="./layout/footer.jsp" %>
 // ====================================================================================================
 1010_board/src/main/java/com.example.board.controller/BoardController.java
+##BoardController.java############################################################################################################################################################################################################
 package com.example.board.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.example.board.domain.Post;
+import com.example.board.service.PostService;
 
 @Controller
 public class BoardController {
+	
+	@Autowired
+	private PostService postService;
+	
 	@GetMapping("/")
-	public String getPostList() {
+	public String getPostList(Model model, @PageableDefault(size = 5, sort = "id", direction = Direction.DESC) Pageable pageable) { // size 페이지 갯수 기본값 20일꺼라심, page라는 속성도 있는데... 0번부터!!! 시작하는!!! 페이지번호를 지정할 수 있는 속성값도 있다심, maxPage 같은 거도 있고...
+//		model.addAttribute("postList", postService.getPostList());
+
+//		Page<Post> page = postService.getPostList(pageable);
+//		System.out.println(page.getContent());
+//		System.out.println("전체 페이지 수 : " + page.getTotalPages());
+//		System.out.println("전체 항목(레코드) 수 : " + page.getTotalElements());
+//		System.out.println("현재 페이지 번호 : " + page.getNumber());
+//		System.out.println("페이지당 항목 수 : " + page.getSize());
+//		System.out.println("이전 페이지 존재 여부 : " + page.hasPrevious());
+//		System.out.println("다음 페이지 존재 여부 : " + page.hasNext());
+//		System.out.println("첫 페이지인지 여부 : " + page.isFirst());
+//		System.out.println("마지막 페이지인지 여부 : " + page.isLast());		
+		model.addAttribute("postList", postService.getPostList(pageable));
+		
 		return "index";
 	}
 }
@@ -40220,6 +40276,9 @@ public class BoardController {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
@@ -40237,7 +40296,7 @@ public class BoardController {
 					<c:if test="${principal != null}">
 						<li class="nav-item"><a class="nav-link active" aria-current="page" href="/auth/logout">${principal.username}님 로그아웃</a></li>
 						<li class="nav-item"><a class="nav-link active" href="">회원 정보</a></li>
-						<li class="nav-item"><a class="nav-link active" href="">게시물 등록</a></li>
+						<li class="nav-item"><a class="nav-link active" href="/post/insertPost">게시물 등록</a></li>
 					</c:if>
 				</ul>
 				<form class="d-flex" role="search">
@@ -40555,6 +40614,7 @@ public class AuthInterceptor implements HandlerInterceptor{
 // ====================================================================================================
 1010_board/src/main/java/com.example.board.config/BoardWebMvcConfig.java
 root-context 같은 거...
+##BoardWebMvcConfig.java############################################################################################################################################################################################################
 package com.example.board.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -40567,11 +40627,798 @@ public class BoardWebMvcConfig implements WebMvcConfigurer{
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new AuthInterceptor())
-				.addPathPatterns("/"); 
+				.addPathPatterns("/", "/post/**"); 
 		// 일단은 적용되는 페이지를 / 로 해둔 거... 변경 예정, 추가하려면 .addPathPatterns("/xxx") 메서드 체이닝 추가해주면 됨
 	}
 }
 // ====================================================================================================
+Day1012
+// ====================================================================================================
+1010_board/src/main/webapp/WEB-INF/board/post/insertPost.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="../layout/header.jsp" %>
+
+<div class="container mt-3">
+	<form>
+		<div class="mb-3 mt-3">
+			<label for="title" class="form-label">Title:</label>
+			<input type="text" class="form-control" id="title" placeholder="Enter title" name="title">
+		</div>
+		<div class="mb-3">
+			<label for="content" class="form-label">Content:</label>
+			<textarea class="form-control" id="content" rows="5"></textarea>
+		</div>
+		<button id="btn-insert" type="submit" class="btn btn-primary">게시물 등록</button>
+	</form>
+</div>
+<script src='/js/post.js'></script>
+<%@ include file="../layout/footer.jsp" %>
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.controller/PostController
+##PostController############################################################################################################################################################################################################
+package com.example.board.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.example.board.domain.Post;
+import com.example.board.domain.User;
+import com.example.board.dto.ResponseDTO;
+import com.example.board.service.PostService;
+
+@Controller
+public class PostController {
+	
+	@Autowired
+	private PostService postService;
+	
+	@GetMapping("/post/insertPost")
+	public String insertPost() {
+		return "/post/insertPost";
+	}
+	
+	@PostMapping("/post/insertPost")
+	public @ResponseBody ResponseDTO<?> insertPost(@RequestBody Post post, HttpSession session) {
+		post.setUser((User)session.getAttribute("principal"));
+		postService.insertPost(post);
+		return new ResponseDTO<>(HttpStatus.OK.value(), "새 글 등록 완료");
+	}
+	
+	@GetMapping("/post/{id}")
+	public String getPost(@PathVariable int id, Model model) {
+		Post post = postService.getPost(id);
+		if(post == null)
+			return "redirect:/";
+		model.addAttribute("post", post);
+		return "/post/getPost";
+	}
+	
+	@GetMapping("/post/updatePost/{id}")
+	public String updatePost(@PathVariable int id, Model model) {
+		Post post = postService.getPost(id);
+		if(post == null)
+			return "redirect:/";
+		model.addAttribute("post", post);
+		return "/post/updatePost";
+	}
+	@PutMapping("/post")
+	public @ResponseBody ResponseDTO<?> updatePost(@RequestBody Post post) {
+		if(postService.updatePost(post))
+			return new ResponseDTO<>(HttpStatus.OK.value(), "수정 완료");
+		return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), "수정 실패");
+	}
+	@DeleteMapping("/post/{id}")
+	public @ResponseBody ResponseDTO<?> deletePost(@PathVariable int id) {
+		postService.deletePost(id);
+		return new ResponseDTO<>(HttpStatus.OK.value(), "삭제 완료");
+	}
+}
+
+
+http://localhost:8888/post/insertPost 확인
+Header 수정
+연결 확인
+// ====================================================================================================
+글작성 칸 폰트 수정하고 하는 거 라이브러리 사용할 거라심
+https://summernote.org/ 를 태그 형식으로 작업되어 있음~ DB에도 태그형태로 저장된다심
+Summernote 검색 후 두번째꺼 build.gradle에 넣기
+// https://mvnrepository.com/artifact/org.webjars.bower/summernote
+implementation 'org.webjars.bower:summernote:0.8.16'
+
+header에 cdn넣기 jquery와 bootstrap은 기존에 있어서 제외
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+코드에는 id 지정(아래 보면 알겠지만 해당 박스만 지정하면 되니깐 필수는 아님)과 jquery 코드가 필요함
+<div id="summernote">Hello Summernote</div>
+$(document).ready(function() {
+  $('#summernote').summernote();
+});
+// ====================================================================================================
+1010_board/src/main/resources/static/js/post.js
+##post.js############################################################################################################################################################################################################
+$(document).ready(function() {
+	$('#content').summernote({
+		height: 500
+	});
+});
+
+const postObject = {
+	init: function() {
+		$('#btn-insert').on('click', (e)=>{
+			e.preventDefault();
+			this.insertPost();
+		})
+		$('#btn-update').on('click', ()=>{
+			this.updatePost();
+		})
+		$('#btn-delete').on('click', ()=>{
+			this.deletePost();
+		})
+	},
+	insertPost: function() {
+//		alert('글작성 요청');
+		let post = {
+			title: $('#title').val(), 
+			content: $('#content').val()
+		};
+		$.ajax({
+			url: '/post/insertPost',
+			type: 'post',
+			contentType: 'application/json; charset=utf-8',
+			data: JSON.stringify(post)
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = "/";
+		}).fail(function(error){
+			console.log(error);
+		});
+	},
+	updatePost: function() {
+		let post = {
+			id: $('#id').val(), 
+			title: $('#title').val(), 
+			content: $('#content').val()
+		};
+		$.ajax({
+			url: '/post',
+			type: 'put',
+			contentType: 'application/json; charset=utf-8',
+			data: JSON.stringify(post)
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = "/";
+		}).fail(function(error){
+			console.log(error);
+		});
+	},
+	deletePost: function() {
+		$.ajax({
+			url: location.href,
+			type: 'delete'
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = "/";
+		}).fail(function(error){
+			console.log(error);
+		});
+	}
+}
+
+postObject.init();
+// ====================================================================================================
+insertPost.jsp 수정
+// ====================================================================================================
+게시글 저장할 수 있는 엔티티 생성
+테이블 설계
+post 테이블
+id → 정수(기본키, 일련번호)
+title → 문자(공란 불가, 길이 100)
+content → 문자(공란 불가)
+createDate → TimeStamp
+cnt → 정수 (조회수...)
+user → 작성자(정보)
+
+1010_board/src/main/java/com.example.board.domain/Post.java
+##Post.java############################################################################################################################################################################################################
+package com.example.board.domain;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Post {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	
+	@Column(nullable = false, length = 100)
+	private String title;
+
+	@Lob // 대용량을 넣을 수 있는 타입을 잡아주는 거...
+	@Column(nullable = false)
+	private String content;
+	
+	@CreationTimestamp
+	private Timestamp createDate;
+	
+	private int cnt;
+	
+	@ManyToOne(fetch = FetchType.EAGER) // post 입장에서 관계 설정 1:1 vs 1:다 vs 다:1 vs 다:다, 식별할 수 있는 값만 들어가 있는데,,, () 옵션 설정해서 모든 정보 값을 가져오도록 해둠 / cascade라는 외래키 기본키 간 삭제시 데이터를 어떻게 할 것인가에 관한 옵션도 있음...
+	@JoinColumn(name = "userid")
+	private User user;
+	
+	@OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE) // cascade 명시하지 않으면 아무작업도 안함... All이나 REMOVE...
+	@OrderBy("id desc")
+	private List<Reply> replyList;
+}
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.repository/PostRepository.java
+##PostRepository############################################################################################################################################################################################################
+package com.example.board.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.board.domain.Post;
+
+@Repository
+public interface PostRepository extends JpaRepository<Post, Integer>{
+
+}
+// ====================================================================================================
+1010_board/src/main/java/com.example.board.service/PostService.java
+##PostService############################################################################################################################################################################################################
+package com.example.board.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.board.domain.Post;
+import com.example.board.repository.PostRepository;
+
+@Service
+public class PostService {
+	
+	@Autowired
+	private PostRepository postRepository;
+	
+	@Transactional // 하나의 작업단위를 묶어주는...지금은 별 문제는 없지만...
+	public void insertPost(Post post) {
+		post.setCnt(0);
+		postRepository.save(post);
+	}
+	
+	public Page<Post> getPostList(Pageable pageable) {
+//	public List<Post> getPostList() {
+		return postRepository.findAll(pageable);
+	}
+	
+	public Post getPost(int id) {
+		return postRepository.findById(id).orElse(null);
+	}
+	
+	@Transactional
+	public Boolean updatePost(Post post) {
+		Post findPost = postRepository.findById(post.getId()).orElse(null);
+		if(findPost == null)
+			return false;
+		findPost.setTitle(post.getTitle());
+		findPost.setContent(post.getContent());
+		// postRepository.save(findPost); // @Transactional 롤백 커밋하기 때문에 save 없어도 수정된다는 ㄷㄷㄷ 그래서 update문이 없는 배경이...(?) 된다심
+		return true;
+	}
+	
+	public void deletePost(int id) {
+		postRepository.deleteById(id);
+	}
+}
+// ====================================================================================================
+PostController 수정
+post.js 수정
+글작성 테스트 완료 DB post 테이블 확인 완료
+// ====================================================================================================
+게시물 목록 보이게
+findAll() : 전체 레코드를 리턴(List<>)
+index페이지로 들어갔을 때 작동이 되어야 함
+
+-index 페이지로 이동할 때 DB에서 모든 게시물 정보를 빼와야 함
+JPA에 findAll 메서드가 이미 구현되어 있음
+서비스에서 레퍼지토리에 있는 findAll메서드 호출
+-빼온 게시물들을 index로 보내줘야 함
+서비스에 구현해둔 메서드를 이용해서 컨트롤러에서 처리
+model객체를 활용
+-index는 받아온 게시물들을 화면에 뿌려줘야 함
+
+PostService.java 수정
+index.jsp 수정
+BoardController 수정
+// ====================================================================================================
+페이징 처리
+페이징은 부트에서는 좀더 간편하게 할 수 있다심
+PostService.java 수정
+BoardController 수정
+index.jsp 수정
+// ====================================================================================================
+post 상세보기
+상세페이지로 가고 싶은데 정확하게 어떤 걸 보고 싶어요
+보고 싶은 정보를 서버로 보내야 하는데 어떻게 보낼 수 있을까?
+-url 활용 ( /post/이거보고싶어 )
+-쿼리스트링 활용 ( /post?이거=이거보여줘 )
+보내줄 정보를 결정 (게시물 id)
+그래야 서버가 보고 싶은 데이터를 DB에 뽑아와서
+클라이언트에게 뽑아온 상세내용을 전달
+
+PostService.java 수정
+postController 수정
+1010_board/src/main/webapp/WEB-INF/board/post/getPost.jsp 생성
+##getPost.jsp############################################################################################################################################################################################################
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="../layout/header.jsp" %>
+
+<div class="container border py-3 mt-3">
+	<div>
+		<h3>${post.title}</h3>
+	</div>
+	<div>
+		<p>${post.content}</p>
+	</div>
+	<div>
+		<p>포스트 번호 : ${post.id}</p>
+		<p>작성자 : ${post.user.username}</p>
+	</div>
+	<hr>
+	<button class="btn btn-secondary" onclick="history.back()">돌아가기</button>
+	<c:if test="${principal.id==post.user.id}">
+		<a href="/post/updatePost/${post.id}" class="btn btn-warning">수정하기</a>
+		<button id="btn-delete" class="btn btn-danger">삭제하기</button>
+		<input type="hidden" id="id" value="${post.id}">
+	</c:if>
+	<br><br>
+	<div class="container mt-3">
+		<table class="table">
+			<c:if test="${!empty post.replyList}">
+				<thead>
+					<tr>
+						<th colspan="12"><h4>댓글 목록</h4></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="col-9 col-sm-6">내용</th>
+						<th class="col-1 col-sm-2">작성자</th>
+						<th class="col-1 col-sm-2">수정</th>
+						<th class="col-1 col-sm-2">삭제</th>
+					</tr>
+					<c:forEach items="${post.replyList}" var="reply">
+						<tr>
+							<td class="col-9 col-sm-6">
+								<input class="form-control input-reply-update-${reply.id}" value="${reply.content}">
+							</td>
+							<td class="col-1 col-sm-2">
+								<input class="form-control" value="${reply.user.username}" disabled>
+							</td>
+							<c:if test="${principal.id==reply.user.id}">
+								<td class="col-1 col-sm-2">
+									<button class="btn btn-warning btn-reply-update" data-replyId="${reply.id}">수정</button>
+								</td>
+								<td class="col-1 col-sm-2">
+									<button class="btn btn-danger btn-reply-delete" data-replyId="${reply.id}">삭제</button>
+								</td>
+							</c:if>
+						<tr>
+					</c:forEach>
+				</c:if>
+				<tr align="right">
+					<td  colspan="12">
+						<textarea id="reply-content" rows="2" class="form-control"></textarea>
+						<button id="btn-save-reply" class="btn btn-secondary mt-3">댓글 등록</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<script src="/js/post.js"></script>
+<script src="/js/reply.js"></script>
+<%@ include file="../layout/footer.jsp" %>
+// ====================================================================================================
+게시글 보는 거 회원전용으로 하기 위해서
+BoardWebMvcConfig.java 수정
+// ====================================================================================================
+게시글 수정
+수정페이지에는 제목, 내용 입력 공간만 있음 두개를 수정했으니까 고쳐주세요 → 서버에게 요청
+두개 정보만으로는 수정처리가 불가능, 정확하게 수정할 레코드를 식별할 수 없음
+제목, 내용, 수정할 게시물의 id도 보내서 요청 
+서버에서 제목, 내용, 수정할 게시물 id를 받을 수 있어야 함
+id에 해당하는 걸 찾아서 제목, 내용을 고친 다음에 update
+post, /post/update 요청, id, title, content 송부
+
+PostService.java 수정
+postController 수정
+getPost.jsp 링크 수정
+post.js 수정
+
+1010_board/src/main/webapp/WEB-INF/board/post/updatePost.jsp 생성
+##updatePost.jsp############################################################################################################################################################################################################
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="../layout/header.jsp" %>
+
+<div class="container border py-3 mt-3">
+	<form>
+		<input type="hidden" id="id" value="${post.id}">
+		<div class="mb-3">
+			<label for="title">Title : </label>
+			<input type="text" class="form-control" id="title" value="${post.title}">
+		</div>
+		<div class="mb-3">
+			<label for="content">Content : </label>
+			<textarea class="form-control" id="content" >${post.content}</textarea>
+		</div>
+	</form>
+	<hr>
+	<button class="btn btn-secondary" onclick="history.back()">돌아가기</button>
+	<button id="btn-update" class="btn btn-warning">수정완료</button>
+</div>
+
+<script src="/js/post.js"></script>
+<%@ include file="../layout/footer.jsp" %>
+// ====================================================================================================
+게시글 삭제
+delete, /post/{id} 요청
+
+PostService.java 수정
+postController 수정
+getPost.jsp 링크 수정
+post.js 수정
+// ====================================================================================================
+Day1013
+// ====================================================================================================
+댓글 기능을 추가
+엔티티
+댓글번호(기본키), 내용, 작성일자, 작성자, 게시글정보
+
+getPost.jsp 수정
+
+1010_board/src/main/java/com.example.board.domain/Reply.java 생성
+##Reply.java############################################################################################################################################################################################################
+package com.example.board.domain;
+
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import lombok.Data;
+
+@Entity
+@Data
+public class Reply {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	
+	@Column(nullable = false, length = 200)
+	private String content;
+	
+	@CreationTimestamp
+	private Timestamp createDate;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "userid")
+	private User user;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "postid")
+	private Post post;
+	// 그냥 댓글(나)를 기준으로 내가 여러개 있을 수 있으면 앞에가 Many
+	// 나를 기준으로 움, 그러니까 내가 정해지면 user나 post는 고정되므로 One
+	// 거의 ManyToOne일 거라는 소리가 이해됨... 
+	// 앞으로도 헷갈릴 예정
+	// http://www.amathsdictionaryforkids.com/qr/m/manyToOne.html x(A)가 나임
+	// 기본적으로 엄밀한 함수 관계여야 하니까
+}
+// ====================================================================================================
+Post 테이블에는 댓글정보가 포함되어 있지 않음
+상세페이지에 들어가면 댓글목록이 같이 나와야 함
+- 게시물 id를 이용해서 게시물 정보를 뽑아와야 함(post 테이블)
+- 게시물 id를 이용해서 댓글정보들도 뽑아와야 함(reply 테이블)
+Post 테이블에는 댓글정보가 포함 ... 되면
+- 게시물 id를 이용해서 게시물 정보를 뽑아와야 함
+어떤 댓글이 달려있는지도 같이 나옴
+
+Post.java 수정
+// ====================================================================================================
+엔티티 생성했으니 repository 생성
+1010_board/src/main/java/com.example.board.repository/ReplyRepository.java
+##ReplyRepository.java############################################################################################################################################################################################################
+package com.example.board.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.board.domain.Reply;
+
+@Repository
+public interface ReplyRepository extends JpaRepository<Reply, Integer>{
+
+}
+// ====================================================================================================
+댓글 등록
+게시글 id, 댓글 내용, 작성자 정보 받을 수 있도록 컨트롤러 구현
+댓글이 DB에 저장되도록 구현 → 서비스
+댓글 내용, 작성자 정보, 게시글 정보를 insert(save)
+받아온 정보가 게시글 id만 있으므로 게시글 id를 이용해서 게시글 정보를 먼저 가져와야 함
+→ 댓글 내용, 작성자 정보, 게시글 정보를 insert(save)
+
+getPost.jsp 수정
+
+1010_board/src/main/java/com.example.board.controller/ReplyController.java 생성
+##ReplyController############################################################################################################################################################################################################
+package com.example.board.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.example.board.domain.Reply;
+import com.example.board.domain.User;
+import com.example.board.dto.ResponseDTO;
+import com.example.board.service.ReplyService;
+
+@Controller
+public class ReplyController {
+	
+	@Autowired
+	private ReplyService replyService;
+	
+	@PostMapping("/reply/{postId}")
+	public @ResponseBody ResponseDTO<?> insertReply(@PathVariable int postId, @RequestBody Reply reply, HttpSession session){
+		replyService.insertReply(reply, postId, (User) session.getAttribute("principal"));
+		return new ResponseDTO<>(HttpStatus.OK.value(), "댓글 등록 완료");
+	}
+	
+	@DeleteMapping("/reply/{replyId}")
+	public @ResponseBody ResponseDTO<?> deleteReply(@PathVariable int replyId, HttpSession session){
+		replyService.deleteReply(replyId, (User) session.getAttribute("principal"));
+		return new ResponseDTO<>(HttpStatus.OK.value(), "댓글 삭제 완료");
+	}
+	
+	@PutMapping("/reply")
+	public @ResponseBody ResponseDTO<?> updateReply(@RequestBody Reply reply, HttpSession session){
+		replyService.updateReply(reply, (User) session.getAttribute("principal"));
+		return new ResponseDTO<>(HttpStatus.OK.value(), "댓글 수정 완료");
+	}
+}
+// ====================================================================================================
+replyService 생성
+##replyService############################################################################################################################################################################################################
+package com.example.board.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.board.domain.Post;
+import com.example.board.domain.Reply;
+import com.example.board.domain.User;
+import com.example.board.repository.PostRepository;
+import com.example.board.repository.ReplyRepository;
+
+@Service
+public class ReplyService {
+	
+	@Autowired
+	private ReplyRepository replyRepository;
+
+	@Autowired
+	private PostRepository postRepository;
+	
+	@Transactional
+	public void insertReply(Reply reply, int postId, User user) {
+		Post post = postRepository.findById(postId).get();
+//		post.getReplyList().add(reply);
+//		postRepository.save(post); // 오오 이거 안 해도 되넹 ㅋㅋㅋ
+		reply.setPost(post);
+		reply.setUser(user);
+		replyRepository.save(reply);
+	}
+	
+	@Transactional
+	public void deleteReply(int replyId, User user) {	
+		if(user.getId() == replyRepository.findById(replyId).orElse(new Reply()).getUser().getId())
+			replyRepository.deleteById(replyId);
+	}
+
+	@Transactional
+	public void updateReply(Reply reply, User user) {
+		Reply findReply = replyRepository.findById(reply.getId()).orElse(null);
+		if(findReply == null)
+			return;
+		if(findReply.getUser().getId() != user.getId())
+			return;
+		findReply.setContent(reply.getContent());
+		replyRepository.save(findReply); // 이거 딱히 안 해도 될 듯...
+	}
+}
+// ====================================================================================================
+reply.js 생성
+##reply.js############################################################################################################################################################################################################
+const replyObject = {
+	init: function() {
+		$('#btn-save-reply').on('click', ()=>{
+			this.insertReply();
+		})
+		$('.btn-reply-delete').on('click', (e)=>{
+			this.deleteReply(e.target.dataset.replyid);
+		})
+		$('.btn-reply-update').on('click', (e)=>{
+			this.updateReply(e.target.dataset.replyid);
+		})
+	},
+	insertReply: function() {
+		let postId = $('#id').val();
+		let reply = {
+			content: $('#reply-content').val()
+		};
+		$.ajax({
+			url: '/reply/'+ postId,
+			type: 'post',
+			contentType: 'application/json; charset=utf-8',
+			data: JSON.stringify(reply)
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = '/post/'+ postId;
+		}).fail(function(error){
+			console.log(error);
+		})
+	},
+	deleteReply: function(replyId) {
+		$.ajax({
+			url: '/reply/'+ replyId,
+			type: 'delete',
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = '/post/'+ $('#id').val();
+		}).fail(function(error){
+			console.log(error);
+		})
+	},
+	updateReply: function(replyId) {
+		let reply = {
+			id: replyId,
+			content: $(`.input-reply-update-${replyId}`).val()
+		};
+		$.ajax({
+			url: '/reply',
+			type: 'put',
+			contentType: 'application/json; charset=utf-8',
+			data: JSON.stringify(reply)
+		}).done(function(response){
+			alert(response.data);
+			if(response.status == 200)
+				location = '/post/'+ $('#id').val();
+		}).fail(function(error){
+			console.log(error);
+		})
+	}
+	
+}
+
+replyObject.init();
+// ====================================================================================================
+댓글 보이게 getPost.jsp 수정
+// ====================================================================================================
+댓글 삭제 기능 구현
+delete /reply/{replyId} 요청
+
+reply.js 수정
+getPost.jsp 수정
+ReplyController.java 수정
+ReplyService.java 수정
+// ====================================================================================================
+댓글 관련 게시글 삭제 불가로 인한 post.java 수정
+// ====================================================================================================
+댓글 수정
+reply.js 수정
+getPost.jsp 수정
+ReplyController.java 수정
+ReplyService.java 수정
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
+
+// ====================================================================================================
 
 // ====================================================================================================
 
@@ -40604,3 +41451,4 @@ public class BoardWebMvcConfig implements WebMvcConfigurer{
 // ====================================================================================================
 
 // ====================================================================================================
+
