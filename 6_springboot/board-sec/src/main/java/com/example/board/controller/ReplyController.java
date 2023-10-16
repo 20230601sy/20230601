@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import com.example.board.domain.Post;
 import com.example.board.domain.Reply;
 import com.example.board.domain.User;
 import com.example.board.dto.ResponseDTO;
+import com.example.board.security.UserDetailsImpl;
 import com.example.board.service.ReplyService;
 
 @Controller
@@ -25,11 +27,11 @@ public class ReplyController {
 	private ReplyService replyService;
 	
 	@PostMapping("/reply/{postId}")
-	public @ResponseBody ResponseDTO<?> insertReply(@PathVariable int postId, @RequestBody Reply reply, HttpSession session) {
+	public @ResponseBody ResponseDTO<?> insertReply(@PathVariable int postId, @RequestBody Reply reply, @AuthenticationPrincipal UserDetailsImpl principal) {
 		
-		User user = (User)session.getAttribute("principal");
+//		User user = (User)session.getAttribute("principal");
 		
-		replyService.insertReply(postId, reply, user);
+		replyService.insertReply(postId, reply, principal.getUser());
 		
 		return new ResponseDTO<>(HttpStatus.OK.value(), "댓글 등록 완료");
 		

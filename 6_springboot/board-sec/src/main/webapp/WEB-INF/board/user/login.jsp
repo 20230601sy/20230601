@@ -19,6 +19,9 @@
      <button id="btn-login" type="submit" class="btn btn-primary">
      	<spring:message code="user.login.form.login_btn" />
      </button>
+     <a href="">
+     	<img src="/img/kakao_login_medium_narrow.png">
+     </a>
    </form>
 </div>
 

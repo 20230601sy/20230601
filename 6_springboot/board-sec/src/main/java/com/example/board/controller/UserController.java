@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -28,6 +29,7 @@ import com.example.board.dto.ResponseDTO;
 import com.example.board.dto.UserDTO;
 import com.example.board.exception.BoardException;
 import com.example.board.repository.UserRepository;
+import com.example.board.security.UserDetailsImpl;
 import com.example.board.service.UserService;
 
 @Controller
@@ -75,8 +77,8 @@ public class UserController {
 	}
 	
 	@PutMapping("/user")
-	public @ResponseBody ResponseDTO<?> updateUser(@RequestBody User user) {
-		userService.updateUser(user);
+	public @ResponseBody ResponseDTO<?> updateUser(@RequestBody User user, @AuthenticationPrincipal UserDetailsImpl principal) {
+		principal.setUser(userService.updateUser(user));
 		
 		return new ResponseDTO<>(HttpStatus.OK.value(), "수정 완료");
 	}

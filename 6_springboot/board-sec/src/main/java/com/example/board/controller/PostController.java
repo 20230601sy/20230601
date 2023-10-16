@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,7 @@ import com.example.board.domain.Post;
 import com.example.board.domain.User;
 import com.example.board.dto.PostDTO;
 import com.example.board.dto.ResponseDTO;
+import com.example.board.security.UserDetailsImpl;
 import com.example.board.service.PostService;
 
 @Controller
@@ -42,13 +44,13 @@ public class PostController {
 	}
 	
 	@PostMapping("/post")
-	public @ResponseBody ResponseDTO<?> insertPost(@Valid @RequestBody PostDTO postDTO, BindingResult bindingResult, HttpSession session) {
+	public @ResponseBody ResponseDTO<?> insertPost(@Valid @RequestBody PostDTO postDTO, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl principal) {
 		
 		Post post = modelMapper.map(postDTO, Post.class);
 		
-		User principal = (User)session.getAttribute("principal");
+//		User principal = (User)session.getAttribute("principal");
 		
-		post.setUser(principal);
+		post.setUser(principal.getUser());
 		
 		postService.insertPost(post);
 		

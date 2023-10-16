@@ -36,12 +36,14 @@ public class UserService {
 	}
 	
 	@Transactional
-	public void updateUser(User user) {
+	public User updateUser(User user) {
 		User oriUser = userRepository.findById(user.getId()).get();
 		
 		oriUser.setUsername(user.getUsername());
 		oriUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		oriUser.setEmail(user.getEmail());
+		
+		return oriUser;
 	}
 	
 }
