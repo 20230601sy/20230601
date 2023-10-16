@@ -20,9 +20,20 @@ const userObject = {
 		}).done(function(response){
 //			console.log(response);
 			// 위 코드 동작 확인 후 완료 후 다른 페이지로 이동하는 코드 필요
-			alert(response.data);
-			if(response.status == 200)
-				location = "/";
+			if(response.status == 200) {
+				alert(response.data);
+				location = "/";				
+			} else {
+				let msg = '';
+				const errorMsg = response.data;
+				if(errorMsg.username != null)
+					msg += errorMsg.username + '\n';
+				if(errorMsg.password != null)
+					msg += errorMsg.password + '\n';
+				if(errorMsg.email != null)
+					msg += errorMsg.email;
+				alert(msg);
+			}
 		}).fail(function(error){
 			console.log(error);
 		})

@@ -39474,6 +39474,10 @@ dependencies {
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 	// https://mvnrepository.com/artifact/org.webjars.bower/summernote
 	implementation 'org.webjars.bower:summernote:0.8.16'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+	implementation 'org.modelmapper:modelmapper:3.1.1'
 }
 
 tasks.named('test') {
@@ -40268,6 +40272,7 @@ public class BoardController {
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -40308,6 +40313,7 @@ public class BoardController {
 	</nav>
 // ====================================================================================================
 1010_board/src/main/webapp/WEB-INF/board/layout/footer.jsp
+##footer.jsp############################################################################################################################################################################################################
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -40316,6 +40322,8 @@ public class BoardController {
 		<hr>
 		<p>스프링 부트 연습중</p>
 		<p>전화번호 : 010-1234-5678, 주소 : 서울시 강서구 화곡동</p>
+		<a href="/auth/login?lang=ko">한국어</a>
+		<a href="/auth/login?lang=en">English</a>
 	</div>
 </body>
 </html>
@@ -40349,11 +40357,18 @@ public class BoardController {
 ##UserController############################################################################################################################################################################################################
 package com.example.board.controller;
 
-import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40361,6 +40376,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.board.domain.User;
 import com.example.board.dto.ResponseDTO;
+import com.example.board.dto.UserDTO;
 import com.example.board.service.UserService;
 
 @Controller
@@ -40369,6 +40385,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@GetMapping("/auth/insertUser")
 	public String insertUser() {
 		return "/user/insertUser";
@@ -40376,8 +40395,16 @@ public class UserController {
 	
 	@PostMapping("/auth/insertUser")
 	@ResponseBody
-	public ResponseDTO<?> insertUser(@RequestBody User user) {
-//		User findUser = userService.getUser(user.getUsername());
+//	public ResponseDTO<?> insertUser(@RequestBody User user) {
+	public ResponseDTO<?> insertUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) { // BindingResult는 무조건 @Valid UserDTO 바로 뒤에 와야 함
+//		if(bindingResult.hasErrors()) {
+//			Map<String, String> errorMap = new HashMap<>();
+//			for(FieldError error : bindingResult.getFieldErrors()) // getFieldErrors -s 로 끝나야 함 자동완성 주의!
+//				errorMap.put(error.getField(), error.getDefaultMessage());
+//			return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), errorMap);
+//		}
+		User user = modelMapper.map(userDTO, User.class);
+//		User findUser = userService.getUser(user.getUsername());		
 		if(userService.getUser(user.getUsername()) == null) {
 			userService.insertUser(user);
 			return new ResponseDTO<>(HttpStatus.OK.value(), user.getUsername() + " 회원 가입 완료");
@@ -40436,9 +40463,20 @@ const userObject = {
 		}).done(function(response){
 //			console.log(response);
 			// 위 코드 동작 확인 후 완료 후 다른 페이지로 이동하는 코드 필요
-			alert(response.data);
-			if(response.status == 200)
-				location = "/";
+			if(response.status == 200) {
+				alert(response.data);
+				location = "/";				
+			} else {
+				let msg = '';
+				const errorMsg = response.data;
+				if(errorMsg.username != null)
+					msg += errorMsg.username + '\n';
+				if(errorMsg.password != null)
+					msg += errorMsg.password + '\n';
+				if(errorMsg.email != null)
+					msg += errorMsg.email;
+				alert(msg);
+			}
 		}).fail(function(error){
 			console.log(error);
 		})
@@ -40517,6 +40555,7 @@ UserController에 /auth/login get요청을 받으면 login.jsp 페이지로 이�
 header에 있는 네비바 로그인 버튼을 클릭하면 위에거 실행되도록
 
 1010_board/src/main/webapp/WEB-INF/board/user/login.jsp
+##login.jsp############################################################################################################################################################################################################
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../layout/header.jsp" %>
@@ -40524,14 +40563,23 @@ header에 있는 네비바 로그인 버튼을 클릭하면 위에거 실행되�
 <div class="container mt-3">
 	<form>
 		<div class="mb-3 mt-3">
-			<label for="username" class="form-label">userName:</label>
+			<label for="username" class="form-label">
+<!-- 				userName: -->
+				<spring:message code="user.login.form.username"/>:
+			</label>
 			<input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
 		</div>
 		<div class="mb-3">
-			<label for="password" class="form-label">Password:</label>
+			<label for="password" class="form-label">
+<!-- 				Password: -->
+				<spring:message code="user.login.form.password"/>:
+			</label>
 			<input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
 		</div>
-		<button id="btn-login" type="submit" class="btn btn-primary">로그인</button>
+		<button id="btn-login" type="submit" class="btn btn-primary">
+<!-- 			로그인 -->
+			<spring:message code="user.login.form.login_btn"/>
+		</button>
 	</form>
 </div>
 <script src="/js/login.js"></script>
@@ -40617,18 +40665,50 @@ root-context 같은 거...
 ##BoardWebMvcConfig.java############################################################################################################################################################################################################
 package com.example.board.config;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
 public class BoardWebMvcConfig implements WebMvcConfigurer{
-
+	
+	@Bean
+	public LocaleChangeInterceptor localeChangeInterceptor() {
+		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+		localeChangeInterceptor.setParamName("lang");
+		return localeChangeInterceptor;
+	}
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new AuthInterceptor())
 				.addPathPatterns("/", "/post/**"); 
 		// 일단은 적용되는 페이지를 / 로 해둔 거... 변경 예정, 추가하려면 .addPathPatterns("/xxx") 메서드 체이닝 추가해주면 됨
+		registry.addInterceptor(localeChangeInterceptor());
+	}
+	
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
+	
+	@Bean
+	public LocaleResolver localeResolver() { // import 주의! org.springframework.web.servlet.LocaleResolver;
+		return new SessionLocaleResolver();
+	}
+	
+	@Bean("messageSource")
+	public MessageSource messageSource() {
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("message/messageSource");
+		return messageSource;
 	}
 }
 // ====================================================================================================
@@ -40659,12 +40739,19 @@ Day1012
 ##PostController############################################################################################################################################################################################################
 package com.example.board.controller;
 
-import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40675,6 +40762,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.board.domain.Post;
 import com.example.board.domain.User;
+import com.example.board.dto.PostDTO;
 import com.example.board.dto.ResponseDTO;
 import com.example.board.service.PostService;
 
@@ -40684,13 +40772,23 @@ public class PostController {
 	@Autowired
 	private PostService postService;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@GetMapping("/post/insertPost")
 	public String insertPost() {
 		return "/post/insertPost";
 	}
 	
 	@PostMapping("/post/insertPost")
-	public @ResponseBody ResponseDTO<?> insertPost(@RequestBody Post post, HttpSession session) {
+	public @ResponseBody ResponseDTO<?> insertPost(@Valid @RequestBody PostDTO postDTO, BindingResult bindingResult, HttpSession session) {
+//		if(bindingResult.hasErrors()) {
+//			Map<String, String> errorMap = new HashMap<>();
+//			for(FieldError error : bindingResult.getFieldErrors())
+//				errorMap.put(error.getField(), error.getDefaultMessage());
+//			return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), errorMap);
+//		}
+		Post post = modelMapper.map(postDTO, Post.class);
 		post.setUser((User)session.getAttribute("principal"));
 		postService.insertPost(post);
 		return new ResponseDTO<>(HttpStatus.OK.value(), "새 글 등록 완료");
@@ -40725,7 +40823,6 @@ public class PostController {
 		return new ResponseDTO<>(HttpStatus.OK.value(), "삭제 완료");
 	}
 }
-
 
 http://localhost:8888/post/insertPost 확인
 Header 수정
@@ -40781,9 +40878,18 @@ const postObject = {
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify(post)
 		}).done(function(response){
-			alert(response.data);
-			if(response.status == 200)
+			if(response.status == 200) {
+				alert(response.data);
 				location = "/";
+			} else {
+				let msg = '';
+				const errorMsg = response.data;
+				if(errorMsg.title != null)
+					msg += errorMsg.title + '\n';
+				if(errorMsg.content != null)
+					msg += errorMsg.content;
+				alert(msg);
+			}
 		}).fail(function(error){
 			console.log(error);
 		});
@@ -41351,7 +41457,7 @@ const replyObject = {
 	updateReply: function(replyId) {
 		let reply = {
 			id: replyId,
-			content: $(`.input-reply-update-${replyId}`).val()
+			content: $(`.input-reply-update-${replyId}`).val() // 강사님은 e.target.previousElementSibling.value로 설명해주심 1. previousElementSibling vs previousSibling : Element가 없으면 태그 이외의 것도 감지하는 거. 2. .val() vs .value jQuery vs javascript 
 		};
 		$.ajax({
 			url: '/reply',
@@ -41389,21 +41495,229 @@ getPost.jsp 수정
 ReplyController.java 수정
 ReplyService.java 수정
 // ====================================================================================================
-
+Day1016
 // ====================================================================================================
+유효성 검사는 보통 양쪽 다 함
+프론트에서 안하면 서버자원낭비, 백에서 안하면 포스트맨 같은 거에서 날려버리면 프론트쪽에서 안 걸림...개발자가 원치 않는 쪽의 데이터 입력 ㄷㄷㄷ
 
+유효성 검사 라이브러리 추가
+validation 3번째 꺼, 버전 지우고
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+implementation 'org.springframework.boot:spring-boot-starter-validation'
+modelmapper 1번째 꺼 / 객체를 통으로 이전 시킬 때 쓰는 거 bean 등록 필요 
+// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+implementation 'org.modelmapper:modelmapper:3.1.1'
+BoardWebMvcConfig.java 에서 수정, bean 등록
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
+username, password, email 유효성 검사하는 클래스 UserDTO 생성
+1010_board/src/main/java/com.example.board.dto/UserDTO.java
+##UserDTO.java############################################################################################################################################################################################################
+package com.example.board.dto;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import lombok.Data;
+
+@Data
+public class UserDTO {
+	
+	@NotNull(message = "username이 비어있음")
+	@NotBlank(message = "username은 필수 입력임") // NotEmpty 같은 거도 있음 이거는 문자열, 배열, 컬렉션의 크기가 0보다 커야 할 때 씀.
+	@Size(min = 1, max = 20, message = "username 1~20글자만 입력")
+	private String username;
+	
+	@Size(max = 100, message = "password는 100글자 이하만 입력")
+	private String password;
+	
+	@NotNull(message = "email이 입력되지 않음")
+	@NotBlank(message = "email은 필수 입력")
+	@Email(message = "email 형식이 아님") // 정규식으로 검사하려면 @Pattern(정규식) 써야 함
+	private String email;
+}
 // ====================================================================================================
-
+UserController 수정
+	@Autowired
+	private ModelMapper modelMapper;
+	
+	public ResponseDTO<?> insertUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) { // BindingResult는 무조건 @Valid UserDTO 바로 뒤에 와야 함
+		if(bindingResult.hasErrors()) {
+			Map<String, String> errorMap = new HashMap<>();
+			for(FieldError error : bindingResult.getFieldErrors()) // getFieldErrors -s 로 끝나야 함 자동완성 주의!
+				errorMap.put(error.getField(), error.getDefaultMessage());
+			return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), errorMap);
+		}
+		User user = modelMapper.map(userDTO, User.class);
 // ====================================================================================================
-
+http://localhost:8888/auth/insertUser post body raw 요청
+{
+    "username": "abczzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+    "password": "e",
+    "email": "naver.com"
+}
+→ {
+    "status": 400,
+    "data": {
+        "email": "email 형식이 아님",
+        "username": "username 1~20글자만 입력"
+    }
+  } 이런 식으로 옴...
 // ====================================================================================================
-
+errorMap 잘 뱉어낼 수 있도록 user.js 수정
+	else {
+				let msg = '';
+				const errorMsg = response.data;
+				if(errorMsg.username != null)
+					msg += errorMsg.username + '\n';
+				if(errorMsg.password != null)
+					msg += errorMsg.password + '\n';
+				if(errorMsg.email != null)
+					msg += errorMsg.email;
+				alert(msg);
+	}
 // ====================================================================================================
+게시글 작성 시에도 blank 없게 똑같이 처리해봅시다~~
 
+PostController 수정
+post.js 수정
+1010_board/src/main/java/com.example.board.dto/PostDTO.java 생성
+##PostDTO.java############################################################################################################################################################################################################
+package com.example.board.dto;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import lombok.Data;
+
+@Data
+public class PostDTO {
+	@NotNull(message = "title이 없음")
+	@NotBlank(message = "title은 필수 입력")
+	private String title;
+
+	@NotNull(message = "content가 없음")
+	@NotBlank(message = "content는 필수 입력")
+	private String content;
+}
 // ====================================================================================================
+content는 summernote 써서 해놨기 때문에...태그가 들어가서 NotBlank 같은 게 의미가 없...
+bindingResult 처리 모듈화,
+필터나 인터셉터... AOP나 ... 같은 거 활용하는 거 해봤... ㅋㅋㅋ AOP를 이용해서 해볼 거라심
 
+1010_board/src/main/java/com.example.board.advice/ValidationAdvice.java 생성
+##ValidationAdvice.java############################################################################################################################################################################################################
+package com.example.board.advice;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import com.example.board.dto.ResponseDTO;
+
+@Aspect
+@Component
+public class ValidationAdvice {
+	@Around("execution(* com.example..controller.*Controller.*(..))")
+	public Object validationCheck(ProceedingJoinPoint jp) throws Throwable {
+		Object[] args = jp.getArgs();
+		for(Object arg : args) {
+			if(arg instanceof BindingResult) {
+				BindingResult bindingResult = (BindingResult)arg;
+				if(bindingResult.hasErrors()) {
+					Map<String, String> errorMap = new HashMap<>();
+					for(FieldError error : bindingResult.getFieldErrors())
+						errorMap.put(error.getField(), error.getDefaultMessage());
+					return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), errorMap);
+				}
+			}
+		}
+		return jp.proceed(); // 원래 실행할 메서드 작동되도록!
+	}
+}
 // ====================================================================================================
+다국어 설정
+Eclipse MarketPlace에서 properties editor 같은 거 설치하면 한글로 쓰는 거 그대로...
 
+1010_board/src/main/resources/message/messageSource_ko.properties 생성
+user.login.form.username = \uC544\uC774\uB514		← 아이디
+user.login.form.password = \uBE44\uBC00\uBC88\uD638	← 비밀번호
+user.login.form.login_btn = \uB85C\uADF8\uC778		← 로그인
+
+1010_board/src/main/resources/message/messageSource_en.properties 생성
+user.login.form.username = Username
+user.login.form.password = Password
+user.login.form.login_btn = Login
+
+BoardWebMvcConfig.java 에서 수정, bean 등록
+	@Bean
+	public LocaleResolver localeResolver() { // import 주의! org.springframework.web.servlet.LocaleResolver;
+		return new SessionLocaleResolver();
+	}
+	
+	@Bean("messageSource")
+	public MessageSource messageSource() {
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("message/messageSource");
+		return messageSource;
+	}
+	
+header.jsp 수정
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+login.jsp 수정
+			<spring:message code="user.login.form.username"/>:
+			<spring:message code="user.login.form.password"/>:
+			<spring:message code="user.login.form.login_btn"/>
+// ====================================================================================================
+지역변경
+BoardWebMvcConfig.java 에서 수정, bean 등록, interceptor 추가
+
+footer.jsp 수정
+		<a href="/auth/login?lang=ko">한국어</a>
+		<a href="/auth/login?lang=en">영어</a>
+// ====================================================================================================
+시큐리티 지울 게 많아서 1016_board-security로 프로젝트 복사함
+우선 settings.gradle에서 폴더명 1016_board-security로 변경 후 gradle refresh하면 프로젝트 동작함
+
+config/AuthInterceptor.java 삭제
+login.js 삭제 (일단은 주석처리만 해둠)
+UserController login 부분 삭제
+BoardWebMvcConfig.java 에서 인터셉터부분 날림
+
+spring boot security 검색 1, 3번째, 버전 지우고! gragle refresh
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+implementation 'org.springframework.boot:spring-boot-starter-security'
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+testImplementation 'org.springframework.boot:spring-boot-starter-test'
+시큐리티를 설치하고 서버를 실행시키는 순간 바로 로그인페이지가 뜨기 때문에 이렇게 나중에 추가하기도 한다심...
+물론 서버 실행하면 자동 생기는 비밀번호 user(아이디 고정) / 94757507-060a-4963-ba48-448215545a53 로 확인은 가능함...
+
+spring security taglibs 검색 1번째, 버전 지우고! gradle refresh
+// https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs
+implementation 'org.springframework.security:spring-security-taglibs'
+jstl로 하는 거 이제 안되고 security tag 써야 함...
+header.jsp 수정
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
+SecurityConfig.java 생성
+
+login.jsp 수정
+logout.jsp 수정
+
+UserDetailsImpl 생성
+UserDetails custom 했으면 UserDetailsService도 그거에 맞게 custom해줘야 함
+UserDetailsServiceImpl
 // ====================================================================================================
 
 // ====================================================================================================
