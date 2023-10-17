@@ -19,8 +19,11 @@
      <button id="btn-login" type="submit" class="btn btn-primary">
      	<spring:message code="user.login.form.login_btn" />
      </button>
-     <a href="">
+     <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=e5d93009f7ec792c5e61f011892f46ee&redirect_uri=http://localhost:8888/oauth/kakao">
      	<img src="/img/kakao_login_medium_narrow.png">
+     </a>
+     <a href="../oauth2/authorization/google">
+     	<img src="/img/google_login.png">
      </a>
    </form>
 </div>

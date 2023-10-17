@@ -41734,10 +41734,64 @@ SecurityContext
 http://localhost:8888/oauth/kakao
 REST API key: e5d93009f7ec792c5e61f011892f46ee
 좌하단 제품에서 동의항목 필수, 이메일(선택) 선택함
+https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api 리소스 다운로드 받아서 img 폴더에 넣기
+https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}
 // ====================================================================================================
-
+Day1017
 // ====================================================================================================
+kakao 계속...
+gson
+	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation 'com.google.code.gson:gson'
 
+OAuthType
+// ====================================================================================================
+구글 로그인
+https://console.cloud.google.com/
+Cloud 개요 - 대시보드 - 프로젝트 만들기 - 1017googleLogin
+API 및 서비스 - OAuth 동의 화면 - 외부 - 만들기 - 
+googleLogin / 20230601sy@gmail.com / 20230601sy@gmail.com
+저장 후 계속 계속 계속
+좌측 사용자 인증 정보
++ 사용자 인증 정보 만들기
+OAuth 클라이언트 ID
+웹 애플리케이션
+승인된 리디렉션 URI
++ URI 추가 uri http://localhost:8888/login/oauth2/code/google
+클라이언트 ID : 947680246566-qkbi15qfvdptu7nsmdr6juv10j1edl38.apps.googleusercontent.com
+클라이언트 보안 비밀번호 : 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
+
+Oauth2 starter 검색 첫번째 꺼 버전 정보 지우고. Gradle refresh
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-client
+implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+application.properties
+# Google
+spring.security.oauth2.client.registration.google.client-id=클라이언트id
+spring.security.oauth2.client.registration.google.client-secret=클라이언트pw
+spring.security.oauth2.client.registration.google.scope=profile,email
+
+google 어딘가에서 다운 받을 수 있는 이미지ㅡㅡ
+img 폴더에 넣기
+login.jsp에 출력
+SecurityConfig
+// ====================================================================================================
+Springboot + React
+스프링부트로 만들어진 서버 (backend) : 8888포트
+리액트로 만들어진 클라이언트 (frontend) : 3000포트
+CORS 설정 (cross origin 웹 보안정책)
+동일한 프로토콜, 동일한 ip, 동일한 포트번호를 가져야만 됨
+제약없이 통신을 할 수 있음
+데이터를 주고 받는 거...일반적으로 백엔드쪽에서 CORS 설정
+WebConfig
+
+npm install react-router-dom@6;
+index.js
+npm install axios;
+
+TestController
+
+REACT_APP_SERVER_URL = http://localhost:8888 # REACT_APP_ 붙여야 함
 // ====================================================================================================
 
 // ====================================================================================================

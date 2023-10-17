@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.board.domain.OAuthType;
 import com.example.board.domain.RoleType;
 import com.example.board.domain.User;
 import com.example.board.repository.UserRepository;
@@ -20,8 +21,9 @@ public class UserService {
 	private PasswordEncoder passwordEncoder;
 	
 	public void insertUser(User user) {
+		if(user.getOauth() == null)
+			user.setOauth(OAuthType.BOARD);
 		user.setRole(RoleType.USER);
-		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		
 		userRepository.save(user);
