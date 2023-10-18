@@ -5,6 +5,7 @@ import Header from './Header';
 import { Route, Routes } from 'react-router-dom';
 import Signup from './Signup';
 import Login from './Login';
+import GoogleLogin from './GoogleLogin';
 
 function App() {
   // const [test, setTest] = useState();
@@ -24,14 +25,16 @@ function App() {
   //       console.log(error);
   //   })
   // }, [])
+  const [isAuth, setAuth] = useState(false);
   return (
     <div className="App">
-      <Header/>
+      <Header isAuth={isAuth} setAuth={setAuth}/>
 
       <Routes>
         <Route path='/' element={<h1>인덱스페이지</h1>}/>
-        <Route path='/login' element={<Login />}/>
+        <Route path='/login' element={<Login setAuth={setAuth}/>}/>
         <Route path='/signup' element={<Signup />}/>
+        <Route path='/oauth/google' element={<GoogleLogin setAuth={setAuth} />}/>
       </Routes>
       {/* <h1>{test}</h1>
 

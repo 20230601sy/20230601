@@ -1,8 +1,10 @@
 import axios from "axios";
-import { error } from "jquery";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
     username:'',
     password:'',
@@ -24,12 +26,13 @@ function Signup() {
       <button onClick={()=> {
         axios.post(`${process.env.REACT_APP_SERVER_URL}/signup`, user)
         .then(response => {
-
+          // console.log(response.data);
+          alert(response.data);
+          navigate('/');
         })
         .catch(error => {
-          
-        }) 
-
+          console.log(error);
+        });
       }}>회원가입</button>
     </div>
   );
