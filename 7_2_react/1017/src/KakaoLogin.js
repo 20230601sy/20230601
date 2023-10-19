@@ -1,14 +1,12 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-function GoogleLogin({setAuth}) {
+function KakaoLogin({setAuth}) {
   const navigate = useNavigate();
   const URL = window.location.href;
-  const match = /access_token=([^&]+)/.exec(URL);
-  // console.log(URL);
-  // console.log(match);
+  const match = /code=([^&]+)/.exec(URL);
   if(match) {
-    const accessToken = decodeURIComponent(match[1]);
-    axios.post(`${process.env.REACT_APP_SERVER_URL}/oauth/google`, {accessToken : accessToken})
+    const code = decodeURIComponent(match[1]);
+    axios.post(`${process.env.REACT_APP_SERVER_URL}/oauth/kakao`, {code : code})
       .then(response => {
         const jwt = response.headers.authorization;
         if(jwt) {
@@ -32,4 +30,4 @@ function GoogleLogin({setAuth}) {
   );
 }
 
-export default GoogleLogin;
+export default KakaoLogin;

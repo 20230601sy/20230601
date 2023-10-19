@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,9 +44,34 @@ public class MemberController {
 		Member member = memberService.googleLogin(accessToken.get("accessToken"));
 //		System.out.println(member);
 		Member findMember = memberService.getMember(member.getUsername());
-		if(findMember.getUsername() == null) {
+		if(findMember.getUsername() == null)
 			memberService.signup(member);
-		}
 		return memberService.getResponseEntity(member.getUsername(), member.getPassword());
+	}
+	@PostMapping("/oauth/kakao")
+	public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> code) {
+		String accessToken = memberService.getKakaoAccessToken(code.get("code"));
+//		System.out.println(accessToken);
+//		System.out.println(memberService.kakaoLogin(accessToken));
+		Member member = memberService.kakaoLogin(accessToken);
+//		System.out.println(member);
+		Member findMember = memberService.getMember(member.getUsername());
+		if(findMember.getUsername() == null)
+			memberService.signup(member);
+		return memberService.getResponseEntity(member.getUsername(), member.getPassword());
+//		return null;
+	}
+	
+//	@GetMapping("/aa")
+//	public String test() {
+//		return "aaaaa";
+//	}
+
+	@GetMapping("/userInfo")
+	public ResponseEntity<?> userInfo(Authentication authentication) { // jwtFilter에서 이미 인증 객체 만들어뒀기 때문에 받아올 수 있는 그것...
+//		System.out.println(authentication.getName());
+		String username = authentication.getName();
+		Member member = memberService.getMember(username);
+		return new ResponseEntity<>(member, HttpStatus.OK);
 	}
 }

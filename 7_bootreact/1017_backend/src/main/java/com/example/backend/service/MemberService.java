@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,9 +37,9 @@ public class MemberService {
 	
 	@Value("${google.default.password}")
 	private String googlePassword;
-//
-//	@Value("${kakao.default.password}")
-//	private String kakaoPassword;
+
+	@Value("${kakako.default.password}")
+	private String kakaoPassword;
 	
 	public void signup(Member member) {
 		member.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -87,5 +88,61 @@ public class MemberService {
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
 						.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
 						.build();
+	}
+	
+	public String getKakaoAccessToken(String code) {
+		HttpHeaders header = new HttpHeaders();
+		header.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+		body.add("grant_type", "authorization_code");
+		body.add("client_id", "e5d93009f7ec792c5e61f011892f46ee");
+		body.add("redirect_uri", "http://localhost:3000/oauth/kakao");
+		body.add("code", code);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, header);
+		
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, request, String.class);
+		String json = response.getBody();
+//		System.out.println(json);
+//		{	"access_token":"Ox6QYcRl9U3WxBr1rwguhdxsoUxLbuCAAHoKKiUOAAABi0V9NNT-oZq-Jypvmw",
+//			"token_type":"bearer",
+//			"refresh_token":"9sXI3PPhnlL001t4VmqRX02i0y6wCfnvCpMKKiUOAAABi0V9NNH-oZq-Jypvmw",
+//			"expires_in":21599,
+//			"scope":"account_email profile_nickname",
+//			"refresh_token_expires_in":5183999	}
+		
+		Gson gson = new Gson();
+		Map<?, ?> data = gson.fromJson(json, Map.class);
+		return (String)data.get("access_token");
+	}
+	
+	public Member kakaoLogin(String accessToken) {
+		HttpHeaders header = new HttpHeaders();
+		header.add("Authorization", "Bearer " + accessToken);
+	    header.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(header);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, request, String.class);
+//		System.out.println(response.getBody());
+//		{	"id":3101019923,
+//			"connected_at":"2023-10-19T01:11:55Z",
+//			"properties":{"nickname":"SY"},
+//			"kakao_account":{	"profile_nickname_needs_agreement":false,
+//								"profile":{"nickname":"SY"},
+//								"has_email":true,
+//								"email_needs_agreement":false,
+//								"is_email_valid":true,
+//								"is_email_verified":true,
+//								"email":"16s@kakao.com"	}	}
+		String json = response.getBody();
+		Gson gson = new Gson();
+		Map<?, ?> data = gson.fromJson(json, Map.class);
+		String username = (String) ((Map<?, ?>) data.get("properties")).get("nickname");
+		String email = (String) ((Map<?, ?>) data.get("kakao_account")).get("email");
+		Member member = new Member();
+		member.setUsername(username);
+		member.setEmail(email);
+		member.setPassword(kakaoPassword);
+		return member;
 	}
 }

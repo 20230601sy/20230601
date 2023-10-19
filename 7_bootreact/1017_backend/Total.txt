@@ -41819,7 +41819,8 @@ bearer 제외해서 encode 입력
 // ====================================================================================================
 소셜 로그인
 
-구글 리디렉션 포트가 다르니까 boot에서 썼던 거 똑같이는 못 씀...
+구글 로그인
+리디렉션 포트가 다르니까 boot에서 썼던 거 똑같이는 못 씀...
 http://localhost:3000/oauth/google
 클라이언트 ID : 947680246566-qkbi15qfvdptu7nsmdr6juv10j1edl38.apps.googleusercontent.com
 클라이언트 보안 비밀번호 : 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
@@ -41835,11 +41836,44 @@ http://localhost:3000/oauth/google
 시큐리티를 이용해서 인증처리 (jwt 발급)
 클라이언트로 jwt 전송
 // ====================================================================================================
+카카오 로그인
 
+http://localhost:3000 추가 (http://localhost:8888 남겨둠)
+http://localhost:8888/oauth/kakao 추가 http://localhost:8888/oauth/kakao
+REST API key: e5d93009f7ec792c5e61f011892f46ee
+좌하단 제품에서 동의항목 필수, 이메일(선택) 선택함
+https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api 리소스 다운로드 받아서 img 폴더에 넣기
+https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}
 // ====================================================================================================
-
+Day1019
 // ====================================================================================================
+로그인을 하면 header에 로그인한 사람의 username을 출력
+`xxx`님 환영합니다
+리액트
+서버로부터 받아온 사용자 정보를 저장할 state를 app component에 생성
+isAuth 변경 여부에 따라 서버에서 사용자 정보를 받아오도록 요청하는 코드를 작업
+// ====================================================================================================
+게시글 작성
+// ====================================================================================================
+Git Hub Flow 이건 잘 안 함... 개인이나 개발 기간 짧을 때, 유지보수만 남았을 때
 
+Git Flow 제일 많이 쓰는 거.
+Branch가 5개 Main (hotfix) (Release) Develop Feature
+팀장
+Main 초기 setting 끝나고 push / 배포, 서비스 중인 아이 그래서 함부로 건드리지 않음. 주기 정해서 develop merge
+Develop 초기 setting 끝난 시점에서 branch
+main push를 막아놓음
+
+팀원 Develop clone 
+local에는 main만 보임 
+팀원은 각자 자기가 작업할 branch 새로 생성 Feature/Login(A)
+or 팀장이 branch 파는 것도 가능...
+
+팀장 
+GitHub Repository Front/Back 2개 / 팀원 초대 / 초기 세팅
+리액트는 git init 할 필요 없고 boot는 git init 부터...
+develop branch 만들고, main, develop 4번 push
+github → 브랜치 보호 설정, main 아무나 못 건드리게... & develop 동의 설정...
 // ====================================================================================================
 
 // ====================================================================================================
