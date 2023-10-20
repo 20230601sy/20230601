@@ -41875,6 +41875,84 @@ GitHub Repository Front/Back 2개 / 팀원 초대 / 초기 세팅
 develop branch 만들고, main, develop 4번 push
 github → 브랜치 보호 설정, main 아무나 못 건드리게... & develop 동의 설정...
 // ====================================================================================================
+Day1020
+// ====================================================================================================
+
+제어판\사용자 계정\자격 증명 관리자 github 삭제
+chrome 등
+
+팀장
+setting 우측 branches 클릭
+main lock
+add rule develop require a pull request before merging, require approvals / lock(선택) 
+
+
+팀원
+git clone 
+git add .
+git commit -m 'bb작업함'
+git push origin feature/bb
+
+compare & pull request 클릭
+develop ← feature/bb 할말 작성
+우측 리뷰어 선택
+라벨 정해놓고 쓰기...
+create pull request
+
+나머지 팀원
+Pull request
+line 별로 comment
+finish your review approve / request changes
+confirm Pull request → Delete branch (팀장)
+충돌나는 거 보통은 아래가 맞음(confirm 받은 거!)
+vscode는 버튼 누르면 됨
+없으면 코드부분을 지우면 됨...
+local에서 branch 삭제
+git switch develop
+git branch -D feature/bb
+
+https://docs.google.com/presentation/d/1wPxOQ9V_2vQbNw0HL9hCvxYsXPX7CtYMKsuaXSAItnU/edit?usp=sharing
+https://docs.google.com/spreadsheets/d/1s-d0SfcPg1w2kBgj9cwvUh4C_vyvo0AUfVglOg8tLxk/edit?usp=sharing
+
+React
+1020_frontend > npx create-react-app .
+폴더 세팅, library setting
+
+https://github.com/20230601sy/1020_frontend.git
+
+echo "# 1020_frontend" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/20230601sy/1020_frontend.git
+git push -u origin main
+
+git remote add origin https://github.com/20230601sy/1020_frontend.git
+git branch -M main
+git push -u origin main
+
+git clone https://github.com/20230601sy/1020_frontend.git .
+npm install
+
+Spring boot
+https://github.com/20230601sy/1020_backend.git
+프로젝트 생성, library setting
+git init
+git add . (LF will be replaced by CRLF 관련해서 git config core.autocrlf true 하면 이 프로젝트에는 안 뜸)
+git push origin main
+git branch develop
+git switch develop
+git push origin develop
+
+git clone https://github.com/20230601sy/1020_backend.git 1020_backend
+워크스페이스는 1020_backend의 상위 폴더임!!!
+좌측 하단 import projects
+Gradle - Existing Gradle Project / Next
+Browse 클론 떠온 폴더 1020_backend 선택 후 finish
+import 할 때 library 다 가져와 지지만 혹시 모르니까 gradle refresh
+application.properties 같은 거 제외 시킬 수도 있는데... 그러면... 포트 설정이랑... db 설정... oracle 계정 신규 생성...
+// ====================================================================================================
 
 // ====================================================================================================
 
