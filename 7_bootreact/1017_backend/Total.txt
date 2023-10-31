@@ -41935,12 +41935,24 @@ git push -u origin main
 git clone https://github.com/20230601sy/1020_frontend.git .
 npm install
 
+oracle db system에서 계정 생성
+create user project identified by 1234;
+grant connect, resource, dba to project;
+
 Spring boot
 https://github.com/20230601sy/1020_backend.git
 프로젝트 생성, library setting
 git init
 git add . (LF will be replaced by CRLF 관련해서 git config core.autocrlf true 하면 이 프로젝트에는 안 뜸)
 git push origin main
+
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/20230601sy/1020_backend.git
+git push -u origin main
+
 git branch develop
 git switch develop
 git push origin develop
@@ -41954,6 +41966,22 @@ import 할 때 library 다 가져와 지지만 혹시 모르니까 gradle refres
 application.properties 같은 거 제외 시킬 수도 있는데... 그러면... 포트 설정이랑... db 설정... oracle 계정 신규 생성...
 // ====================================================================================================
 
+할 거!
+
+many to many
+입금, 출금 목록 합쳐서 보이게
+
+우편번호 주소
+
+국적 목록
+
+외환 환율 API
+
+ID, PW 찾기!
+
+순환참조
+부모에 @JsonManagerReference
+자식에 @JsonBackReference
 // ====================================================================================================
 
 // ====================================================================================================
