@@ -1,6 +1,7 @@
 *{
   text-align: center;
   border-collapse : collapse;
+  font-size: 12px !important;
 }
 td {
   margin: 0 !important;
