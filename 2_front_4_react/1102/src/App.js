@@ -2,25 +2,102 @@ import './App.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useEffect, useState } from 'react';
-import DisplayRow from './DisplayRow';
-import ReducedRow from './ReducedRow';
+import { PROBLEM_SETS } from './constants/problemSet';
+import { useState } from 'react';
 
 function App() {
   const IMG_PATH = 'https://20230601sy.github.io/0810/src/assets/';
-  const [num, setNum] = useState(new Array(729).fill(1));
-  const [set, isSet] = useState(new Array(729).fill(1));
-  const [simpleTable, setSimpleTable] = useState(new Array(81).fill(''));
+  // const [currentStage, setCurrentStage] = useState(PROBLEM_SETS.Expert01);
+  const [currentStage, setCurrentStage] = useState(PROBLEM_SETS.Test01);
+  const [status, setStatus] = useState(false);
 
-  useEffect(()=>{
-    for(let i=0; i<27; i++) {
-      for(let j=0; j<27; j++)
-        num[27*i+j] = 1 + (i%3)*3 + j%3;
+  const Box = props => {
+    setStatus(calcStatus() ? (isFinished() ? "You Win!" : "") : "You Wrong!");
+
+    return(
+      <>
+        { props.data.map(item => (
+          <table>
+            { [[1, 2, 3], [4, 5, 6], [7, 8, 9]].map(rowArr => (
+              <tr>
+                { rowArr.map(nCol => (
+                  <td style={{border:'1px solid'}}> 
+                    {
+                      item[`block${nCol}`]?.length 
+                      ? <Box data={item[`block${nCol}`]}/>
+                      : <div data-block1={item.block} data-block2={`block${nCol}`} style={{width:'18px', height:'18px'}} onClick={blockHandler}>
+                          {item[`block${nCol}`] ? item[`block${nCol}`] : ""}
+                        </div> 
+                    } 
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </table>
+        ))}
+      </>
+    );
+  }
+
+  const blockHandler = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if(! currentStage[0][e.target.dataset.block1][0][e.target.dataset.block2]) {
+      currentStage[0][e.target.dataset.block1][0][e.target.dataset.block2] = Number(prompt('값을 입력하세요.'));
+      console.log(currentStage[0][e.target.dataset.block1][0][e.target.dataset.block2]);
+      setCurrentStage([...currentStage]);
     }
-    setNum([...num]);
-  }, []);
+  }
+  
+  const isFinished = () => {
+    for(let i=1; i<=9; i++)
+    for(let j=1; j<=9; j++)
+      if(!currentStage[0][`block${i}`][0][`block${j}`])
+        return false;
+    return true;
+  }
 
+  const calcStatus = () => {
+    for(let i=1; i<=9; i++) {
+      const bNums = new Set();
+      let cnt = 0;
+      for(let j=1; j<=9; j++) {
+        if(currentStage[0][`block${i}`][0][`block${j}`] != 0) {
+          cnt++;
+          bNums.add(currentStage[0][`block${i}`][0][`block${j}`]);
+        }
+        else {
 
+          console.log(i, j, currentStage[0][`block${i}`][0][`block${j}`]);
+        }
+      }
+      if(bNums.size != cnt)
+        return false;
+    }
+    const rPtn = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+    const cPtn = [[1, 4, 7], [2, 5, 8], [3, 6, 9]];
+    return checkLines(rPtn) && checkLines(cPtn);
+  }
+
+  const checkLines = (ptn) => {
+    for(let i=0; i<3; i++) {
+      for(let j=0; j<3; j++) {
+        const nums = new Set();
+        let cnt = 0;
+        for(let b1=0; b1<3; b1++) {
+          for(let b2=0; b2<3; b2++) {
+            if(currentStage[0][`block${ptn[i][b1]}`][0][`block${ptn[j][b2]}`] != 0) {
+              cnt++;
+              nums.add(currentStage[0][`block${ptn[i][b1]}`][0][`block${ptn[j][b2]}`]);
+            }
+          }
+        }
+        if(nums.size != cnt)
+          return false;
+      }
+    }
+    return true;
+  }
   return (
     <div className="App">
       <Container className='mt-5'>
@@ -33,21 +110,23 @@ function App() {
         </Row>
         <Row>
           <Col className='d-flex justify-content-center'>
-            <table id='num-table'>
-              {
-                new Array(27).fill(1).map((_, i) => <DisplayRow y={i} num={num} setNum={setNum} set={set} isSet={isSet} simpleTable={simpleTable} setSimpleTable={setSimpleTable}/>)
-              }
-            </table>
+            <Box data={currentStage}/>
           </Col>
+        </Row>
+        <Row>
           <Col className='d-flex justify-content-center'>
-            <table id='num-table'>
-              {
-                new Array(9).fill(1).map((_, i) => <ReducedRow y={i} simpleTable={simpleTable}/>)
-              }
-            </table>
+            { status }
           </Col>
         </Row>
       </Container>
+      {/* <div className="game">
+        <div className="game-board">
+          <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        </div>
+        <div className="game-info">
+          <ol>{moves}</ol>
+        </div>
+      </div> */}
     </div>
   );
 }
