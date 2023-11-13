@@ -7,8 +7,8 @@ import { useState } from 'react';
 
 function App() {
   const IMG_PATH = 'https://20230601sy.github.io/0810/src/assets/';
-  // const [currentStage, setCurrentStage] = useState(PROBLEM_SETS.Expert01);
-  const [currentStage, setCurrentStage] = useState(PROBLEM_SETS.Test01);
+  const [currentStage, setCurrentStage] = useState(PROBLEM_SETS.Expert01);
+  // const [currentStage, setCurrentStage] = useState(PROBLEM_SETS.Test01);
   const [status, setStatus] = useState(false);
 
   const Box = props => {

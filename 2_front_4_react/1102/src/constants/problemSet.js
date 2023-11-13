@@ -90,6 +90,10 @@ export const PROBLEM_SETS = {
                   "block1": 9, "block2": 7, "block3": 8, 
                   "block4": 3, "block5": 1, "block6": 2, 
                   "block7": 6, "block8": 4, "block9": 5 } ]
+                  // "block7": 6, "block8": 4, "block9": [{ "block": "block9",
+                  // "block1": 1, "block2": 2, "block3": 3, 
+                  // "block4": 4, "block5": 5, "block6": 6, 
+                  // "block7": 7, "block8": 8, "block9": 9 }] } ]
   }]
 
 
