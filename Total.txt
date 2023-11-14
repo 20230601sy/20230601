@@ -41994,7 +41994,73 @@ git hub fork
 // ====================================================================================================
 
 // ====================================================================================================
+fork 뜨다 말음
 
+clone 새 repository 파서 올리기 
+권한 다를 때라든지 remote 설정 변경
+git remote set-url origin https://github.com/20230601sy/1116_backend.git
+한다음 새 repository에 push
+
+데이터베이스
+클라우드타입 검색 https://cloudtype.io/
+github 연동 회원가입
+
+oracle 안됨...ㄷㄷㄷ
+MariaDB ~ mySQL과 유사
+Postgre가 오라클과 유사한
+우측 상단 파란 + 버튼
+post 검색후 postgresql 입력
+DB user root / 1234
+더많은 옵션에 name이 포트번호랑 주소에 관련된거라 설정 꼭 해줘야 한다심
+
+도메인이 url
+기본 설정이 외부 유입이 안되게 되어 있음
+좌측 프로젝트 클릭 후 우측 톱니 설정 클릭
+방화벽 TCP 외부 접속 적용하기 적용하기!
+
+maven 검색 postgresql
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	implementation 'org.postgresql:postgresql:42.6.0'
+gradle refresh
+
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://svc.sel5.cloudtype.app:31644/test
+jdbc://postgresql:// + 도메인에서 주소 + CLI에서 database 이름 연결한 거...
+spring.datasource.username=root
+spring.datasource.password=1234
+
+프로젝트 박스 안에 최우측에 터미널... 아이콘이 있음
+SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+테이블 만들어졌는지 확인함...
+
+무료버전은 무중단배포가 안됨
+초기화 전력은 create로 하면 안됨...
+update나...사실 서비스 실행하면 none이나 vaildate...
+
+일단 여기까지 바꾼 거 git add . && git commit -m 'db change oracle to postgresql' && git push
+
+이제 back배포
+프로젝트 클릭 후 생성한 거 옆에 추가 + 클릭 후 springboot 검색해서 git repository
+자바버전 포트 8888 로 바꿈
+// 배포할 때 환경변수 설정해줄 수 있으시다심 이따가 살짝...?
+여기서 환경변수 미리 저장해놓을 수 있다심...
+가끔 포트에러 같은 거 뜨는데 기다리면 또 사라진다심
+
+프론트 3000 포트도 바꿔줘야 할 듯....
+
+.env.local → .env
+npm run build
+
+// jpa에 구문 써놓으면 db 자동으로 추가되는 거...해두심 ㄷㄷㄷ
+// 근데 이거 쓰면 비밀번호 넣는 거는 어떻게 되는 거지??? ㄷㄷㄷ
+// https://github.com/esjang67/shome_b/blob/main/src/main/resources/data.sql
+
+Project Console: https://console.firebase.google.com/project/project-3204811911975252544/overview
+Hosting URL: https://project-3204811911975252544.web.app
+
+서버 20자 제한 해제 (으아 이거 그러면 main 합쳤을 때 문제인 거 같은데...변경 이력 함 보긴 해야겠다)
+UPDATE users SET role='ADMIN' WHERE id=1;
 // ====================================================================================================
 
 // ====================================================================================================
