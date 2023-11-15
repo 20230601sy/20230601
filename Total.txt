@@ -42051,6 +42051,7 @@ update나...사실 서비스 실행하면 none이나 vaildate...
 
 .env.local → .env
 npm run build
+npm run build && firebase deploy
 
 // jpa에 구문 써놓으면 db 자동으로 추가되는 거...해두심 ㄷㄷㄷ
 // 근데 이거 쓰면 비밀번호 넣는 거는 어떻게 되는 거지??? ㄷㄷㄷ
@@ -42059,10 +42060,22 @@ npm run build
 Project Console: https://console.firebase.google.com/project/project-3204811911975252544/overview
 Hosting URL: https://project-3204811911975252544.web.app
 
+front, back 요청 주소들 모두 맞게 webconfig, securityconfig, env 꺼에 있음...
+social login한 거는 했을 때...각각 api 키 발급 받은 곳에서 주소 넣기
+kakao는 back service 에서도 토큰 전 코드 주고 받는 곳에도 주소 변경해야 함
+front에도 key에 바꿔야 하고...
+
 서버 20자 제한 해제 (으아 이거 그러면 main 합쳤을 때 문제인 거 같은데...변경 이력 함 보긴 해야겠다)
 UPDATE users SET role='ADMIN' WHERE id=1;
 // ====================================================================================================
 
+https://project-3204811911975252544.web.app
+https://github.com/20230601sy/1116_frontend.git
+https://github.com/20230601sy/1116_backend.git
+https://docs.google.com/presentation/d/1wPxOQ9V_2vQbNw0HL9hCvxYsXPX7CtYMKsuaXSAItnU/edit?usp=sharing
+
+
+소셜 로그인은 카카오 이메일 선택으로 할 수 밖에 없는 것은... 테스트 계정은 카카오가 선택으로만 하도록 강제해놨기 때문이라심...
 // ====================================================================================================
 
 // ====================================================================================================
